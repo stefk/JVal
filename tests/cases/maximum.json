@@ -1,0 +1,30 @@
+{
+    "title": "maximum constraint",
+    "tests": [
+        {
+            "title": "without exclusiveMaximum",
+            "schema": { "maximum": 3 },
+            "valid": [
+                {},
+                [],
+                null,
+                true,
+                "foo",
+                1,
+                -1,
+                0.4,
+                3
+            ],
+            "invalid": [
+                {
+                    "instance": 5,
+                    "violations": ["err"]
+                },
+                {
+                    "instance": 3.000001,
+                    "violations": ["err"]
+                }
+            ]
+        }
+    ]
+}
