@@ -51,24 +51,39 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
                 $case = json_decode(file_get_contents($item->getPathname()));
 
                 foreach ($case->tests as $test) {
-                    foreach ($test->valid as $i => $instance) {
-                        $cases[] = [
-                            $item->getFilename(),
-                            "{$case->title} {$test->title}, valid instance #{$i}",
-                            $instance,
-                            $test->schema,
-                            []
-                        ];
+                    if (!isset($test->valid) && !isset($test->invalid)) {
+                        throw new \Exception(sprintf(
+                            'Test case "%s %s" has neither "valid" or "invalid" data (file: %s)',
+                            $case->title,
+                            $test->title,
+                            $item->getFilename()
+                        ));
                     }
 
-                    foreach ($test->invalid as $i => $set) {
-                        $cases[] = [
-                            $item->getFilename(),
-                            "{$case->title} {$test->title}, invalid instance #{$i}",
-                            $set->instance,
-                            $test->schema,
-                            $set->violations
-                        ];
+                    if (isset($test->valid)) {
+                        foreach ($test->valid as $i => $instance) {
+                            $cases[] = [
+                                $item->getFilename(),
+                                "{$case->title} {$test->title}, valid instance #{$i}",
+                                $instance,
+                                $test->schema,
+                                []
+                            ];
+                        }
+                    }
+
+                    if (isset($test->invalid)) {
+                        foreach ($test->invalid as $i => $set) {
+                            $cases[] = [
+                                $item->getFilename(),
+                                "{$case->title} {$test->title}, invalid instance #{$i}",
+                                $set->instance,
+                                $test->schema,
+                                array_map(function ($violation) {
+                                    return (array)$violation;
+                                }, $set->violations)
+                            ];
+                        }
                     }
                 }
             }

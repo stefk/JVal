@@ -22,10 +22,10 @@ class MaximumConstraint implements ConstraintInterface
     {
         if (!isset($schema->exclusiveMaximum) || $schema->exclusiveMaximum === false) {
             if ($instance > $schema->maximum) {
-                $context->addViolation('err');
+                $context->addViolation('should be less than, or equal to, %s', [$schema->maximum]);
             }
+        } else if ($instance >= $schema->maximum) {
+            $context->addViolation('should be less than %s', [$schema->maximum]);
         }
-
-        // if schema->exclusiveMaximum == true and instance >= maximum, add error
     }
 }

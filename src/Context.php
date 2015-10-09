@@ -14,11 +14,11 @@ class Context
         $this->path = $path;
     }
 
-    public function addViolation($message)
+    public function addViolation($message, array $parameters = [])
     {
         $this->violations[] = [
             'path' => $this->path,
-            'message' => $message
+            'message' => vsprintf($message, $parameters)
         ];
     }
 

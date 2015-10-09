@@ -1,0 +1,30 @@
+{
+    "title": "maxItems constraint",
+    "tests": [
+        {
+            "title": "against non-array data",
+            "schema": { "maxItems": 4 },
+            "valid": [{}, null, true, "foo", 1, 2.5]
+        },
+        {
+            "title": "against array data",
+            "schema": { "maxItems": 3 },
+            "valid": [
+                [1],
+                ["foo", ["bar1", "bar2"], "baz"],
+                [{ "foo": 1, "bar": 2 }, true]
+            ],
+            "invalid": [
+                {
+                    "instance": [1, 2, 3, 4],
+                    "violations": [
+                        {
+                            "path": "",
+                            "message": "number of items should be less than, or equal to, 3"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -10,19 +10,21 @@ class MaxItemsConstraint implements ConstraintInterface
 {
     public function keywords()
     {
-
+        return ['maxItems'];
     }
 
     public function isApplicableTo($instance)
     {
-        //return instance == array;
+        return is_array($instance);
     }
 
-     // will be applied to array itself
     public function apply($instance, stdClass $schema, Context $context)
     {
-        // if type of instance != array, return (4.1)
-
-        // if array size > maxItems, add error (5.3.2.2)
+        if (count($instance) > $schema->maxItems) {
+            $context->addViolation(
+                'number of items should be less than, or equal to, %s',
+                [$schema->maxItems]
+            );
+        }
     }
 }

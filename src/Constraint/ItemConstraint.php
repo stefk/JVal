@@ -10,13 +10,12 @@ class ItemConstraint implements ConstraintInterface
 {
     public function keywords()
     {
-
+        return ['items', 'additionalItems'];
     }
 
-    // will be applied to array *items* (-> any type)
     public function isApplicableTo($instance)
     {
-        // return true
+        return is_array($instance);
     }
 
     public function apply($instance, stdClass $schema, Context $context)
