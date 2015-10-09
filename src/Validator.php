@@ -2,10 +2,7 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Constraint\ItemsConstraint;
-use JsonSchema\Constraint\MaximumConstraint;
-use JsonSchema\Constraint\MaxItemsConstraint;
-use JsonSchema\Constraint\MultipleOfConstraint;
+use JsonSchema\Constraint;
 use stdClass;
 
 class Validator
@@ -18,10 +15,11 @@ class Validator
     public function __construct()
     {  
        $this->constraints = [
-           new MultipleOfConstraint(),
-           new MaximumConstraint(),
-           new MaxItemsConstraint(),
-           new ItemsConstraint()
+           new Constraint\MultipleOfConstraint(),
+           new Constraint\MaximumConstraint(),
+           new Constraint\MaxItemsConstraint(),
+           new Constraint\ItemsConstraint(),
+           new Constraint\MaxPropertiesConstraint()
        ];
     }
 
