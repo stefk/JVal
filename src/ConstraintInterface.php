@@ -6,17 +6,32 @@ use stdClass;
 
 interface ConstraintInterface
 {
-    // return the keyword(s) which trigger the constraint
+    /**
+     * Returns the keywords which trigger the constraint check.
+     *
+     * @return string[]
+     */
     function keywords();
 
-//    // container ?
-//    function scope();
-
-    // validation will be bypassed if not -- always succeed (4.1)
+    /**
+     * Returns whether the constraint is applicable to a given instance.
+     * If not, the validation for that constraint should be considered
+     * successful event without applying it (4.1).
+     *
+     * @param mixed $instance
+     * @return bool
+     */
     function isApplicableTo($instance);
 
-    // stateless
-    // populates context if error
-    // may need schema for dependent keywords
+    /**
+     * Applies the constraint to the given instance, and populates
+     * the execution context with any encountered errors. The current
+     * schema is passed in so that dependent keywords can be checked if
+     * needed.
+     *
+     * @param mixed     $instance
+     * @param stdClass  $schema
+     * @param Context   $context
+     */
     function apply($instance, stdClass $schema, Context $context);
 }
