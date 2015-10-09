@@ -50,6 +50,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             if ($item->isFile()) {
                 $case = json_decode(file_get_contents($item->getPathname()));
 
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new \Exception(sprintf(
+                        'json_encode error in file %s -> Error: %s',
+                        $item->getFileName(),
+                        json_last_error_msg()
+                    ));
+                }
+
                 foreach ($case->tests as $test) {
                     if (!isset($test->valid) && !isset($test->invalid)) {
                         throw new \Exception(sprintf(

@@ -2,7 +2,7 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Constraint\ItemConstraint;
+use JsonSchema\Constraint\ItemsConstraint;
 use JsonSchema\Constraint\MaximumConstraint;
 use JsonSchema\Constraint\MaxItemsConstraint;
 use JsonSchema\Constraint\MultipleOfConstraint;
@@ -21,7 +21,7 @@ class Validator
            new MultipleOfConstraint(),
            new MaximumConstraint(),
            new MaxItemsConstraint(),
-           new ItemConstraint()
+           new ItemsConstraint()
        ];
     }
 

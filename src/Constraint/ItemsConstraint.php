@@ -6,7 +6,7 @@ use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
 use stdClass;
 
-class ItemConstraint implements ConstraintInterface
+class ItemsConstraint implements ConstraintInterface
 {
     public function keywords()
     {
@@ -20,10 +20,12 @@ class ItemConstraint implements ConstraintInterface
 
     public function apply($instance, stdClass $schema, Context $context)
     {
-        // if items is not set, return (5.3.1.2)
-
-        // if additionalItems is true or object, return [VAGUE "object", what if complete schema ? or no instances corresponding to defined items ?]
-
-        // if additionalItems == false and items == array and array size > items size, add error
+        if (isset($schema->items)
+            && is_array($schema->items)
+            && isset($schema->additionalItems) 
+            && $schema->additionalItems === false 
+            && count($instance) > count($schema->items)) {
+            $context->addViolation('additional items are not allowed');
+        }
     }
 }
