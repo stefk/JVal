@@ -42,6 +42,8 @@ class Validator
 
     private function doValidate($instance, stdClass $schema, Context $context)
     {
+        // call set node here ?
+
         if (isset($schema->definitions)) {
             // store sub schemas
         }
@@ -56,5 +58,23 @@ class Validator
                 }
             }
         }
+
+
+        // providers:
+        // OfProvider (allOf, anyOf, oneOf)
+        // NotProvider
+        // DependenciesProvider(schema dependencies >< property dependencies)
+
+        // loop on providers
+        // provider->collect(instance, schema)
+        // while provider->hasSchema()
+        // provider->popSchema()
+        // validate in new context
+        // 
+
+
+        // child (item, property) provider ? => iterator
+        // ItemIterator
+        // PropertyIterator
     }
 }
