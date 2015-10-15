@@ -10,6 +10,13 @@ class Resolver
     private $schemas = [];
     private $stack = [];
 
+    /**
+     * Adds a schema to the stack.
+     *
+     * @param stdClass  $schema
+     * @param string    $uri
+     * @throws ResolverException
+     */
     public function pushSchema(stdClass $schema, $uri)
     {
         if (isset($this->schemas[$uri])) {
@@ -23,6 +30,12 @@ class Resolver
         $this->stack[] = $schema;
     }
 
+    /**
+     * Pops a schema from the stack.
+     *
+     * @return stdClass
+     * @throws ResolverException
+     */
     public function popSchema()
     {
         if (count($this->stack) === 0) {
@@ -35,6 +48,12 @@ class Resolver
         return array_pop($this->stack);
     }
 
+    /**
+     * Returns the last schema pushed in the stack.
+     *
+     * @return stdClass
+     * @throws ResolverException
+     */
     public function currentSchema()
     {
         if (count($this->stack) === 0) {
@@ -47,6 +66,14 @@ class Resolver
         return $this->stack[count($this->stack) - 1];
     }
 
+    /**
+     * Resolves a schema reference according to the JSON Reference
+     * specification draft.
+     *
+     * @param stdClass $reference
+     * @return stdClass
+     * @throws ResolverException
+     */
     public function resolve(stdClass $reference)
     {
         $pointerUri = $reference->{'$ref'};
@@ -79,6 +106,14 @@ class Resolver
         return $resolved;
     }
 
+    /**
+     * Resolves a JSON pointer according to RFC 6901.
+     *
+     * @param stdClass  $schema
+     * @param string    $pointer
+     * @return mixed
+     * @throws ResolverException
+     */
     private function resolvePointer(stdClass $schema, $pointer)
     {
         $segments = explode('/', $pointer);
