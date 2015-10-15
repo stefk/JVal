@@ -54,12 +54,12 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider chainPropertyProvider
+     * @dataProvider chainProvider
      * @param stdClass $schema
      * @param string    $pointerUri
      * @param stdClass $resolved
      */
-    public function testResolvePropertyChain(stdClass $schema, $pointerUri, stdClass $resolved)
+    public function testResolveChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
@@ -172,7 +172,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function chainPropertyProvider()
+    public function chainProvider()
     {
         $schema = new stdClass();
         $schema->foo = new stdClass();
@@ -180,6 +180,14 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
         $schema->foo->baz = new stdClass();
         $schema->bar->baz = new stdClass();
         $schema->bar->baz->bat = new stdClass();
+        $schema->bat = [];
+        $schema->bat[0] = new stdClass();
+        $schema->bat[1] = new stdClass();
+        $schema->bat[1]->quz = [];
+        $schema->bat[1]->quz[0] = new stdClass();
+        $schema->{'with%percent'} = new stdClass();
+        $schema->bar->{'with/slash'} = new stdClass();
+        $schema->bar->{'with~tilde'} = new stdClass();
 
         return [
             [$schema, '#foo', $schema->foo],
@@ -187,7 +195,13 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
             [$schema, '#/foo/baz', $schema->foo->baz],
             [$schema, '#/bar/baz', $schema->bar->baz],
             [$schema, '#/bar/baz/bat', $schema->bar->baz->bat],
-            [$schema, '#/bar/baz/bat/', $schema->bar->baz->bat]
+            [$schema, '#/bar/baz/bat/', $schema->bar->baz->bat],
+            [$schema, '#/bat/1', $schema->bat[0]],
+            [$schema, '#/bat/2/quz/1', $schema->bat[1]->quz[0]],
+            [$schema, '#/with%25percent', $schema->{'with%percent'}],
+            [$schema, '#/bar/with~1slash', $schema->bar->{'with/slash'}],
+            [$schema, '#/bar/with~1slash', $schema->bar->{'with/slash'}],
+            [$schema, '#/bar/with~0tilde', $schema->bar->{'with~tilde'}]
         ];
     }
 

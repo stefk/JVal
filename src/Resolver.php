@@ -50,6 +50,7 @@ class Resolver
     public function resolve(stdClass $reference)
     {
         $pointerUri = $reference->{'$ref'};
+        $pointerUri = rawurldecode($pointerUri);
 
         if (0 === strpos($pointerUri, '#')) {
             $resolved = $this->resolvePointer(
@@ -63,11 +64,19 @@ class Resolver
                    ResolverException::SELF_REFERENCING_POINTER
                 );
             }
-
-            return $resolved;
+        } else {
+            $resolved = 'REMOTE REF NOT IMPLEMENTED';
+            //throw new \Exception('Remote refs not implemented');
         }
 
-        throw new \Exception('Remote refs not implemented');
+        if (!is_object($resolved)) {
+            throw new ResolverException(
+                "Target of pointer '{$pointerUri}' is not a valid schema",
+                ResolverException::INVALID_POINTER_TARGET
+            );
+        }
+
+        return $resolved;
     }
 
     private function resolvePointer(stdClass $schema, $pointer)
@@ -79,6 +88,9 @@ class Resolver
             if ($segments[$i] === '') {
                 continue;
             }
+
+            $segments[$i] = str_replace('~1', '/', $segments[$i]);
+            $segments[$i] = str_replace('~0', '~', $segments[$i]);
 
             if (is_object($currentNode)) {
                 if (isset($currentNode->{$segments[$i]})) {
@@ -114,13 +126,6 @@ class Resolver
             throw new ResolverException(
                 "Invalid segment type at position {$i} in pointer '{$pointer}'",
                 ResolverException::INVALID_SEGMENT_TYPE
-            );
-        }
-
-        if (!is_object($currentNode)) {
-            throw new ResolverException(
-                "Target of pointer '{$pointer}' is not a valid schema",
-                ResolverException::INVALID_POINTER_TARGET
             );
         }
 
