@@ -11,4 +11,5 @@ class ResolverException extends \Exception
     const UNRESOLVED_POINTER_INDEX      = 14;
     const INVALID_SEGMENT_TYPE          = 15;
     const INVALID_POINTER_TARGET        = 16;
+    const SELF_REFERENCING_POINTER      = 17;
 }

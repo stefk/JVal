@@ -2,6 +2,8 @@
 
 namespace JsonSchema;
 
+use stdClass;
+
 class ResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -31,35 +33,39 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     public function testPushSchemaThrowsIfUriIsAlreadyRegistered()
     {
         $resolver = new Resolver();
-        $schema = new \stdClass();
+        $schema = new stdClass();
         $resolver->pushSchema($schema, 'file:///foo/bar');
         $resolver->pushSchema($schema, 'file:///foo/bar');
     }
 
     /**
      * @dataProvider rootRefProvider
-     * @param string $ref
+     * @param string $pointerUri
      */
-    public function testResolveLocalRoot($ref)
+    public function testResolveLocalRoot($pointerUri)
     {
         $resolver = new Resolver();
-        $schema = new \stdClass();
+        $schema = new stdClass();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $resolved = $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolved = $resolver->resolve($reference);
         $this->assertSame($schema, $resolved);
     }
 
     /**
      * @dataProvider chainPropertyProvider
-     * @param \stdClass $schema
-     * @param string    $ref
-     * @param \stdClass $resolved
+     * @param stdClass $schema
+     * @param string    $pointerUri
+     * @param stdClass $resolved
      */
-    public function testResolvePropertyChain(\stdClass $schema, $ref, \stdClass $resolved)
+    public function testResolvePropertyChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $actual = $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $actual = $resolver->resolve($reference);
         $this->assertSame($actual, $resolved);
     }
 
@@ -67,70 +73,94 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      * @dataProvider unresolvablePointerPropertyProvider
      * @expectedException \JsonSchema\Exception\ResolverException
      * @expectedExceptionCode 12
-     * @param \stdClass $schema
-     * @param string    $ref
+     * @param stdClass $schema
+     * @param string    $pointerUri
      */
-    public function testResolveThrowsOnUnresolvedPointerProperty(\stdClass $schema, $ref)
+    public function testResolveThrowsOnUnresolvedPointerProperty(stdClass $schema, $pointerUri)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolver->resolve($reference);
     }
 
     /**
      * @dataProvider invalidPointerIndexProvider
      * @expectedException \JsonSchema\Exception\ResolverException
      * @expectedExceptionCode 13
-     * @param \stdClass $schema
-     * @param string    $ref
+     * @param stdClass $schema
+     * @param string    $pointerUri
      */
-    public function testResolveThrowsOnInvalidPointerIndex(\stdClass $schema, $ref)
+    public function testResolveThrowsOnInvalidPointerIndex(stdClass $schema, $pointerUri)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolver->resolve($reference);
     }
 
     /**
      * @dataProvider unresolvablePointerIndexProvider
      * @expectedException \JsonSchema\Exception\ResolverException
      * @expectedExceptionCode 14
-     * @param \stdClass $schema
-     * @param string    $ref
+     * @param stdClass $schema
+     * @param string    $pointerUri
      */
-    public function testResolveThrowsOnUnresolvedPointerIndex(\stdClass $schema, $ref)
+    public function testResolveThrowsOnUnresolvedPointerIndex(stdClass $schema, $pointerUri)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolver->resolve($reference);
     }
 
     /**
      * @dataProvider invalidPointerSegmentProvider
      * @expectedException \JsonSchema\Exception\ResolverException
      * @expectedExceptionCode 15
-     * @param \stdClass $schema
-     * @param string    $ref
+     * @param stdClass $schema
+     * @param string    $pointerUri
      */
-    public function testResolveThrowsOnInvalidPointerSegment(\stdClass $schema, $ref)
+    public function testResolveThrowsOnInvalidPointerSegment(stdClass $schema, $pointerUri)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolver->resolve($reference);
     }
 
     /**
      * @dataProvider invalidPointerTargetProvider
      * @expectedException \JsonSchema\Exception\ResolverException
      * @expectedExceptionCode 16
-     * @param \stdClass $schema
-     * @param string    $ref
+     * @param stdClass $schema
+     * @param string    $pointerUri
      */
-    public function testResolveThrowsOnInvalidPointerTarget(\stdClass $schema, $ref)
+    public function testResolveThrowsOnInvalidPointerTarget(stdClass $schema, $pointerUri)
     {
         $resolver = new Resolver();
         $resolver->pushSchema($schema, 'file:///foo/bar');
-        $resolver->resolve($ref);
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolver->resolve($reference);
+    }
+
+    /**
+     * @dataProvider selfReferencingPointerProvider
+     * @expectedException \JsonSchema\Exception\ResolverException
+     * @expectedExceptionCode 17
+     * @param stdClass $schema
+     * @param stdClass $reference
+     */
+    public function testResolveThrowsOnSelfReferencingPointer(stdClass $schema, stdClass $reference)
+    {
+        $resolver = new Resolver();
+        $resolver->pushSchema($schema, 'file:///foo/bar');
+        $resolver->resolve($reference);
     }
 
     public function rootRefProvider()
@@ -144,12 +174,12 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function chainPropertyProvider()
     {
-        $schema = new \stdClass();
-        $schema->foo = new \stdClass();
-        $schema->bar = new \stdClass();
-        $schema->foo->baz = new \stdClass();
-        $schema->bar->baz = new \stdClass();
-        $schema->bar->baz->bat = new \stdClass();
+        $schema = new stdClass();
+        $schema->foo = new stdClass();
+        $schema->bar = new stdClass();
+        $schema->foo->baz = new stdClass();
+        $schema->bar->baz = new stdClass();
+        $schema->bar->baz->bat = new stdClass();
 
         return [
             [$schema, '#foo', $schema->foo],
@@ -163,10 +193,10 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function unresolvablePointerPropertyProvider()
     {
-        $schema = new \stdClass();
-        $schema->foo = new \stdClass();
-        $schema->foo->bar = new \stdClass();
-        $schema->foo->bar->baz = new \stdClass();
+        $schema = new stdClass();
+        $schema->foo = new stdClass();
+        $schema->foo->bar = new stdClass();
+        $schema->foo->bar->baz = new stdClass();
 
         return [
             [$schema, '#nope'],
@@ -177,10 +207,10 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function invalidPointerIndexProvider()
     {
-        $schema = new \stdClass();
+        $schema = new stdClass();
         $schema->foo = [];
-        $schema->foo[0] = new \stdClass();
-        $schema->foo[0]->bar = [new \stdClass(), new \stdClass()];
+        $schema->foo[0] = new stdClass();
+        $schema->foo[0]->bar = [new stdClass(), new stdClass()];
 
         return [
             [$schema, '#/foo/bar'],
@@ -190,10 +220,10 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function unresolvablePointerIndexProvider()
     {
-        $schema = new \stdClass();
+        $schema = new stdClass();
         $schema->foo = [];
-        $schema->foo[0] = new \stdClass();
-        $schema->foo[0]->bar = [new \stdClass(), new \stdClass()];
+        $schema->foo[0] = new stdClass();
+        $schema->foo[0]->bar = [new stdClass(), new stdClass()];
 
         return [
             [$schema, '#/foo/2'],
@@ -203,10 +233,10 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function invalidPointerSegmentProvider()
     {
-        $schema = new \stdClass();
+        $schema = new stdClass();
         $schema->foo = [];
         $schema->foo[0] = 'nope';
-        $schema->foo[1] = new \stdClass();
+        $schema->foo[1] = new stdClass();
         $schema->foo[1]->bar = 123;
 
         return [
@@ -217,15 +247,31 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function invalidPointerTargetProvider()
     {
-        $schema = new \stdClass();
-        $schema->foo = new \stdClass();
+        $schema = new stdClass();
+        $schema->foo = new stdClass();
         $schema->bar = [];
-        $schema->foo->baz = new \stdClass();
+        $schema->foo->baz = new stdClass();
         $schema->foo->baz->bat = 123;
 
         return [
             [$schema, '#/bar'],
             [$schema, '#foo/baz/bat']
+        ];
+    }
+
+    public function selfReferencingPointerProvider()
+    {
+        $schema1 = new stdClass();
+        $schema1->{'$ref'} = '#';
+
+        $schema2 = new stdClass();
+        $schema2->foo = new stdClass();
+        $schema2->foo->bar = new stdClass();
+        $schema2->foo->bar->{'$ref'} = '#/foo/bar';
+
+        return [
+            [$schema1, $schema1],
+            [$schema2, $schema2->foo->bar]
         ];
     }
 }

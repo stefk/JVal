@@ -47,13 +47,24 @@ class Resolver
         return $this->stack[count($this->stack) - 1];
     }
 
-    public function resolve($pointerUri)
+    public function resolve(stdClass $reference)
     {
+        $pointerUri = $reference->{'$ref'};
+
         if (0 === strpos($pointerUri, '#')) {
-            return $this->resolvePointer(
+            $resolved = $this->resolvePointer(
                 $this->currentSchema(),
                 strlen($pointerUri) > 1 ? substr($pointerUri, 1) : ''
             );
+
+            if ($resolved === $reference) {
+                throw new ResolverException(
+                   'Pointer self reference detected',
+                   ResolverException::SELF_REFERENCING_POINTER
+                );
+            }
+
+            return $resolved;
         }
 
         throw new \Exception('Remote refs not implemented');
