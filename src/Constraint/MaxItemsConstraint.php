@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
+use JsonSchema\Walker;
 use stdClass;
 
 class MaxItemsConstraint implements ConstraintInterface
@@ -18,7 +19,7 @@ class MaxItemsConstraint implements ConstraintInterface
         return is_array($instance);
     }
 
-    public function apply($instance, stdClass $schema, Context $context)
+    public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (count($instance) > $schema->maxItems) {
             $context->addViolation(

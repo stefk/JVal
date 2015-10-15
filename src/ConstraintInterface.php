@@ -32,6 +32,7 @@ interface ConstraintInterface
      * @param mixed     $instance
      * @param stdClass  $schema
      * @param Context   $context
+     * @param Walker    $walker
      */
-    function apply($instance, stdClass $schema, Context $context);
+    function apply($instance, stdClass $schema, Context $context, Walker $walker);
 }

@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
+use JsonSchema\Walker;
 use stdClass;
 
 class MultipleOfConstraint implements ConstraintInterface
@@ -18,7 +19,7 @@ class MultipleOfConstraint implements ConstraintInterface
         return !is_string($instance) && is_numeric($instance);
     }
 
-    public function apply($instance, stdClass $schema, Context $context)
+    public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $divider = $schema->multipleOf;
         $modulus = fmod($instance, $divider);

@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
+use JsonSchema\Walker;
 use stdClass;
 
 class MaximumConstraint implements ConstraintInterface
@@ -18,7 +19,7 @@ class MaximumConstraint implements ConstraintInterface
         return !is_string($instance) && is_numeric($instance);
     }
 
-    public function apply($instance, stdClass $schema, Context $context)
+    public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (!isset($schema->exclusiveMaximum) || $schema->exclusiveMaximum === false) {
             if ($instance > $schema->maximum) {

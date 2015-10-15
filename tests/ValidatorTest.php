@@ -15,7 +15,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function test($file, $title, $instance, \stdClass $schema, array $expectedErrors)
     {
-        $validator = new Validator();
+        $validator = Validator::buildDefault();
         $actualErrors = $validator->validate($instance, $schema);
 
         $rule = '**********************************************************************';

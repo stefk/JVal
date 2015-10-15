@@ -8,7 +8,7 @@ class Walker
 {
     private $registry;
 
-    public function __construct(Registry $registry)
+    public function __construct(Registry $registry, Resolver $resolver)
     {
         $this->registry = $registry;
     }
@@ -26,18 +26,18 @@ class Walker
             
             // store schema by pointer in registry (recursion ?)
         } else {
-            if (isset($schema->{'$schema'})) {
-                
+            $version = isset($schema->{'$schema'}) ?
+                $schema->{'$schema'} :
+                $context->getDefaultVersion();
+            $this->registry->loadConstraintsFor($version);
 
-                // check schema version is supported (draft v4)
-                // else throw unsupported exception
-                
-                // load keywords for version in registry
-            } else {
-                // load default keywords (from context)
+
+            if (isset($schema->id)) {
+                // alter scope
             }
 
-            foreach ($this->registry->loaded() as $constraint) {
+
+            foreach ($this->registry->getConstraints() as $constraint) {
                 foreach ($constraint->keywords() as $keyword) {
                     if ($constraint->isApplicableTo($instance)) {
                         if (isset($schema->{$keyword})) {

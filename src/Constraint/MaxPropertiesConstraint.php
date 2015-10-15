@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
+use JsonSchema\Walker;
 use stdClass;
 
 class MaxPropertiesConstraint implements ConstraintInterface
@@ -18,7 +19,7 @@ class MaxPropertiesConstraint implements ConstraintInterface
         return is_object($instance);
     }
 
-    public function apply($instance, stdClass $schema, Context $context)
+    public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (count(get_object_vars($instance)) > $schema->maxProperties) {
             $context->addViolation(

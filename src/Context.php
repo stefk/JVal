@@ -26,4 +26,9 @@ class Context
     {
         return $this->violations;
     }
+
+    public function getDefaultVersion()
+    {
+        return Registry::VERSION_DRAFT_4;
+    }
 }
