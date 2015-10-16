@@ -2,7 +2,7 @@
 
 namespace JsonSchema\Exception;
 
-class RegistryException extends \Exception
+class TypeException extends \Exception
 {
     const UNSUPPORTED_TYPE = 10;
 }

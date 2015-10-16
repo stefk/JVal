@@ -4,7 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Registry;
+use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
 
@@ -17,8 +17,8 @@ class MaximumConstraint implements Constraint
 
     public function supports($type)
     {
-        return $type === Registry::TYPE_INTEGER
-            || $type === Registry::TYPE_NUMBER;
+        return $type === Types::TYPE_INTEGER
+            || $type === Types::TYPE_NUMBER;
     }
 
     public function normalize(stdClass $schema)

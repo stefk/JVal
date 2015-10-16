@@ -3,34 +3,38 @@
 namespace JsonSchema;
 
 use JsonSchema\Exception\ResolverException;
+use JsonSchema\Testing\BaseTestCase;
 use stdClass;
 
-class ResolverTest extends \PHPUnit_Framework_TestCase
+class ResolverTest extends BaseTestCase
 {
+    /**
+     * @var Resolver
+     */
+    private $resolver;
+
+    protected function setUp()
+    {
+        $this->resolver = new Resolver();
+        $this->setExceptionClass('JsonSchema\Exception\ResolverException');
+    }
+
     public function testGetSchemaThrowsIfNoBaseSchema()
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::NO_BASE_SCHEMA
-        );
-
-        $resolver = new Resolver();
-        $resolver->getBaseSchema();
+        $this->expectException(ResolverException::NO_BASE_SCHEMA);
+        $this->resolver->getBaseSchema();
     }
 
     /**
      * @dataProvider rootRefProvider
-     * @param string $pointerUri
+     * @param string $schemaName
      */
-    public function testResolveLocalRoot($pointerUri)
+    public function testResolveLocalRoot($schemaName)
     {
-        $resolver = new Resolver();
-        $schema = new stdClass();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
-        $reference = new stdClass();
-        $reference->{'$ref'} = $pointerUri;
-        $resolved = $resolver->resolve($reference);
-        $this->assertSame($schema, $resolved);
+        $schema = $this->loadSchema($schemaName);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $resolved = $this->resolver->resolve($schema->foo->bar);
+        $this->assertEquals($schema, $resolved);
     }
 
     /**
@@ -41,11 +45,10 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $actual = $resolver->resolve($reference);
+        $actual = $this->resolver->resolve($reference);
         $this->assertSame($actual, $resolved);
     }
 
@@ -56,16 +59,11 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnUnresolvedPointerProperty(stdClass $schema, $pointerUri)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::UNRESOLVED_POINTER_PROPERTY
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->expectException(ResolverException::UNRESOLVED_POINTER_PROPERTY);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -75,16 +73,11 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnInvalidPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::INVALID_POINTER_INDEX
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->expectException(ResolverException::INVALID_POINTER_INDEX);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -94,16 +87,11 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnUnresolvedPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::UNRESOLVED_POINTER_INDEX
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->expectException(ResolverException::UNRESOLVED_POINTER_INDEX);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -113,16 +101,11 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnInvalidPointerSegment(stdClass $schema, $pointerUri)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::INVALID_SEGMENT_TYPE
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->expectException(ResolverException::INVALID_SEGMENT_TYPE);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -132,16 +115,11 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnInvalidPointerTarget(stdClass $schema, $pointerUri)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::INVALID_POINTER_TARGET
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->expectException(ResolverException::INVALID_POINTER_TARGET);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -151,14 +129,9 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnSelfReferencingPointer(stdClass $schema, stdClass $reference)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::SELF_REFERENCING_POINTER
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema($schema, 'file:///foo/bar');
-        $resolver->resolve($reference);
+        $this->expectException(ResolverException::SELF_REFERENCING_POINTER);
+        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -168,16 +141,11 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveThrowsOnUnfetchableUri($pointerUri)
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::UNFETCHABLE_URI
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $this->expectException(ResolverException::UNFETCHABLE_URI);
+        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     /**
@@ -188,69 +156,45 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveRemoteSchema($pointerUri, stdClass $expectedSchema)
     {
-        $resolver = new Resolver();
-        $resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
-        $resolved = $resolver->resolve($reference);
+        $resolved = $this->resolver->resolve($reference);
         $this->assertEquals($expectedSchema, $resolved);
     }
 
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::JSON_DECODE_ERROR
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
-        $schemaFile = __DIR__.'/Data/invalid/undecodable.json';
+        $this->expectException(ResolverException::JSON_DECODE_ERROR);
+        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $schemaFile = __DIR__ . '/Data/schemas/undecodable.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     public function testResolveThrowsOnInvalidRemoteSchema()
     {
-        $this->setExpectedException(
-            'JsonSchema\Exception\ResolverException',
-            ResolverException::INVALID_REMOTE_SCHEMA
-        );
-
-        $resolver = new Resolver();
-        $resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
-        $schemaFile = __DIR__.'/Data/invalid/not-an-object.json';
+        $this->expectException(ResolverException::INVALID_REMOTE_SCHEMA);
+        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $schemaFile = __DIR__ . '/Data/schemas/not-an-object.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
-        $resolver->resolve($reference);
+        $this->resolver->resolve($reference);
     }
 
     public function rootRefProvider()
     {
         return [
-            ['#'],
-            ['#/'],
-            ['#///']
+            ['root-reference-1'],
+            ['root-reference-2'],
+            ['root-reference-3']
         ];
     }
 
     public function chainProvider()
     {
-        $schema = new stdClass();
-        $schema->foo = new stdClass();
-        $schema->bar = new stdClass();
-        $schema->foo->baz = new stdClass();
-        $schema->bar->baz = new stdClass();
-        $schema->bar->baz->bat = new stdClass();
-        $schema->bat = [];
-        $schema->bat[0] = new stdClass();
-        $schema->bat[1] = new stdClass();
-        $schema->bat[1]->quz = [];
-        $schema->bat[1]->quz[0] = new stdClass();
-        $schema->{'with%percent'} = new stdClass();
-        $schema->bar->{'with/slash'} = new stdClass();
-        $schema->bar->{'with~tilde'} = new stdClass();
+        $schema = $this->loadSchema('resolution-chains');
 
         return [
             [$schema, '#foo', $schema->foo],
@@ -270,81 +214,59 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function unresolvablePointerPropertyProvider()
     {
-        $schema = new stdClass();
-        $schema->foo = new stdClass();
-        $schema->foo->bar = new stdClass();
-        $schema->foo->bar->baz = new stdClass();
+        $schema = $this->loadSchema('resolution-chains');
 
         return [
             [$schema, '#nope'],
             [$schema, '#/foo/nope'],
-            [$schema, '#foo/bar/nope']
+            [$schema, '#bar/baz/nope']
         ];
     }
 
     public function invalidPointerIndexProvider()
     {
-        $schema = new stdClass();
-        $schema->foo = [];
-        $schema->foo[0] = new stdClass();
-        $schema->foo[0]->bar = [new stdClass(), new stdClass()];
+        $schema = $this->loadSchema('resolution-chains');
 
         return [
-            [$schema, '#/foo/bar'],
-            [$schema, '#/foo/1/bar/baz']
+            [$schema, '#/bat/2/quz/bar'],
+            [$schema, '#/bat/2/quz/1/bar/baz']
         ];
     }
 
     public function unresolvablePointerIndexProvider()
     {
-        $schema = new stdClass();
-        $schema->foo = [];
-        $schema->foo[0] = new stdClass();
-        $schema->foo[0]->bar = [new stdClass(), new stdClass()];
+        $schema = $this->loadSchema('resolution-chains');
 
         return [
-            [$schema, '#/foo/2'],
-            [$schema, '#/foo/1/bar/3']
+            [$schema, '#/bat/4'],
+            [$schema, '#/bat/7/quz/2/bar']
         ];
     }
 
     public function invalidPointerSegmentProvider()
     {
-        $schema = new stdClass();
-        $schema->foo = [];
-        $schema->foo[0] = 'nope';
-        $schema->foo[1] = new stdClass();
-        $schema->foo[1]->bar = 123;
+        $schema = $this->loadSchema('resolution-chains');
 
         return [
-            [$schema, '#/foo/1/bar'],
-            [$schema, '#/foo/2/bar/baz']
+            [$schema, '#/bat/3/bar'],
+            [$schema, '#/bat/2/quz/2/foo']
         ];
     }
 
     public function invalidPointerTargetProvider()
     {
-        $schema = new stdClass();
-        $schema->foo = new stdClass();
-        $schema->bar = [];
-        $schema->foo->baz = new stdClass();
-        $schema->foo->baz->bat = 123;
+        $schema = $this->loadSchema('resolution-chains');
 
         return [
-            [$schema, '#/bar'],
-            [$schema, '#foo/baz/bat']
+            [$schema, '#/foo/bat'],
+            [$schema, '#bat']
         ];
     }
 
     public function selfReferencingPointerProvider()
     {
-        $schema1 = new stdClass();
-        $schema1->{'$ref'} = '#';
-
-        $schema2 = new stdClass();
-        $schema2->foo = new stdClass();
-        $schema2->foo->bar = new stdClass();
-        $schema2->foo->bar->{'$ref'} = '#/foo/bar';
+        $schema1 = $this->loadSchema('self-referencing-pointer-1');
+        $schema2 = $this->loadSchema('self-referencing-pointer-2');
 
         return [
             [$schema1, $schema1],
@@ -366,8 +288,8 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     public function remoteUriProvider()
     {
         $schemaDir = $this->getVendorDir().'/json-schema/json-schema';
-        $schemaFile = $schemaDir.'/draft-03/schema';
-        $schema3 = json_decode(file_get_contents($schemaFile));
+        $schemaFile = $schemaDir . '/draft-03/schema';
+        $schema3 = $this->loadJsonFromFile($schemaFile);
 
         return [
             ['http://json-schema.org/draft-03/schema#', $schema3],
@@ -377,8 +299,8 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     private function getVendorDir()
     {
-        $local = __DIR__.'/../vendor';
-        $parent = __DIR__.'/../../../../vendor';
+        $local = __DIR__ . '/../vendor';
+        $parent = __DIR__ . '/../../../../vendor';
 
         if (is_dir($local)) {
             return $local;

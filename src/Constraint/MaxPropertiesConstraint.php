@@ -4,7 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Registry;
+use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
 
@@ -17,7 +17,7 @@ class MaxPropertiesConstraint implements Constraint
 
     public function supports($type)
     {
-        return $type === Registry::TYPE_OBJECT;
+        return $type === Types::TYPE_OBJECT;
     }
 
     public function normalize(stdClass $schema)

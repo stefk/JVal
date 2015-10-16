@@ -1,0 +1,26 @@
+{
+  "foo": {
+    "baz": {},
+    "bat": 123
+  },
+  "bar": {
+    "baz": {
+      "bat": {}
+    },
+    "with/slash": {},
+    "with~tilde": {}
+  },
+  "bat": [
+    {},
+    {
+      "quz": [
+        {
+          "bar": [{}, {}]
+        },
+        "foo"
+      ]
+    },
+    123
+  ],
+  "with%percent": {}
+}

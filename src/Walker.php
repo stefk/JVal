@@ -36,7 +36,7 @@ class Walker
                 // alter scope
             }
 
-            $instanceType = $this->registry->getPrimitiveTypeOf($instance);
+            $instanceType = Types::getPrimitiveTypeOf($instance);
 
             foreach ($this->registry->getConstraints() as $constraint) {
                 foreach ($constraint->keywords() as $keyword) {
