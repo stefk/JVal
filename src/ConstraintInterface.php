@@ -14,14 +14,23 @@ interface ConstraintInterface
     function keywords();
 
     /**
-     * Returns whether the constraint is applicable to a given instance.
+     * Returns whether the constraint is applicable to a given type.
      * If not, the validation for that constraint should be considered
-     * successful event without applying it (4.1).
+     * successful event without applying it (4.1). Type passed in is
+     * one of the primitive types listed in Registry::TYPE_*.
      *
-     * @param mixed $instance
+     * @param string $type
      * @return bool
      */
-    function isApplicableTo($instance);
+    function isApplicableTo($type);
+
+    /**
+     * Ensures the supported keywords have a valid value in a given
+     * schema, and sets default ones if necessary.
+     *
+     * @param stdClass $schema
+     */
+    function normalize(stdClass $schema);
 
     /**
      * Applies the constraint to the given instance, and populates

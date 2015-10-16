@@ -46,7 +46,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $cases = [];
 
-        foreach (new \DirectoryIterator(__DIR__.'/cases') as $item) {
+        foreach (new \DirectoryIterator(__DIR__.'/Data/cases') as $item) {
             if ($item->isFile()) {
                 $case = json_decode(file_get_contents($item->getPathname()));
 

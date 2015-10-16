@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
+use JsonSchema\Registry;
 use JsonSchema\Walker;
 use stdClass;
 
@@ -14,9 +15,15 @@ class MultipleOfConstraint implements ConstraintInterface
         return ['multipleOf'];
     }
 
-    public function isApplicableTo($instance)
+    public function isApplicableTo($type)
     {
-        return !is_string($instance) && is_numeric($instance);
+        return $type === Registry::TYPE_INTEGER
+            || $type === Registry::TYPE_NUMBER;
+    }
+
+    public function normalize(stdClass $schema)
+    {
+
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

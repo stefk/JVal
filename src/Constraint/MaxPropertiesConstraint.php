@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\ConstraintInterface;
 use JsonSchema\Context;
+use JsonSchema\Registry;
 use JsonSchema\Walker;
 use stdClass;
 
@@ -14,9 +15,14 @@ class MaxPropertiesConstraint implements ConstraintInterface
         return ['maxProperties'];
     }
 
-    public function isApplicableTo($instance)
+    public function isApplicableTo($type)
     {
-        return is_object($instance);
+        return $type === Registry::TYPE_OBJECT;
+    }
+
+    public function normalize(stdClass $schema)
+    {
+
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

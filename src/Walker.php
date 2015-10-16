@@ -36,10 +36,11 @@ class Walker
                 // alter scope
             }
 
+            $instanceType = $this->registry->getPrimitiveTypeOf($instance);
 
             foreach ($this->registry->getConstraints() as $constraint) {
                 foreach ($constraint->keywords() as $keyword) {
-                    if ($constraint->isApplicableTo($instance)) {
+                    if ($constraint->isApplicableTo($instanceType)) {
                         if (isset($schema->{$keyword})) {
                             $constraint->apply(
                                 $instance, 

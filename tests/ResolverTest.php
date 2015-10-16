@@ -201,7 +201,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     {
         $resolver = new Resolver();
         $resolver->pushSchema(new stdClass(), 'file:///foo/bar');
-        $schemaFile = __DIR__ . '/data/undecodable.json';
+        $schemaFile = __DIR__.'/Data/invalid/undecodable.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $resolver->resolve($reference);
@@ -215,7 +215,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     {
         $resolver = new Resolver();
         $resolver->pushSchema(new stdClass(), 'file:///foo/bar');
-        $schemaFile = __DIR__ . '/data/not-an-object.json';
+        $schemaFile = __DIR__.'/Data/invalid/not-an-object.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $resolver->resolve($reference);
@@ -360,8 +360,8 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function remoteUriProvider()
     {
-        $schemaDir = $this->getVendorDir() . '/json-schema/json-schema';
-        $schemaFile = $schemaDir . '/draft-03/schema';
+        $schemaDir = $this->getVendorDir().'/json-schema/json-schema';
+        $schemaFile = $schemaDir.'/draft-03/schema';
         $schema3 = json_decode(file_get_contents($schemaFile));
 
         return [
@@ -372,8 +372,8 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     private function getVendorDir()
     {
-        $local = __DIR__ . '/../vendor';
-        $parent = __DIR__ . '/../../../../vendor';
+        $local = __DIR__.'/../vendor';
+        $parent = __DIR__.'/../../../../vendor';
 
         if (is_dir($local)) {
             return $local;
