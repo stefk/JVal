@@ -2,6 +2,8 @@
 
 namespace JsonSchema;
 
+use JsonSchema\Exception\RegistryException;
+
 class RegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -16,12 +18,13 @@ class RegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedType, $actualType);
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\RegistryException
-     * @expectedExceptionCode 10
-     */
     public function testGetPrimitiveTypeThrowsOnUnsupportedType()
     {
+        $this->setExpectedException(
+            'JsonSchema\Exception\RegistryException',
+            RegistryException::UNSUPPORTED_TYPE
+        );
+
         $registry = new Registry();
         $registry->getPrimitiveTypeOf(fopen(__FILE__, 'r'));
     }

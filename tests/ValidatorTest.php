@@ -103,12 +103,12 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     private function assertEqualErrors(array $actual, array $expected, $message)
     {
         if (count($actual) !== count($expected)) {
-            $this->assertTrue(false, $message);
+            $this->fail($message);
         }
 
         foreach ($expected as $error) {
             if (!in_array($error, $actual)) {
-                $this->assertTrue(false, $message);
+                $this->fail($message);
             }
         }
     }

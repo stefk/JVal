@@ -26,11 +26,11 @@ class Walker
             
             // store schema by pointer in registry (recursion ?)
         } else {
-            $version = isset($schema->{'$schema'}) ?
-                $schema->{'$schema'} :
-                $context->getDefaultVersion();
-            $this->registry->loadConstraintsFor($version);
+            if (isset($schema->{'$schema'})) {
+                $context->setVersion($schema->{'$schema'});
+            }
 
+            $this->registry->loadConstraintsFor($context->getVersion());
 
             if (isset($schema->id)) {
                 // alter scope
@@ -42,6 +42,7 @@ class Walker
                 foreach ($constraint->keywords() as $keyword) {
                     if ($constraint->supports($instanceType)) {
                         if (isset($schema->{$keyword})) {
+                            $constraint->normalize($schema);
                             $constraint->apply(
                                 $instance, 
                                 $schema, 

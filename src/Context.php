@@ -4,6 +4,7 @@ namespace JsonSchema;
 
 class Context
 {
+    private $version = Registry::VERSION_DRAFT_4;
     private $violations = [];
     private $path = '';
     private $instance;
@@ -27,8 +28,17 @@ class Context
         return $this->violations;
     }
 
-    public function getDefaultVersion()
+    public function getVersion()
     {
-        return Registry::VERSION_DRAFT_4;
+        return $this->version;
+    }
+
+
+    // versions should be stack-able...
+
+
+    public function setVersion($version)
+    {
+        $this->version = $version;
     }
 }

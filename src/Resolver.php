@@ -8,64 +8,39 @@ use stdClass;
 class Resolver
 {
     private $schemas = [];
-    private $stack = [];
-    private $currentUri;
+    private $baseUri;
+    private $baseSchema;
 
     /**
-     * Adds a schema to the stack.
+     * Sets the current schema, on which resolutions will be based.
      *
      * @param stdClass  $schema
      * @param string    $uri
      * @throws ResolverException
      */
-    public function pushSchema(stdClass $schema, $uri)
+    public function setBaseSchema(stdClass $schema, $uri)
     {
-        if (isset($this->schemas[$uri])) {
-            throw new ResolverException(
-                "A schema is already registered for uri '{$uri}'",
-                ResolverException::ALREADY_REGISTERED_URI
-            );
-        }
-
-        $this->schemas[$uri] = $schema;
-        $this->stack[] = $schema;
-        $this->currentUri = $uri;
+        $this->registerSchema($schema, $uri);
+        $this->baseUri = $uri;
+        $this->baseSchema = $schema;
     }
 
     /**
-     * Pops a schema from the stack.
+     * Returns the current base schema.
      *
      * @return stdClass
      * @throws ResolverException
      */
-    public function popSchema()
+    public function getBaseSchema()
     {
-        if (count($this->stack) === 0) {
+        if (!isset($this->baseSchema)) {
             throw new ResolverException(
-                'The schema stack is empty',
-                ResolverException::EMPTY_SCHEMA_STACK
+                'No base schema has been set',
+                ResolverException::NO_BASE_SCHEMA
             );
         }
 
-        return array_pop($this->stack);
-    }
-
-    /**
-     * Returns the last schema pushed in the stack.
-     *
-     * @return stdClass
-     * @throws ResolverException
-     */
-    public function currentSchema()
-    {
-        if (count($this->stack) === 0) {
-            throw new ResolverException(
-                'The schema stack is empty',
-                ResolverException::EMPTY_SCHEMA_STACK
-            );
-        }
-
-        return $this->stack[count($this->stack) - 1];
+        return $this->baseSchema;
     }
 
     /**
@@ -82,15 +57,16 @@ class Resolver
         $uriParts = explode('#', $pointerUri);
         $uri = $uriParts[0];
         $pointer = isset($uriParts[1]) ? $uriParts[1] : '';
+        $baseSchema = $this->getBaseSchema();
 
-        if ($uri !== '' && $uri !== $this->currentUri) {
-            $this->pushSchema(
-                $this->fetchSchemaAt($uriParts[0]),
-                $uriParts[0]
-            );
+        if ($uri !== '' && $uri !== $this->baseUri) {
+            $baseSchema = isset($this->schemas[$uri]) ?
+                $this->schemas[$uri] :
+                $this->fetchSchemaAt($uriParts[0]);
+            $this->registerSchema($baseSchema, $uriParts[0]);
         }
 
-        $resolved = $this->resolvePointer($this->currentSchema(), $pointer);
+        $resolved = $this->resolvePointer($baseSchema, $pointer);
 
         if ($resolved === $reference) {
             throw new ResolverException(
@@ -107,6 +83,19 @@ class Resolver
         }
 
         return $resolved;
+    }
+
+    /**
+     * Caches a schema reference for future use.
+     *
+     * @param stdClass  $schema
+     * @param string    $uri
+     */
+    private function registerSchema(stdClass $schema, $uri)
+    {
+        if (!isset($this->schemas[$uri])) {
+            $this->schemas[$uri] = $schema;
+        }
     }
 
     /**

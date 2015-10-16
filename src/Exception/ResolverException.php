@@ -4,15 +4,14 @@ namespace JsonSchema\Exception;
 
 class ResolverException extends \Exception
 {
-    const EMPTY_SCHEMA_STACK            = 10;
-    const ALREADY_REGISTERED_URI        = 11;
-    const UNRESOLVED_POINTER_PROPERTY   = 12;
-    const INVALID_POINTER_INDEX         = 13;
-    const UNRESOLVED_POINTER_INDEX      = 14;
-    const INVALID_SEGMENT_TYPE          = 15;
-    const INVALID_POINTER_TARGET        = 16;
-    const SELF_REFERENCING_POINTER      = 17;
-    const UNFETCHABLE_URI               = 18;
-    const JSON_DECODE_ERROR             = 19;
-    const INVALID_REMOTE_SCHEMA         = 20;
+    const NO_BASE_SCHEMA                = 10;
+    const UNRESOLVED_POINTER_PROPERTY   = 11;
+    const INVALID_POINTER_INDEX         = 12;
+    const UNRESOLVED_POINTER_INDEX      = 13;
+    const INVALID_SEGMENT_TYPE          = 14;
+    const INVALID_POINTER_TARGET        = 15;
+    const SELF_REFERENCING_POINTER      = 16;
+    const UNFETCHABLE_URI               = 17;
+    const JSON_DECODE_ERROR             = 18;
+    const INVALID_REMOTE_SCHEMA         = 19;
 }
