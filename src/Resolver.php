@@ -9,6 +9,7 @@ class Resolver
 {
     private $schemas = [];
     private $stack = [];
+    private $currentUri;
 
     /**
      * Adds a schema to the stack.
@@ -28,6 +29,7 @@ class Resolver
 
         $this->schemas[$uri] = $schema;
         $this->stack[] = $schema;
+        $this->currentUri = $uri;
     }
 
     /**
@@ -76,24 +78,25 @@ class Resolver
      */
     public function resolve(stdClass $reference)
     {
-        $pointerUri = $reference->{'$ref'};
-        $pointerUri = rawurldecode($pointerUri);
+        $pointerUri = rawurldecode($reference->{'$ref'});
+        $uriParts = explode('#', $pointerUri);
+        $uri = $uriParts[0];
+        $pointer = isset($uriParts[1]) ? $uriParts[1] : '';
 
-        if (0 === strpos($pointerUri, '#')) {
-            $resolved = $this->resolvePointer(
-                $this->currentSchema(),
-                strlen($pointerUri) > 1 ? substr($pointerUri, 1) : ''
+        if ($uri !== '' && $uri !== $this->currentUri) {
+            $this->pushSchema(
+                $this->fetchSchemaAt($uriParts[0]),
+                $uriParts[0]
             );
+        }
 
-            if ($resolved === $reference) {
-                throw new ResolverException(
-                   'Pointer self reference detected',
-                   ResolverException::SELF_REFERENCING_POINTER
-                );
-            }
-        } else {
-            $resolved = 'REMOTE REF NOT IMPLEMENTED';
-            //throw new \Exception('Remote refs not implemented');
+        $resolved = $this->resolvePointer($this->currentSchema(), $pointer);
+
+        if ($resolved === $reference) {
+            throw new ResolverException(
+               'Pointer self reference detected',
+               ResolverException::SELF_REFERENCING_POINTER
+            );
         }
 
         if (!is_object($resolved)) {
@@ -104,6 +107,49 @@ class Resolver
         }
 
         return $resolved;
+    }
+
+    /**
+     * Fetches a remote schema and ensures it is valid.
+     *
+     * @param string $uri
+     * @return stdClass
+     * @throws ResolverException
+     */
+    private function fetchSchemaAt($uri)
+    {
+        set_error_handler(function ($severity, $error) use ($uri) {
+            $message = 'Failed to fetch URI "%s" (error: "%s", severity: %s)';
+            restore_error_handler();
+
+            throw new ResolverException(
+                sprintf($message, $uri, $error, $severity),
+                ResolverException::UNFETCHABLE_URI
+            );
+        });
+
+        $content = file_get_contents($uri);
+        restore_error_handler();
+
+        $schema = json_decode($content);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $message = 'Cannot decode JSON from URI "%s" (error: %s)';
+
+            throw new ResolverException(
+                sprintf($message, $uri, json_last_error_msg()),
+                ResolverException::JSON_DECODE_ERROR
+            );
+        }
+
+        if (!is_object($schema)) {
+            throw new ResolverException(
+                "Content fetched at '{$uri}' is not a valid schema",
+                ResolverException::INVALID_REMOTE_SCHEMA
+            );
+        }
+
+        return $schema;
     }
 
     /**

@@ -12,4 +12,7 @@ class ResolverException extends \Exception
     const INVALID_SEGMENT_TYPE          = 15;
     const INVALID_POINTER_TARGET        = 16;
     const SELF_REFERENCING_POINTER      = 17;
+    const UNFETCHABLE_URI               = 18;
+    const JSON_DECODE_ERROR             = 19;
+    const INVALID_REMOTE_SCHEMA         = 20;
 }

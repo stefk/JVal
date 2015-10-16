@@ -163,6 +163,64 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
         $resolver->resolve($reference);
     }
 
+    /**
+     * @dataProvider unfetchableUriProvider
+     * @expectedException \JsonSchema\Exception\ResolverException
+     * @expectedExceptionCode 18
+     * @param string $pointerUri
+     */
+    public function testResolveThrowsOnUnfetchableUri($pointerUri)
+    {
+        $resolver = new Resolver();
+        $resolver->pushSchema(new stdClass(), 'file:///foo/bar');
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolver->resolve($reference);
+    }
+
+    /**
+     * @dataProvider remoteUriProvider
+     * @param string    $pointerUri
+     * @param stdClass  $expectedSchema
+     */
+    public function testResolveRemoteSchema($pointerUri, stdClass $expectedSchema)
+    {
+        $resolver = new Resolver();
+        $resolver->pushSchema(new stdClass(), 'file:///foo/bar');
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $resolved = $resolver->resolve($reference);
+        $this->assertEquals($expectedSchema, $resolved);
+    }
+
+    /**
+     * @expectedException \JsonSchema\Exception\ResolverException
+     * @expectedExceptionCode 19
+     */
+    public function testResolveThrowsOnUndecodableRemoteSchema()
+    {
+        $resolver = new Resolver();
+        $resolver->pushSchema(new stdClass(), 'file:///foo/bar');
+        $schemaFile = __DIR__ . '/data/undecodable.json';
+        $reference = new stdClass();
+        $reference->{'$ref'} = "file://{$schemaFile}";
+        $resolver->resolve($reference);
+    }
+
+    /**
+     * @expectedException \JsonSchema\Exception\ResolverException
+     * @expectedExceptionCode 20
+     */
+    public function testResolveThrowsOnInvalidRemoteSchema()
+    {
+        $resolver = new Resolver();
+        $resolver->pushSchema(new stdClass(), 'file:///foo/bar');
+        $schemaFile = __DIR__ . '/data/not-an-object.json';
+        $reference = new stdClass();
+        $reference->{'$ref'} = "file://{$schemaFile}";
+        $resolver->resolve($reference);
+    }
+
     public function rootRefProvider()
     {
         return [
@@ -287,5 +345,44 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
             [$schema1, $schema1],
             [$schema2, $schema2->foo->bar]
         ];
+    }
+
+    public function unfetchableUriProvider()
+    {
+        return [
+            ['`malformed:/?u?r::l'],
+            ['unknown://scheme'],
+            ['http://non.existent/host'],
+            ['http://localhost/non/existent/resource'],
+            ['http://localhost/same#/with/pointer']
+        ];
+    }
+
+    public function remoteUriProvider()
+    {
+        $schemaDir = $this->getVendorDir() . '/json-schema/json-schema';
+        $schemaFile = $schemaDir . '/draft-03/schema';
+        $schema3 = json_decode(file_get_contents($schemaFile));
+
+        return [
+            ['http://json-schema.org/draft-03/schema#', $schema3],
+            ["file://{$schemaFile}", $schema3]
+        ];
+    }
+
+    private function getVendorDir()
+    {
+        $local = __DIR__ . '/../vendor';
+        $parent = __DIR__ . '/../../../../vendor';
+
+        if (is_dir($local)) {
+            return $local;
+        }
+
+        if (is_dir($parent)) {
+            return $parent;
+        }
+
+        throw new \Exception('Cannot find vendor dir');
     }
 }
