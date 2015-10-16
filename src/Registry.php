@@ -46,7 +46,7 @@ class Registry
     }
 
     /**
-     * @return ConstraintInterface[]
+     * @return Constraint[]
      * @throws \Exception
      */
     public function getConstraints()

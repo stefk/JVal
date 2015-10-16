@@ -2,20 +2,20 @@
 
 namespace JsonSchema\Constraint;
 
-use JsonSchema\ConstraintInterface;
+use JsonSchema\Constraint;
 use JsonSchema\Context;
 use JsonSchema\Registry;
 use JsonSchema\Walker;
 use stdClass;
 
-class ItemsConstraint implements ConstraintInterface
+class ItemsConstraint implements Constraint
 {
     public function keywords()
     {
         return ['items', 'additionalItems'];
     }
 
-    public function isApplicableTo($type)
+    public function supports($type)
     {
         return $type === Registry::TYPE_ARRAY;
     }

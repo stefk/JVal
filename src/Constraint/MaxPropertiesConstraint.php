@@ -2,20 +2,20 @@
 
 namespace JsonSchema\Constraint;
 
-use JsonSchema\ConstraintInterface;
+use JsonSchema\Constraint;
 use JsonSchema\Context;
 use JsonSchema\Registry;
 use JsonSchema\Walker;
 use stdClass;
 
-class MaxPropertiesConstraint implements ConstraintInterface
+class MaxPropertiesConstraint implements Constraint
 {
     public function keywords()
     {
         return ['maxProperties'];
     }
 
-    public function isApplicableTo($type)
+    public function supports($type)
     {
         return $type === Registry::TYPE_OBJECT;
     }

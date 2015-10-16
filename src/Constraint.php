@@ -4,7 +4,7 @@ namespace JsonSchema;
 
 use stdClass;
 
-interface ConstraintInterface
+interface Constraint
 {
     /**
      * Returns the keywords which trigger the constraint check.
@@ -22,11 +22,13 @@ interface ConstraintInterface
      * @param string $type
      * @return bool
      */
-    function isApplicableTo($type);
+    function supports($type);
 
     /**
      * Ensures the supported keywords have a valid value in a given
-     * schema, and sets default ones if necessary.
+     * schema, and sets default ones if necessary. This method should
+     * be called only if one of the triggering keywords has been 
+     * encountered in the schema.
      *
      * @param stdClass $schema
      */

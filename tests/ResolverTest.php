@@ -164,6 +164,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group network
      * @dataProvider unfetchableUriProvider
      * @expectedException \JsonSchema\Exception\ResolverException
      * @expectedExceptionCode 18
@@ -179,6 +180,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group network
      * @dataProvider remoteUriProvider
      * @param string    $pointerUri
      * @param stdClass  $expectedSchema

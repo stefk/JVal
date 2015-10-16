@@ -40,7 +40,7 @@ class Walker
 
             foreach ($this->registry->getConstraints() as $constraint) {
                 foreach ($constraint->keywords() as $keyword) {
-                    if ($constraint->isApplicableTo($instanceType)) {
+                    if ($constraint->supports($instanceType)) {
                         if (isset($schema->{$keyword})) {
                             $constraint->apply(
                                 $instance, 
