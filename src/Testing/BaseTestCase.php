@@ -54,6 +54,19 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Returns a JSON-decoded schema from tests/Data/schemas.
+     *
+     * @param string $name Name of the file without the extension
+     * @return mixed
+     */
+    protected function loadSchema($name)
+    {
+        $schemaDir = realpath(__DIR__ . '/../../tests/Data/schemas');
+
+        return $this->loadJsonFromFile("{$schemaDir}/{$name}.json");
+    }
+
+    /**
      * Asserts the validation results equal the expected one and make
      * a full report otherwise.
      *

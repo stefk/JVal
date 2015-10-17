@@ -52,19 +52,6 @@ abstract class ConstraintTestCase extends BaseTestCase
     }
 
     /**
-     * Returns a JSON-decoded schema from tests/Data/schemas.
-     *
-     * @param string $name Name of the file without the extension
-     * @return mixed
-     */
-    protected function loadSchema($name)
-    {
-        $schemaDir = realpath(__DIR__ . '/../../tests/Data/schemas');
-
-        return $this->loadJsonFromFile("{$schemaDir}/{$name}.json");
-    }
-
-    /**
      * Provider of #testApply().
      */
     public function applyTestProvider()
