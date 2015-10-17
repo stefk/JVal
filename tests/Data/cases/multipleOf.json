@@ -1,51 +1,46 @@
 {
-    "title": "multipleOf constraint",
-    "tests": [
+  "title": "multipleOf constraint",
+  "tests": [
+    {
+      "title": "with integer divider",
+      "schema": { "multipleOf": 3 },
+      "valid": [6, 12, -9, 3],
+      "invalid": [
         {
-            "title": "against non numeric data",
-            "schema": { "multipleOf": 2 },
-            "valid": [{}, [], null, true, "foo"]
-        },
-        {
-            "title": "with integer divider",
-            "schema": { "multipleOf": 3 },
-            "valid": [6, 12, -9, 3],
-            "invalid": [
-                {
-                    "instance": 7,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be a multiple of 3"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "title": "with float divider",
-            "schema": { "multipleOf": 1.4 },
-            "valid": [2.8, 14, -4.2, 1.4],
-            "invalid": [
-                {
-                    "instance": 13,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be a multiple of 1.4"
-                        }
-                    ]
-                },
-                {
-                    "instance": 2.800001,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be a multiple of 1.4"
-                        }
-                    ]
-                }
-            ]
+          "instance": 7,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a multiple of 3"
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "title": "with float divider",
+      "schema": { "multipleOf": 1.4 },
+      "valid": [2.8, 14, -4.2, 1.4],
+      "invalid": [
+        {
+          "instance": 13,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a multiple of 1.4"
+            }
+          ]
+        },
+        {
+          "instance": 2.800001,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a multiple of 1.4"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

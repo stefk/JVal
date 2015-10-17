@@ -27,16 +27,21 @@ class MultipleOfConstraintTest extends ConstraintTestCase
         $constraint->normalize($schema);
     }
 
-    public function testApply()
-    {
-        $this->markTestSkipped();
-    }
-
     public function invalidSchemaProvider()
     {
         return [
             ['multiple-of-not-positive-1'],
             ['multiple-of-not-positive-2']
         ];
+    }
+
+    protected function getConstraint()
+    {
+        return new MultipleOfConstraint();
+    }
+
+    protected function getCaseFileNames()
+    {
+        return ['multipleOf'];
     }
 }
