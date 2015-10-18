@@ -16,7 +16,7 @@ class MultipleOfConstraintTest extends ConstraintTestCase
     }
 
     /**
-     * @dataProvider invalidSchemaProvider
+     * @dataProvider nonPositiveMultipleOfProvider
      * @param string $schemaName
      */
     public function testNormalizeThrowsOnNonPositiveNumber($schemaName)
@@ -26,7 +26,7 @@ class MultipleOfConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    public function invalidSchemaProvider()
+    public function nonPositiveMultipleOfProvider()
     {
         return [
             ['invalid/multiple-of-not-positive-1'],

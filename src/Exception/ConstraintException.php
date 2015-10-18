@@ -14,6 +14,10 @@ class ConstraintException extends \Exception
     const ITEMS_INVALID_TYPE            = 15;
     const ITEMS_ELEMENT_NOT_OBJECT      = 16;
     const ADDITIONAL_ITEMS_INVALID_TYPE = 17;
+    const MAX_ITEMS_NOT_INTEGER         = 18;
+    const MAX_ITEMS_NOT_POSITIVE        = 19;
+    const MAX_PROPERTIES_NOT_INTEGER    = 20;
+    const MAX_PROPERTIES_NOT_POSITIVE   = 21;
 
     private $context;
 

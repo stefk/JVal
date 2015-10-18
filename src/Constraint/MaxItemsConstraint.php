@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
+use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -22,7 +23,21 @@ class MaxItemsConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
+        if (!is_int($schema->maxItems)) {
+            throw new ConstraintException(
+                'maxItems must be an integer',
+                ConstraintException::MAX_ITEMS_NOT_INTEGER,
+                $context
+            );
+        }
 
+        if ($schema->maxItems <= 0) {
+            throw new ConstraintException(
+                'maxItems must be greater than 0',
+                ConstraintException::MAX_ITEMS_NOT_POSITIVE,
+                $context
+            );
+        }
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
