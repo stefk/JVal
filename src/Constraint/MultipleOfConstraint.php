@@ -26,14 +26,16 @@ class MultipleOfConstraint implements Constraint
         if (!Types::isA($schema->multipleOf, Types::TYPE_NUMBER)) {
             throw new ConstraintException(
                 'multipleOf must be a number',
-                ConstraintException::MULTIPLE_OF_NOT_NUMBER
+                ConstraintException::MULTIPLE_OF_NOT_NUMBER,
+                $context
             );
         }
 
         if ($schema->multipleOf <= 0) {
             throw new ConstraintException(
                 'multipleOf must be greater than 0',
-                ConstraintException::MULTIPLE_OF_NOT_POSITIVE
+                ConstraintException::MULTIPLE_OF_NOT_POSITIVE,
+                $context
             );
         }
     }

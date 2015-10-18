@@ -31,34 +31,44 @@ class ItemsConstraint implements Constraint
             $schema->additionalItems = new stdClass();
         }
 
+        $startPath = $context->getCurrentPath();
+
         if (is_object($schema->items)) {
+            $context->setNode($schema->items, $startPath . '/items');
             $walker->parseSchema($schema->items, $context);
         } elseif (is_array($schema->items)) {
-            foreach ($schema->items as $item) {
+            foreach ($schema->items as $index => $item) {
                 if (!is_object($item)) {
                     throw new ConstraintException(
                         'items element must be an object',
-                        ConstraintException::ITEMS_ELEMENT_NOT_OBJECT
+                        ConstraintException::ITEMS_ELEMENT_NOT_OBJECT,
+                        $context
                     );
                 }
 
+                $context->setNode($schema->items, $startPath . '/items/' . ($index + 1));
                 $walker->parseSchema($item, $context);
             }
         } else {
             throw new ConstraintException(
                 'items must be an object or an array',
-                ConstraintException::ITEMS_INVALID_TYPE
+                ConstraintException::ITEMS_INVALID_TYPE,
+                $context
             );
         }
 
         if (is_object($schema->additionalItems)) {
+            $context->setNode($schema->items, $startPath . '/additionalItems');
             $walker->parseSchema($schema->additionalItems, $context);
         } elseif (!is_bool($schema->additionalItems)) {
             throw new ConstraintException(
                 'additionalItems must be an object or a boolean',
-                ConstraintException::ADDITIONAL_ITEMS_INVALID_TYPE
+                ConstraintException::ADDITIONAL_ITEMS_INVALID_TYPE,
+                $context
             );
         }
+
+        $context->setNode($schema, $startPath);
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

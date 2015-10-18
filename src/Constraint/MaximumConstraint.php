@@ -27,7 +27,8 @@ class MaximumConstraint implements Constraint
         if (!isset($schema->maximum)) {
             throw new ConstraintException(
                 "maximum keyword must be present",
-                ConstraintException::MAXIMUM_NOT_PRESENT
+                ConstraintException::MAXIMUM_NOT_PRESENT,
+                $context
             );
         }
 
@@ -38,14 +39,16 @@ class MaximumConstraint implements Constraint
         if (!Types::isA($schema->maximum, Types::TYPE_NUMBER)) {
             throw new ConstraintException(
                 'maximum must be a number',
-                ConstraintException::MAXIMUM_NOT_NUMBER
+                ConstraintException::MAXIMUM_NOT_NUMBER,
+                $context
             );
         }
 
         if (!is_bool($schema->exclusiveMaximum)) {
             throw new ConstraintException(
                 'exclusiveMaximum must be a boolean',
-                ConstraintException::EXCLUSIVE_MAXIMUM_NOT_BOOLEAN
+                ConstraintException::EXCLUSIVE_MAXIMUM_NOT_BOOLEAN,
+                $context
             );
         }
     }
