@@ -1,45 +1,42 @@
 {
-    "title": "maxProperties constraint",
-    "tests": [
+  "title": "maxProperties constraint",
+  "tests": [
+    {
+      "title": "against object instances",
+      "schema": { "maxProperties": 3 },
+      "valid": [
         {
-            "title": "against non-object instances",
-            "schema": { "maxProperties": 4 },
-            "valid": [[], null, true, "foo", 1, 2.5]
+          "a": 1
         },
         {
-            "title": "against object instances",
-            "schema": { "maxProperties": 3 },
-            "valid": [
-                { "a": 1 },
-                { 
-                    "foo": "bar", 
-                    "bar": {
-                        "a": 1,
-                        "b": 2
-                    } 
-                },
-                { 
-                    "foo": 1, 
-                    "bar": 2,
-                    "baz": 3
-                }
-            ],
-            "invalid": [
-                {
-                    "instance": {
-                        "foo": 1,
-                        "bar": 2,
-                        "baz": 3,
-                        "too": 4
-                    },
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "number of properties should be less than, or equal to, 3"
-                        }
-                    ]
-                }
-            ]
+          "foo": "bar",
+          "bar": {
+            "a": 1,
+            "b": 2
+          }
+        },
+        {
+          "foo": 1,
+          "bar": 2,
+          "baz": 3
         }
-    ]
+      ],
+      "invalid": [
+        {
+          "instance": {
+            "foo": 1,
+            "bar": 2,
+            "baz": 3,
+            "too": 4
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "number of properties should be less than, or equal to, 3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

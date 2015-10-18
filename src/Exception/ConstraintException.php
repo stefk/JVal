@@ -4,6 +4,9 @@ namespace JsonSchema\Exception;
 
 class ConstraintException extends \Exception
 {
-    const MULTIPLE_OF_NOT_POSITIVE = 10;
-    const MULTIPLE_OF_NOT_A_NUMBER = 11;
+    const MAXIMUM_NOT_PRESENT           = 10;
+    const MAXIMUM_NOT_NUMBER            = 11;
+    const EXCLUSIVE_MAXIMUM_NOT_BOOLEAN = 12;
+    const MULTIPLE_OF_NOT_POSITIVE      = 13;
+    const MULTIPLE_OF_NOT_NUMBER        = 14;
 }

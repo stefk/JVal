@@ -1,61 +1,86 @@
 {
-    "title": "items constraint",
-    "tests": [
+  "title": "items constraint",
+  "tests": [
+    {
+      "title": "without items",
+      "schema": { "additionalItems": false },
+      "valid": [
+        [],
+        [1, 2, 3]
+      ]
+    },
+    {
+      "title": "with items as object",
+      "schema": {
+        "items": {},
+        "additionalItems": false
+      },
+      "valid": [
+        [],
+        [1, 2, 3]
+      ]
+    },
+    {
+      "title": "with additionalItems set to true",
+      "schema": {
+        "additionalItems": true
+      },
+      "valid": [
+        [],
+        [1, 2, 3]
+      ]
+    },
+    {
+      "title": "with additionalItems as object",
+      "schema": {
+        "additionalItems": {}
+      },
+      "valid": [
+        [],
+        [1, 2, 3]
+      ]
+    },
+    {
+      "title": "with items as array and additionalItems set to false",
+      "schema": {
+        "items": [{}, {}, {}],
+        "additionalItems": false
+      },
+      "valid": [
+        [],
+        [1, 2, 3],
+        [
+          [1, 2, 3],
+          [4, 5, 6]
+        ]
+      ],
+      "invalid": [
         {
-            "title": "against non-array data",
-            "schema": { "items": {} },
-            "valid": [{}, 1, 1.5, null, true, "foo"]
+          "instance": [1, 2, 3, 4],
+          "violations": [
+            {
+              "path": "",
+              "message": "additional items are not allowed"
+            }
+          ]
         },
         {
-            "title": "without items",
-            "schema": { "additionalItems": false },
-            "valid": [[], [1, 2, 3]]
-        },
-        {
-            "title": "with items as object",
-            "schema": { 
-                "items": {},
-                "additionalItems": false
+          "instance": [
+            null,
+            {
+              "a": "b"
             },
-            "valid": [[], [1, 2, 3]]
-        },
-        {
-            "title": "with additionalItems set to true",
-            "schema": { "additionalItems": true },
-            "valid": [[], [1, 2, 3]]
-        },
-        {
-            "title": "with additionalItems as object",
-            "schema": { "additionalItems": {} },
-            "valid": [[], [1, 2, 3]]
-        },
-        {
-            "title": "with items as array and additionalItems set to false",
-            "schema": { 
-                "items": [{}, {}, {}],
-                "additionalItems": false
-            },
-            "valid": [[], [1, 2, 3], [[1, 2, 3], [4, 5, 6]]],
-            "invalid": [
-                {
-                    "instance": [1, 2, 3, 4],
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "additional items are not allowed"
-                        }
-                    ]
-                },
-                {
-                    "instance": [null, { "a": "b" }, true, 31.0012],
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "additional items are not allowed"
-                        }
-                    ]
-                }
-            ]
+            true,
+            31.0012
+          ],
+          "violations": [
+            {
+              "path": "",
+              "message": "additional items are not allowed"
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }

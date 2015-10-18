@@ -43,12 +43,7 @@ class Walker
                     if ($constraint->supports($instanceType)) {
                         if (isset($schema->{$keyword})) {
                             $constraint->normalize($schema);
-                            $constraint->apply(
-                                $instance, 
-                                $schema, 
-                                $context, 
-                                $this
-                            );
+                            $constraint->apply($instance, $schema, $context, $this);
                             break;
                         }
                     }

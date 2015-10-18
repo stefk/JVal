@@ -9,10 +9,9 @@ class MultipleOfConstraintTest extends ConstraintTestCase
 {
     public function testNormalizeThrowsIfNotANumber()
     {
-        $this->expectException(ConstraintException::MULTIPLE_OF_NOT_A_NUMBER);
-        $constraint = new MultipleOfConstraint();
-        $schema = $this->loadSchema('multiple-of-not-a-number');
-        $constraint->normalize($schema);
+        $this->expectException(ConstraintException::MULTIPLE_OF_NOT_NUMBER);
+        $schema = $this->loadSchema('invalid/multiple-of-not-number');
+        $this->getConstraint()->normalize($schema);
     }
 
     /**
@@ -22,16 +21,15 @@ class MultipleOfConstraintTest extends ConstraintTestCase
     public function testNormalizeThrowsOnNonPositiveNumber($schemaName)
     {
         $this->expectException(ConstraintException::MULTIPLE_OF_NOT_POSITIVE);
-        $constraint = new MultipleOfConstraint();
         $schema = $this->loadSchema($schemaName);
-        $constraint->normalize($schema);
+        $this->getConstraint()->normalize($schema);
     }
 
     public function invalidSchemaProvider()
     {
         return [
-            ['multiple-of-not-positive-1'],
-            ['multiple-of-not-positive-2']
+            ['invalid/multiple-of-not-positive-1'],
+            ['invalid/multiple-of-not-positive-2']
         ];
     }
 

@@ -26,7 +26,7 @@ class MultipleOfConstraint implements Constraint
         if (!Types::isA($schema->multipleOf, Types::TYPE_NUMBER)) {
             throw new ConstraintException(
                 'multipleOf must be a number',
-                ConstraintException::MULTIPLE_OF_NOT_A_NUMBER
+                ConstraintException::MULTIPLE_OF_NOT_NUMBER
             );
         }
 

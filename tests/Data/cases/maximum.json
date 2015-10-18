@@ -1,88 +1,83 @@
 {
-    "title": "maximum constraint",
-    "tests": [
+  "title": "maximum constraint",
+  "tests": [
+    {
+      "title": "without exclusiveMaximum",
+      "schema": { "maximum": 3 },
+      "valid": [1, -1, 0.4, 3],
+      "invalid": [
         {
-            "title": "against non numeric data",
-            "schema": { "maximum": 2 },
-            "valid": [{}, [], null, true, "foo"]
+          "instance": 5,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be less than, or equal to, 3"
+            }
+          ]
         },
         {
-            "title": "without exclusiveMaximum",
-            "schema": { "maximum": 3 },
-            "valid": [1, -1, 0.4, 3],
-            "invalid": [
-                {
-                    "instance": 5,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be less than, or equal to, 3"
-                        }
-                    ]
-                },
-                {
-                    "instance": 3.000001,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be less than, or equal to, 3"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "title": "with exclusiveMaximum set to false",
-            "schema": { "maximum": 3 },
-            "valid": [1, -1, 0.4, 3],
-            "invalid": [
-                {
-                    "instance": 5,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be less than, or equal to, 3"
-                        }
-                    ]
-                },
-                {
-                    "instance": 3.000001,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be less than, or equal to, 3"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "title": "with exclusiveMaximum set to true",
-            "schema": {
-                "maximum": 5.3,
-                "exclusiveMaximum": true
-            },
-            "valid": [1, -1, 0.4, 5.299],
-            "invalid": [
-                {
-                    "instance": 6,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be less than 5.3"
-                        }
-                    ]
-                },
-                {
-                    "instance": 5.3,
-                    "violations": [
-                        {
-                            "path": "",
-                            "message": "should be less than 5.3"
-                        }
-                    ]
-                }
-            ]
+          "instance": 3.000001,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be less than, or equal to, 3"
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "title": "with exclusiveMaximum set to false",
+      "schema": { "maximum": 3 },
+      "valid": [1, -1, 0.4, 3],
+      "invalid": [
+        {
+          "instance": 5,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be less than, or equal to, 3"
+            }
+          ]
+        },
+        {
+          "instance": 3.000001,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be less than, or equal to, 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "with exclusiveMaximum set to true",
+      "schema": {
+        "maximum": 5.3,
+        "exclusiveMaximum": true
+      },
+      "valid": [1, -1, 0.4, 5.299],
+      "invalid": [
+        {
+          "instance": 6,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be less than 5.3"
+            }
+          ]
+        },
+        {
+          "instance": 5.3,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be less than 5.3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

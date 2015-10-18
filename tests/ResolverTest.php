@@ -167,7 +167,7 @@ class ResolverTest extends BaseTestCase
     {
         $this->expectException(ResolverException::JSON_DECODE_ERROR);
         $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
-        $schemaFile = __DIR__ . '/Data/schemas/undecodable.json';
+        $schemaFile = __DIR__ . '/Data/schemas/invalid/undecodable.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $this->resolver->resolve($reference);
@@ -177,7 +177,7 @@ class ResolverTest extends BaseTestCase
     {
         $this->expectException(ResolverException::INVALID_REMOTE_SCHEMA);
         $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
-        $schemaFile = __DIR__ . '/Data/schemas/not-an-object.json';
+        $schemaFile = __DIR__ . '/Data/schemas/invalid/not-an-object.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $this->resolver->resolve($reference);
@@ -186,15 +186,15 @@ class ResolverTest extends BaseTestCase
     public function rootRefProvider()
     {
         return [
-            ['root-reference-1'],
-            ['root-reference-2'],
-            ['root-reference-3']
+            ['valid/root-reference-1'],
+            ['valid/root-reference-2'],
+            ['valid/root-reference-3']
         ];
     }
 
     public function chainProvider()
     {
-        $schema = $this->loadSchema('resolution-chains');
+        $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
             [$schema, '#foo', $schema->foo],
@@ -214,7 +214,7 @@ class ResolverTest extends BaseTestCase
 
     public function unresolvablePointerPropertyProvider()
     {
-        $schema = $this->loadSchema('resolution-chains');
+        $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
             [$schema, '#nope'],
@@ -225,7 +225,7 @@ class ResolverTest extends BaseTestCase
 
     public function invalidPointerIndexProvider()
     {
-        $schema = $this->loadSchema('resolution-chains');
+        $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
             [$schema, '#/bat/2/quz/bar'],
@@ -235,7 +235,7 @@ class ResolverTest extends BaseTestCase
 
     public function unresolvablePointerIndexProvider()
     {
-        $schema = $this->loadSchema('resolution-chains');
+        $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
             [$schema, '#/bat/4'],
@@ -245,7 +245,7 @@ class ResolverTest extends BaseTestCase
 
     public function invalidPointerSegmentProvider()
     {
-        $schema = $this->loadSchema('resolution-chains');
+        $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
             [$schema, '#/bat/3/bar'],
@@ -255,7 +255,7 @@ class ResolverTest extends BaseTestCase
 
     public function invalidPointerTargetProvider()
     {
-        $schema = $this->loadSchema('resolution-chains');
+        $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
             [$schema, '#/foo/bat'],
@@ -265,8 +265,8 @@ class ResolverTest extends BaseTestCase
 
     public function selfReferencingPointerProvider()
     {
-        $schema1 = $this->loadSchema('self-referencing-pointer-1');
-        $schema2 = $this->loadSchema('self-referencing-pointer-2');
+        $schema1 = $this->loadSchema('invalid/self-referencing-pointer-1');
+        $schema2 = $this->loadSchema('invalid/self-referencing-pointer-2');
 
         return [
             [$schema1, $schema1],
