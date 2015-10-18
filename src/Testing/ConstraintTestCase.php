@@ -35,10 +35,12 @@ abstract class ConstraintTestCase extends BaseTestCase
     )
     {
         $constraint = $this->getConstraint();
-        $context = new Context();
+        $schemaContext = new Context();
+        $validationContext = new Context();
         $walker = new Walker(new Registry(), new Resolver());
-        $constraint->apply($instance, $schema, $context, $walker);
-        $actualErrors = $context->getViolations();
+        $constraint->normalize($schema, $schemaContext, $walker);
+        $constraint->apply($instance, $schema, $validationContext, $walker);
+        $actualErrors = $validationContext->getViolations();
 
         $this->assertValidationResult(
             $file,
@@ -80,4 +82,14 @@ abstract class ConstraintTestCase extends BaseTestCase
      * @return array
      */
     abstract protected function getCaseFileNames();
+
+    /**
+     * Returns a mocked walker instance.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|Walker
+     */
+    protected function mockWalker()
+    {
+        return $this->mock('JsonSchema\Walker');
+    }
 }

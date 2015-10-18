@@ -25,15 +25,15 @@ class Validator
 
     public function validate($instance, stdClass $schema)
     {
-        $context = new Context();
+        $parseContext = new Context();
+        $constraintContext = new Context();
 
-        return $this->doValidate($instance, $schema, $context);
-    }
+        $this->walker->parseSchema($schema, $parseContext);
 
-    private function doValidate($instance, stdClass $schema, Context $context)
-    {
-        $this->walker->walk($instance, $schema, $context);
+        // todo: keep ref of already parsed schemas
 
-        return $context->getViolations();
+        $this->walker->applyConstraints($instance, $schema, $constraintContext);
+
+        return $constraintContext->getViolations();
     }
 }

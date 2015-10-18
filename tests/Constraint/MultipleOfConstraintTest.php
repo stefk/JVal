@@ -2,6 +2,7 @@
 
 namespace JsonSchema\Constraint;
 
+use JsonSchema\Context;
 use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Testing\ConstraintTestCase;
 
@@ -11,7 +12,7 @@ class MultipleOfConstraintTest extends ConstraintTestCase
     {
         $this->expectException(ConstraintException::MULTIPLE_OF_NOT_NUMBER);
         $schema = $this->loadSchema('invalid/multiple-of-not-number');
-        $this->getConstraint()->normalize($schema);
+        $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
     /**
@@ -22,7 +23,7 @@ class MultipleOfConstraintTest extends ConstraintTestCase
     {
         $this->expectException(ConstraintException::MULTIPLE_OF_NOT_POSITIVE);
         $schema = $this->loadSchema($schemaName);
-        $this->getConstraint()->normalize($schema);
+        $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
     public function invalidSchemaProvider()

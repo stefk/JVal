@@ -30,9 +30,11 @@ interface Constraint
      * be called only if one of the triggering keywords has been 
      * encountered in the schema.
      *
-     * @param stdClass $schema
+     * @param stdClass  $schema
+     * @param Context   $context
+     * @param Walker    $walker
      */
-    function normalize(stdClass $schema);
+    function normalize(stdClass $schema, Context $context, Walker $walker);
 
     /**
      * Applies the constraint to the given instance, and populates

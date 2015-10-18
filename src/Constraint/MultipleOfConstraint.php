@@ -21,7 +21,7 @@ class MultipleOfConstraint implements Constraint
         return $type === Types::TYPE_INTEGER || $type === Types::TYPE_NUMBER;
     }
 
-    public function normalize(stdClass $schema)
+    public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!Types::isA($schema->multipleOf, Types::TYPE_NUMBER)) {
             throw new ConstraintException(

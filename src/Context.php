@@ -15,6 +15,11 @@ class Context
         $this->path = $path;
     }
 
+    public function getCurrentPath()
+    {
+        return $this->path;
+    }
+
     public function addViolation($message, array $parameters = [])
     {
         $this->violations[] = [

@@ -141,6 +141,13 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 
             if (isset($test->invalid)) {
                 foreach ($test->invalid as $i => $set) {
+                    if (!isset($set->violations)) {
+                        throw new \Exception(sprintf(
+                            'Invalid test must have a "violations" property in %s',
+                            $caseFile
+                        ));
+                    }
+
                     $tests[] = [
                         $caseFile,
                         "{$case->title} {$test->title}, invalid instance #{$i}",
@@ -156,6 +163,19 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         }
 
         return $tests;
+    }
+
+    /**
+     * Returns a mock object, bypassing original constructor.
+     *
+     * @param string $class
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function mock($class)
+    {
+        return $this->getMockBuilder($class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     private function dump($variable)

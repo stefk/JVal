@@ -22,7 +22,7 @@ class MaximumConstraint implements Constraint
             || $type === Types::TYPE_NUMBER;
     }
 
-    public function normalize(stdClass $schema)
+    public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!isset($schema->maximum)) {
             throw new ConstraintException(

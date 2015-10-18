@@ -12,19 +12,46 @@
     {
       "title": "with items as object",
       "schema": {
-        "items": {},
+        "items": {
+          "items": [{}, {}],
+          "additionalItems": false
+        },
         "additionalItems": false
       },
       "valid": [
         [],
-        [1, 2, 3]
+        [1, 2, 3],
+        [
+          [
+            ["a"]
+          ],
+          [
+            [1], [2]
+          ]
+        ]
+      ],
+      "invalid": [
+        {
+          "instance": [
+            [
+              ["a"]
+            ],
+            [
+              [1], [2], [3]
+            ]
+          ],
+          "violations": [
+            {
+              "path": "/2/3",
+              "message": "additional items are not allowed"
+            }
+          ]
+        }
       ]
     },
     {
       "title": "with additionalItems set to true",
-      "schema": {
-        "additionalItems": true
-      },
+      "schema": { "additionalItems": true },
       "valid": [
         [],
         [1, 2, 3]
@@ -32,9 +59,7 @@
     },
     {
       "title": "with additionalItems as object",
-      "schema": {
-        "additionalItems": {}
-      },
+      "schema": { "additionalItems": {} },
       "valid": [
         [],
         [1, 2, 3]
@@ -43,7 +68,14 @@
     {
       "title": "with items as array and additionalItems set to false",
       "schema": {
-        "items": [{}, {}, {}],
+        "items": [
+          {},
+          {},
+          {
+            "items": [{}],
+            "additionalItems": false
+          }
+        ],
         "additionalItems": false
       },
       "valid": [
@@ -52,6 +84,11 @@
         [
           [1, 2, 3],
           [4, 5, 6]
+        ],
+        [
+          ["a"],
+          ["b", "c"],
+          ["d"]
         ]
       ],
       "invalid": [
@@ -59,7 +96,7 @@
           "instance": [1, 2, 3, 4],
           "violations": [
             {
-              "path": "",
+              "path": "/4",
               "message": "additional items are not allowed"
             }
           ]
@@ -71,11 +108,54 @@
               "a": "b"
             },
             true,
-            31.0012
+            31.0012,
+            []
           ],
           "violations": [
             {
-              "path": "",
+              "path": "/4",
+              "message": "additional items are not allowed"
+            },
+            {
+              "path": "/5",
+              "message": "additional items are not allowed"
+            }
+          ]
+        },
+        {
+          "instance": [
+            ["a"],
+            ["b", "c"],
+            ["d", "e"]
+          ],
+          "violations": [
+            {
+              "path": "/3/2",
+              "message": "additional items are not allowed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "with items as array and additionalItems set to schema",
+      "schema": {
+        "items": [{}, {}],
+        "additionalItems": {
+          "items": [{}],
+          "additionalItems": false
+        }
+      },
+      "valid": [
+        [1, 2],
+        [1, 2, [3]]
+      ],
+      "invalid": [
+        {
+          "instance": [1, 2, [3, 4]],
+          "violations": [
+            {
+              "path": "/3/2",
               "message": "additional items are not allowed"
             }
           ]

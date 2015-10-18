@@ -20,7 +20,7 @@ class MaxItemsConstraint implements Constraint
         return $type === Types::TYPE_ARRAY;
     }
 
-    public function normalize(stdClass $schema)
+    public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
 
     }

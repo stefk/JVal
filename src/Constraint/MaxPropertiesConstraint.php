@@ -20,7 +20,7 @@ class MaxPropertiesConstraint implements Constraint
         return $type === Types::TYPE_OBJECT;
     }
 
-    public function normalize(stdClass $schema)
+    public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
 
     }
