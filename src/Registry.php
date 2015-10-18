@@ -7,6 +7,7 @@ use JsonSchema\Constraint\MaximumConstraint;
 use JsonSchema\Constraint\MaxItemsConstraint;
 use JsonSchema\Constraint\MaxPropertiesConstraint;
 use JsonSchema\Constraint\MultipleOfConstraint;
+use JsonSchema\Constraint\PropertiesConstraint;
 
 class Registry
 {
@@ -55,7 +56,8 @@ class Registry
             new MaximumConstraint(),
             new MaxItemsConstraint(),
             new ItemsConstraint(),
-            new MaxPropertiesConstraint()
+            new MaxPropertiesConstraint(),
+            new PropertiesConstraint()
         ];
     }
 

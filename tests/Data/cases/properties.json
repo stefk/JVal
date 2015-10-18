@@ -1,0 +1,13 @@
+{
+  "title": "properties constraint",
+  "tests": [
+    {
+      "title": "properties only, with empty schema",
+      "schema": { "properties": {} },
+      "valid": [
+        {},
+        { "foo": "bar" }
+      ]
+    }
+  ]
+}

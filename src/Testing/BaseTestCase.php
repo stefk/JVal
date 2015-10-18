@@ -181,7 +181,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     private function dump($variable)
     {
         if (defined('JSON_PRETTY_PRINT')) {
-            $options = JSON_PRETTY_PRINT;
+            $options = JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES;
 
             if (defined('JSON_PRESERVE_ZERO_FRACTION')) {
                 $options |= JSON_PRESERVE_ZERO_FRACTION;
