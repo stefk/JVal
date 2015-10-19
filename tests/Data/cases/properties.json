@@ -8,6 +8,114 @@
         {},
         { "foo": "bar" }
       ]
+    },
+    {
+      "title": "non-empty properties/patternProperties and additionalProperties set to false",
+      "schema": {
+        "properties": {
+          "foo": {},
+          "bar": {}
+        },
+        "patternProperties": {
+          "baz\\d+": {}
+        },
+        "additionalProperties": false
+      },
+      "valid": [
+        {},
+        { "foo": 123 },
+        { "bar": 123 },
+        { "baz1": 123 },
+        {
+          "foo": 123,
+          "bar": 123,
+          "baz1": 123,
+          "baz2": 123
+        }
+      ],
+      "invalid": [
+        {
+          "instance": {
+            "unknown": 123
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "additional properties are not allowed"
+            }
+          ]
+        },
+        {
+          "instance": {
+            "foo": 123,
+            "bar": 123,
+            "a-baz10": 123,
+            "baz-new": 123
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "additional properties are not allowed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "with children schemas",
+      "schema": {
+        "properties": {
+          "foo": {
+            "properties": {
+              "quz": {}
+            },
+            "additionalProperties": false
+          },
+          "bar": {}
+        },
+        "patternProperties": {
+          "baz\\d+": {
+            "properties": {
+              "bat": {}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "valid": [
+        {},
+        { "foo": {} },
+        {
+          "foo": 123,
+          "bar": {},
+          "baz1": 123,
+          "baz2": {}
+        }
+      ],
+      "invalid": [
+        {
+          "instance": {
+            "foo": {
+              "quz": 123,
+              "nope": 123
+            },
+            "baz2": {
+              "bar": 123
+            }
+          },
+          "violations": [
+            {
+              "path": "/foo",
+              "message": "additional properties are not allowed"
+            },
+            {
+              "path": "/baz2",
+              "message": "additional properties are not allowed"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -10,7 +10,6 @@ use JsonSchema\Exception\Constraint\PatternPropertiesNotObjectException;
 use JsonSchema\Exception\Constraint\PatternPropertyNotObjectException;
 use JsonSchema\Exception\Constraint\PropertiesNotObjectException;
 use JsonSchema\Exception\Constraint\PropertyValueNotObjectException;
-use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -91,6 +90,57 @@ class PropertiesConstraint implements Constraint
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
+        $startPath = $context->getCurrentPath();
+        $propertySet = array_keys(get_object_vars($schema->properties));
+        $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
 
+        // 1) validation of the instance itself (algorithm described in 5.4.4.4)
+        if ($schema->additionalProperties === false) {
+            $instanceSet = array_keys(get_object_vars($instance));
+
+            foreach ($propertySet as $property) {
+                if (in_array($property, $instanceSet)) {
+                    unset($instanceSet[array_search($property, $instanceSet)]);
+                }
+            }
+
+            foreach ($patternPropertySet as $regex) {
+                foreach ($instanceSet as $index => $property) {
+                    if (preg_match("/{$regex}/", $property)) {
+                        unset($instanceSet[$index]);
+                    }
+                }
+            }
+
+            if (count($instanceSet) > 0) {
+                $context->addViolation('additional properties are not allowed');
+            }
+        }
+
+        // 2) validation of the instance's children (algorithm described in 8.3)
+        foreach ($instance as $property => $value) {
+            $context->setNode($value, "{$startPath}/{$property}");
+            $schemas = [];
+
+            if (in_array($property, $propertySet)) {
+                $schemas[] = $schema->properties->{$property};
+            }
+
+            foreach ($patternPropertySet as $regex) {
+                if (preg_match("/{$regex}/", $property)) {
+                    $schemas[] = $schema->patternProperties->{$regex};
+                }
+            }
+
+            if (count($schemas) === 0 && is_object($schema->additionalProperties)) {
+                $schemas[] = $schema->additionalProperties;
+            }
+
+            foreach ($schemas as $childSchema) {
+                $walker->applyConstraints($value, $childSchema, $context);
+            }
+        }
+
+        $context->setNode($instance, $startPath);
     }
 }

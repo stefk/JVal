@@ -6,7 +6,6 @@ use JsonSchema\Constraint;
 use JsonSchema\Context;
 use JsonSchema\Exception\Constraint\MultipleOfNotNumberException;
 use JsonSchema\Exception\Constraint\MultipleOfNotPositiveException;
-use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
