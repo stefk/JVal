@@ -1,0 +1,41 @@
+{
+  "title": "anyOf constraint",
+  "tests": [
+    {
+      "title": "with empty schemas",
+      "schema": {
+        "anyOf": [{}, {}]
+      },
+      "valid": [1, true, { "foo": [null] }]
+    },
+    {
+      "title": "with non-empty schemas",
+      "schema": {
+        "anyOf": [
+          { "type": "boolean" },
+          { "type": "object" }
+        ]
+      },
+      "valid": [true, false, {}],
+      "invalid": [
+        {
+          "instance": [],
+          "violations": [
+            {
+              "path": "",
+              "message": "instance must be of type boolean"
+            },
+            {
+              "path": "",
+              "message": "instance must be of type object"
+            },
+            {
+              "path": "",
+              "message": "instance must match at least one of the schemas listed in anyOf"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

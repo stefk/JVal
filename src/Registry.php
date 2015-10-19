@@ -2,12 +2,16 @@
 
 namespace JsonSchema;
 
+use JsonSchema\Constraint\AllOfConstraint;
+use JsonSchema\Constraint\AnyOfConstraint;
 use JsonSchema\Constraint\ItemsConstraint;
 use JsonSchema\Constraint\MaximumConstraint;
 use JsonSchema\Constraint\MaxItemsConstraint;
 use JsonSchema\Constraint\MaxPropertiesConstraint;
 use JsonSchema\Constraint\MultipleOfConstraint;
+use JsonSchema\Constraint\OneOfConstraint;
 use JsonSchema\Constraint\PropertiesConstraint;
+use JsonSchema\Constraint\TypeConstraint;
 
 class Registry
 {
@@ -56,15 +60,19 @@ class Registry
             new MaximumConstraint(),
             new MaxItemsConstraint(),
             new ItemsConstraint(),
-            new MaxPropertiesConstraint(),
-            new PropertiesConstraint()
+            new PropertiesConstraint(),
+            new TypeConstraint()
         ];
     }
 
     private function createDraft4Constraints()
     {
         return [
-            new MultipleOfConstraint()
+            new MultipleOfConstraint(),
+            new MaxPropertiesConstraint(),
+            new AllOfConstraint(),
+            new AnyOfConstraint(),
+            new OneOfConstraint()
         ];
     }
 }

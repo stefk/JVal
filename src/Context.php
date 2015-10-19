@@ -46,4 +46,16 @@ class Context
     {
         $this->version = $version;
     }
+
+    public function duplicate()
+    {
+        // ok as long as context doesn't hold object references
+
+        return clone $this;
+    }
+
+    public function mergeViolations(Context $context)
+    {
+        $this->violations = array_merge($this->violations, $context->getViolations());
+    }
 }

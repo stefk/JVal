@@ -1,0 +1,62 @@
+{
+  "title": "oneOf constraint",
+  "tests": [
+    {
+      "title": "with one empty schema",
+      "schema": {
+        "oneOf": [{}]
+      },
+      "valid": [1, true, { "foo": [null] }]
+    },
+    {
+      "title": "with non-empty schemas",
+      "schema": {
+        "oneOf": [
+          {
+            "properties": {
+              "foo": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "properties": {
+              "bar": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "valid": [
+        { "foo": 123 },
+        { "bar": 123 }
+      ],
+      "invalid": [
+        {
+          "instance": "foo",
+          "violations": [
+            {
+              "path": "",
+              "message": "instance must match exactly one of the schemas listed in oneOf"
+            }
+          ]
+        },
+        {
+          "instance": {
+            "foo": 123,
+            "bar": 123
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "instance must match exactly one of the schemas listed in oneOf"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
