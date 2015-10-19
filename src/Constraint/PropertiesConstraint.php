@@ -4,6 +4,7 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
+use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -22,26 +23,88 @@ class PropertiesConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        /*
-If either "properties" or "patternProperties" are absent, they can be considered present with an empty object as a value.
+        if (!isset($schema->properties)) {
+            $schema->properties = new stdClass();
+        }
 
-If "additionalProperties" is absent, it may be considered present with an empty schema as a value.
-         */
+        if (!isset($schema->additionalProperties) || $schema->additionalProperties === true) {
+            $schema->additionalProperties = new stdClass();
+        }
 
-        /*
-If "properties" or "patternProperties" are absent, they are considered present with an empty object as a value.
+        if (!isset($schema->patternProperties)) {
+            $schema->patternProperties = new stdClass();
+        }
 
-If "additionalProperties" is absent, it is considered present with an empty schema as a value. In addition, boolean value true is considered equivalent to an empty schema.
-         */
+        $startPath = $context->getCurrentPath();
+        $context->setNode($schema->properties, "{$startPath}/properties");
 
+        if (!is_object($schema->properties)) {
+            throw new ConstraintException(
+                'properties must be an object',
+                ConstraintException::PROPERTIES_NOT_OBJECT,
+                $context
+            );
+        }
 
-        /*
-The value of "additionalProperties" MUST be a boolean or an object. If it is an object, it MUST also be a valid JSON Schema.
+        foreach ($schema->properties as $property => $value) {
+            $context->setNode($schema->properties, "{$startPath}/properties/{$property}");
 
-The value of "properties" MUST be an object. Each value of this object MUST be an object, and each object MUST be a valid JSON Schema.
+            if (!is_object($value)) {
+                throw new ConstraintException(
+                    'property value must be an object',
+                    ConstraintException::PROPERTY_VALUE_NOT_OBJECT,
+                    $context
+                );
+            }
 
-The value of "patternProperties" MUST be an object. Each property name of this object SHOULD be a valid regular expression, according to the ECMA 262 regular expression dialect. Each property value of this object MUST be an object, and each object MUST be a valid JSON Schema.
-         */
+            $walker->parseSchema($value, $context);
+        }
+
+        $context->setNode($schema->additionalProperties, "{$startPath}/additionalProperties");
+
+        if (is_object($schema->additionalProperties)) {
+            $walker->parseSchema($schema->additionalProperties, $context);
+        } elseif (!is_bool($schema->additionalProperties)) {
+            throw new ConstraintException(
+                'additionalProperties must be an object or a boolean',
+                ConstraintException::ADDITIONAL_PROPERTIES_INVALID_TYPE,
+                $context
+            );
+        }
+
+        $context->setNode($schema->patternProperties, "{$startPath}/patternProperties");
+
+        if (!is_object($schema->patternProperties)) {
+            throw new ConstraintException(
+                'patternProperties must be an object',
+                ConstraintException::PATTERN_PROPERTIES_NOT_OBJECT,
+                $context
+            );
+        }
+
+        foreach ($schema->patternProperties as $regex => $value) {
+            $context->setNode($schema->patternProperties, "{$startPath}/patternProperties/{$regex}");
+
+            if (@preg_match("/{$regex}/", '') === false) {
+                throw new ConstraintException(
+                    'patternProperties regex is invalid or non supported',
+                    ConstraintException::PATTERN_PROPERTIES_INVALID_REGEX,
+                    $context
+                );
+            }
+
+            if (!is_object($value)) {
+                throw new ConstraintException(
+                    'patternProperties property value must be an object',
+                    ConstraintException::PATTERN_PROPERTY_NOT_OBJECT,
+                    $context
+                );
+            }
+
+            $walker->parseSchema($value, $context);
+        }
+
+        $context->setNode($schema, $startPath);
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

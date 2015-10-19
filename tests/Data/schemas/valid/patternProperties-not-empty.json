@@ -1,0 +1,9 @@
+{
+  "patternProperties": {
+    "regex": {
+      "properties": {
+        "foo": {}
+      }
+    }
+  }
+}

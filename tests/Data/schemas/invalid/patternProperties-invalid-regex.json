@@ -1,0 +1,5 @@
+{
+  "patternProperties": {
+    "/#this**not---a][valid[regex": {}
+  }
+}
