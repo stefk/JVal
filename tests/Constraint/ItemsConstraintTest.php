@@ -96,7 +96,6 @@ class ItemsConstraintTest extends ConstraintTestCase
         return new ItemsConstraint();
     }
 
-
     protected function getCaseFileNames()
     {
         return ['items'];

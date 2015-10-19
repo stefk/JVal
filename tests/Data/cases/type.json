@@ -1,0 +1,57 @@
+{
+  "title": "type constraint",
+  "tests": [
+    {
+      "title": "with object as value",
+      "schema": {
+        "type": "object"
+      },
+      "valid": [
+        {},
+        { "a": "b" },
+        {
+          "foo": 123,
+          "bar": 456
+        }
+      ],
+      "invalid": [
+        {
+          "instance": 1,
+          "violations": [
+            {
+              "path": "",
+              "message": "instance must be of type object"
+            }
+          ]
+        },
+        {
+          "instance": [1, 2, 3],
+          "violations": [
+            {
+              "path": "",
+              "message": "instance must be of type object"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "with an array of types",
+      "schema": {
+        "type": ["number", "boolean"]
+      },
+      "valid": [1, 1.23, true, false],
+      "invalid": [
+        {
+          "instance": {"foo": "bar"},
+          "violations": [
+            {
+              "path": "",
+              "message": "instance does not match any of the expected types"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

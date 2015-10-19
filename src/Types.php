@@ -19,7 +19,7 @@ class Types
      *
      * @param mixed $instance
      * @return string
-     * @throws TypeException
+     * @throws UnsupportedTypeException
      */
     public static function getPrimitiveTypeOf($instance)
     {
@@ -49,5 +49,16 @@ class Types
 
         return $actualType === $type
             || $actualType === self::TYPE_INTEGER && $type === self::TYPE_NUMBER;
+    }
+
+    public static function isPrimitive($type)
+    {
+        return $type === self::TYPE_ARRAY
+            || $type === self::TYPE_BOOLEAN
+            || $type === self::TYPE_INTEGER
+            || $type === self::TYPE_NUMBER
+            || $type === self::TYPE_NULL
+            || $type === self::TYPE_OBJECT
+            || $type === self::TYPE_STRING;
     }
 }
