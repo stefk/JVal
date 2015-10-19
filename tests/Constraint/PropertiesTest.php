@@ -4,7 +4,6 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Testing\ConstraintTestCase;
 
 class PropertiesTest extends ConstraintTestCase
@@ -32,16 +31,20 @@ class PropertiesTest extends ConstraintTestCase
         $this->assertEquals(new \stdClass(), $schema->additionalProperties);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\PropertiesNotObjectException
+     */
     public function testNormalizeThrowsIfPropertiesIsNotAnObject()
     {
-        $this->expectException(ConstraintException::PROPERTIES_NOT_OBJECT);
         $schema = $this->loadSchema('invalid/properties-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\PropertyValueNotObjectException
+     */
     public function testNormalizeThrowsIfPropertiesPropertyValueIsNotAnObject()
     {
-        $this->expectException(ConstraintException::PROPERTY_VALUE_NOT_OBJECT);
         $schema = $this->loadSchema('invalid/properties-property-value-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
@@ -56,9 +59,11 @@ class PropertiesTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $walker);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\AdditionalPropertiesInvalidTypeException
+     */
     public function testNormalizeThrowsIfAdditionalPropertiesIsNotBooleanOrObject()
     {
-        $this->expectException(ConstraintException::ADDITIONAL_PROPERTIES_INVALID_TYPE);
         $schema = $this->loadSchema('invalid/additionalProperties-not-object-or-boolean');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
@@ -73,23 +78,29 @@ class PropertiesTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $walker);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\PatternPropertiesNotObjectException
+     */
     public function testNormalizeThrowsIfPatternPropertiesIsNotAnObject()
     {
-        $this->expectException(ConstraintException::PATTERN_PROPERTIES_NOT_OBJECT);
         $schema = $this->loadSchema('invalid/patternProperties-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\PatternPropertiesInvalidRegexException
+     */
     public function testNormalizeThrowsIfPatternPropertiesPropertyNameIsNotAValidRegex()
     {
-        $this->expectException(ConstraintException::PATTERN_PROPERTIES_INVALID_REGEX);
         $schema = $this->loadSchema('invalid/patternProperties-invalid-regex');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\PatternPropertyNotObjectException
+     */
     public function testNormalizeThrowsIfPatternPropertiesPropertyValueIsNotAnObject()
     {
-        $this->expectException(ConstraintException::PATTERN_PROPERTY_NOT_OBJECT);
         $schema = $this->loadSchema('invalid/patternProperties-property-value-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

@@ -4,6 +4,12 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
+use JsonSchema\Exception\Constraint\AdditionalPropertiesInvalidTypeException;
+use JsonSchema\Exception\Constraint\PatternPropertiesInvalidRegexException;
+use JsonSchema\Exception\Constraint\PatternPropertiesNotObjectException;
+use JsonSchema\Exception\Constraint\PatternPropertyNotObjectException;
+use JsonSchema\Exception\Constraint\PropertiesNotObjectException;
+use JsonSchema\Exception\Constraint\PropertyValueNotObjectException;
 use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
@@ -39,22 +45,14 @@ class PropertiesConstraint implements Constraint
         $context->setNode($schema->properties, "{$startPath}/properties");
 
         if (!is_object($schema->properties)) {
-            throw new ConstraintException(
-                'properties must be an object',
-                ConstraintException::PROPERTIES_NOT_OBJECT,
-                $context
-            );
+            throw new PropertiesNotObjectException($context);
         }
 
         foreach ($schema->properties as $property => $value) {
             $context->setNode($schema->properties, "{$startPath}/properties/{$property}");
 
             if (!is_object($value)) {
-                throw new ConstraintException(
-                    'property value must be an object',
-                    ConstraintException::PROPERTY_VALUE_NOT_OBJECT,
-                    $context
-                );
+                throw new PropertyValueNotObjectException($context);
             }
 
             $walker->parseSchema($value, $context);
@@ -65,40 +63,24 @@ class PropertiesConstraint implements Constraint
         if (is_object($schema->additionalProperties)) {
             $walker->parseSchema($schema->additionalProperties, $context);
         } elseif (!is_bool($schema->additionalProperties)) {
-            throw new ConstraintException(
-                'additionalProperties must be an object or a boolean',
-                ConstraintException::ADDITIONAL_PROPERTIES_INVALID_TYPE,
-                $context
-            );
+            throw new AdditionalPropertiesInvalidTypeException($context);
         }
 
         $context->setNode($schema->patternProperties, "{$startPath}/patternProperties");
 
         if (!is_object($schema->patternProperties)) {
-            throw new ConstraintException(
-                'patternProperties must be an object',
-                ConstraintException::PATTERN_PROPERTIES_NOT_OBJECT,
-                $context
-            );
+            throw new PatternPropertiesNotObjectException($context);
         }
 
         foreach ($schema->patternProperties as $regex => $value) {
             $context->setNode($schema->patternProperties, "{$startPath}/patternProperties/{$regex}");
 
             if (@preg_match("/{$regex}/", '') === false) {
-                throw new ConstraintException(
-                    'patternProperties regex is invalid or non supported',
-                    ConstraintException::PATTERN_PROPERTIES_INVALID_REGEX,
-                    $context
-                );
+                throw new PatternPropertiesInvalidRegexException($context);
             }
 
             if (!is_object($value)) {
-                throw new ConstraintException(
-                    'patternProperties property value must be an object',
-                    ConstraintException::PATTERN_PROPERTY_NOT_OBJECT,
-                    $context
-                );
+                throw new PatternPropertyNotObjectException($context);
             }
 
             $walker->parseSchema($value, $context);

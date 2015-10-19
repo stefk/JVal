@@ -4,7 +4,6 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Testing\ConstraintTestCase;
 
 class ItemsConstraintTest extends ConstraintTestCase
@@ -32,9 +31,11 @@ class ItemsConstraintTest extends ConstraintTestCase
         $this->assertEquals(new \stdClass(), $schema->additionalItems);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\ItemsInvalidTypeException
+     */
     public function testNormalizeThrowsIfItemsIsNotObjectOrArray()
     {
-        $this->expectException(ConstraintException::ITEMS_INVALID_TYPE);
         $schema = $this->loadSchema('invalid/items-not-object-or-array');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
@@ -49,9 +50,11 @@ class ItemsConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $walker);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\ItemsElementNotObjectException
+     */
     public function testNormalizeThrowsIfItemsElementIsNotObject()
     {
-        $this->expectException(ConstraintException::ITEMS_ELEMENT_NOT_OBJECT);
         $schema = $this->loadSchema('invalid/items-element-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
@@ -69,9 +72,11 @@ class ItemsConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $walker);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\AdditionalItemsInvalidTypeException
+     */
     public function testNormalizeThrowsIfAdditionalItemsIsNotBooleanOrObject()
     {
-        $this->expectException(ConstraintException::ADDITIONAL_ITEMS_INVALID_TYPE);
         $schema = $this->loadSchema('invalid/additionalItems-not-object-or-boolean');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

@@ -2,7 +2,16 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Exception\ResolverException;
+use JsonSchema\Exception\Resolver\InvalidPointerIndexException;
+use JsonSchema\Exception\Resolver\InvalidPointerTargetException;
+use JsonSchema\Exception\Resolver\InvalidRemoteSchemaException;
+use JsonSchema\Exception\Resolver\InvalidSegmentTypeException;
+use JsonSchema\Exception\Resolver\JsonDecodeErrorException;
+use JsonSchema\Exception\Resolver\NoBaseSchemaException;
+use JsonSchema\Exception\Resolver\SelfReferencingPointerException;
+use JsonSchema\Exception\Resolver\UnfetchableUriException;
+use JsonSchema\Exception\Resolver\UnresolvedPointerIndexException;
+use JsonSchema\Exception\Resolver\UnresolvedPointerPropertyException;
 use stdClass;
 
 class Resolver
@@ -16,7 +25,6 @@ class Resolver
      *
      * @param stdClass  $schema
      * @param string    $uri
-     * @throws ResolverException
      */
     public function setBaseSchema(stdClass $schema, $uri)
     {
@@ -29,15 +37,12 @@ class Resolver
      * Returns the current base schema.
      *
      * @return stdClass
-     * @throws ResolverException
+     * @throws NoBaseSchemaException
      */
     public function getBaseSchema()
     {
         if (!isset($this->baseSchema)) {
-            throw new ResolverException(
-                'No base schema has been set',
-                ResolverException::NO_BASE_SCHEMA
-            );
+            throw new NoBaseSchemaException();
         }
 
         return $this->baseSchema;
@@ -48,8 +53,10 @@ class Resolver
      * specification draft.
      *
      * @param stdClass $reference
+     * @throws InvalidPointerTargetException
+     * @throws NoBaseSchemaException
+     * @throws SelfReferencingPointerException
      * @return stdClass
-     * @throws ResolverException
      */
     public function resolve(stdClass $reference)
     {
@@ -69,17 +76,11 @@ class Resolver
         $resolved = $this->resolvePointer($baseSchema, $pointer);
 
         if ($resolved === $reference) {
-            throw new ResolverException(
-               'Pointer self reference detected',
-               ResolverException::SELF_REFERENCING_POINTER
-            );
+            throw new SelfReferencingPointerException();
         }
 
         if (!is_object($resolved)) {
-            throw new ResolverException(
-                "Target of pointer '{$pointerUri}' is not a valid schema",
-                ResolverException::INVALID_POINTER_TARGET
-            );
+            throw new InvalidPointerTargetException([$pointerUri]);
         }
 
         return $resolved;
@@ -102,19 +103,15 @@ class Resolver
      * Fetches a remote schema and ensures it is valid.
      *
      * @param string $uri
+     * @throws InvalidRemoteSchemaException
+     * @throws JsonDecodeErrorException
      * @return stdClass
-     * @throws ResolverException
      */
     private function fetchSchemaAt($uri)
     {
         set_error_handler(function ($severity, $error) use ($uri) {
-            $message = 'Failed to fetch URI "%s" (error: "%s", severity: %s)';
             restore_error_handler();
-
-            throw new ResolverException(
-                sprintf($message, $uri, $error, $severity),
-                ResolverException::UNFETCHABLE_URI
-            );
+            throw new UnfetchableUriException([$uri, $error, $severity]);
         });
 
         $content = file_get_contents($uri);
@@ -123,19 +120,11 @@ class Resolver
         $schema = json_decode($content);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $message = 'Cannot decode JSON from URI "%s" (error: %s)';
-
-            throw new ResolverException(
-                sprintf($message, $uri, json_last_error_msg()),
-                ResolverException::JSON_DECODE_ERROR
-            );
+            throw new JsonDecodeErrorException([$uri, json_last_error_msg()]);
         }
 
         if (!is_object($schema)) {
-            throw new ResolverException(
-                "Content fetched at '{$uri}' is not a valid schema",
-                ResolverException::INVALID_REMOTE_SCHEMA
-            );
+            throw new InvalidRemoteSchemaException([$uri]);
         }
 
         return $schema;
@@ -168,35 +157,23 @@ class Resolver
                     continue;
                 }
 
-                throw new ResolverException(
-                    "Cannot resolve property '{$segments[$i]}' at position {$i} in pointer '{$pointer}'",
-                    ResolverException::UNRESOLVED_POINTER_PROPERTY
-                );
+                throw new UnresolvedPointerPropertyException([$segments[$i], $i, $pointer]);
             }
 
             if (is_array($currentNode)) {
                 if (!preg_match('/^\d+$/', $segments[$i])) {
-                    throw new ResolverException(
-                        "Invalid index '{$segments[$i]}' at position {$i} in pointer '{$pointer}'",
-                        ResolverException::INVALID_POINTER_INDEX
-                    );
+                    throw new InvalidPointerIndexException([$segments[$i], $i, $pointer]);
                 }
 
                 if (!isset($currentNode[$index = (int) $segments[$i] - 1])) {
-                    throw new ResolverException(
-                        "Cannot resolve index '{$segments[$i]}' at position {$i} in pointer '{$pointer}'",
-                        ResolverException::UNRESOLVED_POINTER_INDEX
-                    );
+                    throw new UnresolvedPointerIndexException([$segments[$i], $i, $pointer]);
                 }
 
                 $currentNode = $currentNode[$index];
                 continue;
             }
 
-            throw new ResolverException(
-                "Invalid segment type at position {$i} in pointer '{$pointer}'",
-                ResolverException::INVALID_SEGMENT_TYPE
-            );
+            throw new InvalidSegmentTypeException([$i, $pointer]);
         }
 
         return $currentNode;

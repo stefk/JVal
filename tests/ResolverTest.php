@@ -19,14 +19,17 @@ class ResolverTest extends BaseTestCase
         $this->setExceptionClass('JsonSchema\Exception\ResolverException');
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Resolver\NoBaseSchemaException
+     */
     public function testGetSchemaThrowsIfNoBaseSchema()
     {
-        $this->expectException(ResolverException::NO_BASE_SCHEMA);
         $this->resolver->getBaseSchema();
     }
 
     /**
      * @dataProvider rootRefProvider
+     *
      * @param string $schemaName
      */
     public function testResolveLocalRoot($schemaName)
@@ -39,6 +42,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider chainProvider
+     *
      * @param stdClass $schema
      * @param string    $pointerUri
      * @param stdClass $resolved
@@ -54,12 +58,13 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider unresolvablePointerPropertyProvider
+     * @expectedException \JsonSchema\Exception\Resolver\UnresolvedPointerPropertyException
+     *
      * @param stdClass $schema
      * @param string    $pointerUri
      */
     public function testResolveThrowsOnUnresolvedPointerProperty(stdClass $schema, $pointerUri)
     {
-        $this->expectException(ResolverException::UNRESOLVED_POINTER_PROPERTY);
         $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
@@ -68,12 +73,13 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider invalidPointerIndexProvider
+     * @expectedException \JsonSchema\Exception\Resolver\InvalidPointerIndexException
+     *
      * @param stdClass $schema
      * @param string    $pointerUri
      */
     public function testResolveThrowsOnInvalidPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->expectException(ResolverException::INVALID_POINTER_INDEX);
         $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
@@ -82,12 +88,13 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider unresolvablePointerIndexProvider
+     * @expectedException \JsonSchema\Exception\Resolver\UnresolvedPointerIndexException
+     *
      * @param stdClass $schema
      * @param string    $pointerUri
      */
     public function testResolveThrowsOnUnresolvedPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->expectException(ResolverException::UNRESOLVED_POINTER_INDEX);
         $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
@@ -96,12 +103,13 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider invalidPointerSegmentProvider
+     * @expectedException \JsonSchema\Exception\Resolver\InvalidSegmentTypeException
+     *
      * @param stdClass $schema
      * @param string    $pointerUri
      */
     public function testResolveThrowsOnInvalidPointerSegment(stdClass $schema, $pointerUri)
     {
-        $this->expectException(ResolverException::INVALID_SEGMENT_TYPE);
         $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
@@ -110,12 +118,13 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider invalidPointerTargetProvider
+     * @expectedException \JsonSchema\Exception\Resolver\InvalidPointerTargetException
+     *
      * @param stdClass $schema
      * @param string    $pointerUri
      */
     public function testResolveThrowsOnInvalidPointerTarget(stdClass $schema, $pointerUri)
     {
-        $this->expectException(ResolverException::INVALID_POINTER_TARGET);
         $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
@@ -124,12 +133,13 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider selfReferencingPointerProvider
+     * @expectedException \JsonSchema\Exception\Resolver\SelfReferencingPointerException
+     *
      * @param stdClass $schema
      * @param stdClass $reference
      */
     public function testResolveThrowsOnSelfReferencingPointer(stdClass $schema, stdClass $reference)
     {
-        $this->expectException(ResolverException::SELF_REFERENCING_POINTER);
         $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
         $this->resolver->resolve($reference);
     }
@@ -137,11 +147,12 @@ class ResolverTest extends BaseTestCase
     /**
      * @group network
      * @dataProvider unfetchableUriProvider
+     * @expectedException \JsonSchema\Exception\Resolver\UnfetchableUriException
+     *
      * @param string $pointerUri
      */
     public function testResolveThrowsOnUnfetchableUri($pointerUri)
     {
-        $this->expectException(ResolverException::UNFETCHABLE_URI);
         $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
@@ -151,6 +162,7 @@ class ResolverTest extends BaseTestCase
     /**
      * @group network
      * @dataProvider remoteUriProvider
+     *
      * @param string    $pointerUri
      * @param stdClass  $expectedSchema
      */
@@ -163,9 +175,11 @@ class ResolverTest extends BaseTestCase
         $this->assertEquals($expectedSchema, $resolved);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Resolver\JsonDecodeErrorException
+     */
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {
-        $this->expectException(ResolverException::JSON_DECODE_ERROR);
         $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
         $schemaFile = __DIR__ . '/Data/schemas/invalid/undecodable.json';
         $reference = new stdClass();
@@ -173,9 +187,11 @@ class ResolverTest extends BaseTestCase
         $this->resolver->resolve($reference);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Resolver\InvalidRemoteSchemaException
+     */
     public function testResolveThrowsOnInvalidRemoteSchema()
     {
-        $this->expectException(ResolverException::INVALID_REMOTE_SCHEMA);
         $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
         $schemaFile = __DIR__ . '/Data/schemas/invalid/not-an-object.json';
         $reference = new stdClass();

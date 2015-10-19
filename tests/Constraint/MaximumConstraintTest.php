@@ -4,14 +4,15 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Testing\ConstraintTestCase;
 
 class MaximumConstraintTest extends ConstraintTestCase
 {
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\MaximumNotPresentException
+     */
     public function testNormalizeThrowsIfMaxNotPresent()
     {
-        $this->expectException(ConstraintException::MAXIMUM_NOT_PRESENT);
         $schema = $this->loadSchema('invalid/maximum-not-present');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
@@ -24,16 +25,20 @@ class MaximumConstraintTest extends ConstraintTestCase
         $this->assertEquals(false, $schema->exclusiveMaximum);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\MaximumNotNumberException
+     */
     public function testNormalizeThrowsIfMaximumIsNotANumber()
     {
-        $this->expectException(ConstraintException::MAXIMUM_NOT_NUMBER);
         $schema = $this->loadSchema('invalid/maximum-not-number');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\ExclusiveMaximumNotBooleanException
+     */
     public function testNormalizeThrowsIfExclusiveMaximumIsNotABoolean()
     {
-        $this->expectException(ConstraintException::EXCLUSIVE_MAXIMUM_NOT_BOOLEAN);
         $schema = $this->loadSchema('invalid/exclusiveMaximum-not-boolean');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

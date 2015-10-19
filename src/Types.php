@@ -2,7 +2,7 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Exception\TypeException;
+use JsonSchema\Exception\UnsupportedTypeException;
 
 class Types
 {
@@ -40,10 +40,7 @@ class Types
                 return self::TYPE_STRING;
         }
 
-        throw new TypeException(
-            "Unsupported type '{$type}'",
-            TypeException::UNSUPPORTED_TYPE
-        );
+        throw new UnsupportedTypeException($type);
     }
 
     public static function isA($instance, $type)

@@ -4,25 +4,27 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
 use JsonSchema\Testing\ConstraintTestCase;
 
 class MaxPropertiesConstraintTest extends ConstraintTestCase
 {
+    /**
+     * @expectedException \JsonSchema\Exception\Constraint\MaxPropertiesNotIntegerException
+     */
     public function testNormalizeThrowsIfMaxPropertiesIsNotAnInteger()
     {
-        $this->expectException(ConstraintException::MAX_PROPERTIES_NOT_INTEGER);
         $schema = $this->loadSchema('invalid/maxProperties-not-integer');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
     /**
      * @dataProvider nonPositiveMaxPropertiesProvider
+     * @expectedException \JsonSchema\Exception\Constraint\MaxPropertiesNotPositiveException
+     *
      * @param $schemaName
      */
     public function testNormalizeThrowsIfMaxPropertiesIsNotPositive($schemaName)
     {
-        $this->expectException(ConstraintException::MAX_PROPERTIES_NOT_POSITIVE);
         $schema = $this->loadSchema($schemaName);
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

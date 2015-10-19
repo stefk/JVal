@@ -2,13 +2,13 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Exception\TypeException;
 use JsonSchema\Testing\BaseTestCase;
 
 class TypesTest extends BaseTestCase
 {
     /**
      * @dataProvider instanceTypeProvider
+     *
      * @param mixed     $instance
      * @param string    $expectedType
      */
@@ -18,10 +18,11 @@ class TypesTest extends BaseTestCase
         $this->assertEquals($expectedType, $actualType);
     }
 
+    /**
+     * @expectedException \JsonSchema\Exception\UnsupportedTypeException
+     */
     public function testGetPrimitiveTypeThrowsOnUnsupportedType()
     {
-        $this->setExceptionClass('JsonSchema\Exception\TypeException');
-        $this->expectException(TypeException::UNSUPPORTED_TYPE);
         Types::getPrimitiveTypeOf(fopen(__FILE__, 'r'));
     }
 

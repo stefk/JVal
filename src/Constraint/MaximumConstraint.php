@@ -4,7 +4,9 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
+use JsonSchema\Exception\Constraint\ExclusiveMaximumNotBooleanException;
+use JsonSchema\Exception\Constraint\MaximumNotNumberException;
+use JsonSchema\Exception\Constraint\MaximumNotPresentException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -25,11 +27,7 @@ class MaximumConstraint implements Constraint
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!isset($schema->maximum)) {
-            throw new ConstraintException(
-                "maximum keyword must be present",
-                ConstraintException::MAXIMUM_NOT_PRESENT,
-                $context
-            );
+            throw new MaximumNotPresentException($context);
         }
 
         if (!isset($schema->exclusiveMaximum)) {
@@ -37,19 +35,11 @@ class MaximumConstraint implements Constraint
         }
 
         if (!Types::isA($schema->maximum, Types::TYPE_NUMBER)) {
-            throw new ConstraintException(
-                'maximum must be a number',
-                ConstraintException::MAXIMUM_NOT_NUMBER,
-                $context
-            );
+            throw new MaximumNotNumberException($context);
         }
 
         if (!is_bool($schema->exclusiveMaximum)) {
-            throw new ConstraintException(
-                'exclusiveMaximum must be a boolean',
-                ConstraintException::EXCLUSIVE_MAXIMUM_NOT_BOOLEAN,
-                $context
-            );
+            throw new ExclusiveMaximumNotBooleanException($context);
         }
     }
 

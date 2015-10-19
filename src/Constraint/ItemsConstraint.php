@@ -4,7 +4,9 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
+use JsonSchema\Exception\Constraint\AdditionalItemsInvalidTypeException;
+use JsonSchema\Exception\Constraint\ItemsElementNotObjectException;
+use JsonSchema\Exception\Constraint\ItemsInvalidTypeException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -39,33 +41,21 @@ class ItemsConstraint implements Constraint
         } elseif (is_array($schema->items)) {
             foreach ($schema->items as $index => $item) {
                 if (!is_object($item)) {
-                    throw new ConstraintException(
-                        'items element must be an object',
-                        ConstraintException::ITEMS_ELEMENT_NOT_OBJECT,
-                        $context
-                    );
+                    throw new ItemsElementNotObjectException($context);
                 }
 
                 $context->setNode($schema->items, $startPath . '/items/' . ($index + 1));
                 $walker->parseSchema($item, $context);
             }
         } else {
-            throw new ConstraintException(
-                'items must be an object or an array',
-                ConstraintException::ITEMS_INVALID_TYPE,
-                $context
-            );
+            throw new ItemsInvalidTypeException($context);
         }
 
         if (is_object($schema->additionalItems)) {
             $context->setNode($schema->items, $startPath . '/additionalItems');
             $walker->parseSchema($schema->additionalItems, $context);
         } elseif (!is_bool($schema->additionalItems)) {
-            throw new ConstraintException(
-                'additionalItems must be an object or a boolean',
-                ConstraintException::ADDITIONAL_ITEMS_INVALID_TYPE,
-                $context
-            );
+            throw new AdditionalItemsInvalidTypeException($context);
         }
 
         $context->setNode($schema, $startPath);
