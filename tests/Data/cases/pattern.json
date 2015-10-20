@@ -1,0 +1,32 @@
+{
+  "title": "pattern constraint",
+  "tests": [
+    {
+      "title": "with simple regex",
+      "schema": {
+        "pattern": "foo\\d+[x-z]?$"
+      },
+      "valid": ["foo1", "foo23x", "foo4y"],
+      "invalid": [
+        {
+          "instance": "bar",
+          "violations": [
+            {
+              "path": "",
+              "message": "should match regex \"foo\\d+[x-z]?$\""
+            }
+          ]
+        },
+        {
+          "instance": "foo123a",
+          "violations": [
+            {
+              "path": "",
+              "message": "should match regex \"foo\\d+[x-z]?$\""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
