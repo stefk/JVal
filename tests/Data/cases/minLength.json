@@ -1,0 +1,23 @@
+{
+  "title": "minLength constraint",
+  "tests": [
+    {
+      "title": "with strings",
+      "schema": {
+        "minLength": 3
+      },
+      "valid": ["foo", "bar-baz"],
+      "invalid": [
+        {
+          "instance": "no",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than or equal to 3 characters"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

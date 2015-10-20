@@ -1,0 +1,23 @@
+{
+  "title": "maxLength constraint",
+  "tests": [
+    {
+      "title": "with strings",
+      "schema": {
+        "maxLength": 10
+      },
+      "valid": ["foo", "bar-baz"],
+      "invalid": [
+        {
+          "instance": "this-one-is-too-long",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be lesser than or equal to 10 characters"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
