@@ -1,0 +1,35 @@
+{
+  "title": "minProperties constraint",
+  "tests": [
+    {
+      "title": "against object instances",
+      "schema": { "minProperties": 2 },
+      "valid": [
+        {
+          "a": 1,
+          "b": 2
+        },
+        {
+          "foo": 1,
+          "bar": 2,
+          "baz": {
+            "quz": 3
+          }
+        }
+      ],
+      "invalid": [
+        {
+          "instance": {
+            "foo": 1
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "number of properties should be greater than or equal to 2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

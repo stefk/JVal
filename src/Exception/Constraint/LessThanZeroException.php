@@ -9,7 +9,7 @@ class LessThanZeroException extends ConstraintException
     protected function buildMessage()
     {
         $this->message = sprintf(
-            '%s must be greater or equal to 0',
+            '%s must be greater than or equal to 0',
             $this->getTargetNode()
         );
     }

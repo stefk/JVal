@@ -15,24 +15,11 @@ class MaxItemsConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @dataProvider nonPositiveMaxItemsProvider
-     *
-     * @param $schemaName
-     */
-    public function testNormalizeThrowsIfMaxItemsIsNotPositive($schemaName)
+    public function testNormalizeThrowsIfMaxItemsIsNotPositive()
     {
         $this->expectConstraintException('LessThanZeroException', '/maxItems');
-        $schema = $this->loadSchema($schemaName);
+        $schema = $this->loadSchema('invalid/maxItems-not-positive');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
-    }
-
-    public function nonPositiveMaxItemsProvider()
-    {
-        return [
-            ['invalid/maxItems-not-positive-1'],
-            ['invalid/maxItems-not-positive-2']
-        ];
     }
 
     protected function getConstraint()

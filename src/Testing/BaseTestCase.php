@@ -4,6 +4,8 @@ namespace JsonSchema\Testing;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
+    private $expectException = false;
+
     /**
      * Wraps the default #runTest() method to provide an exception hook.
      *
@@ -12,15 +14,30 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function runTest()
     {
+        $hasException = false;
+
         try {
             $result = parent::runTest();
         } catch (\Exception $ex) {
+            $hasException = true;
             $this->exceptionHook($ex);
 
             return null;
         }
 
+        if ($this->expectException && !$hasException) {
+            $this->fail('An exception was expected but none has been thrown.');
+        }
+
         return $result;
+    }
+
+    /**
+     * Sets the flag indicating that an exception is expected.
+     */
+    protected function expectException()
+    {
+        $this->expectException = true;
     }
 
     /**

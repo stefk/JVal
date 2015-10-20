@@ -28,6 +28,7 @@ abstract class ConstraintTestCase extends BaseTestCase
         $this->expectedExceptionClass = "JsonSchema\\Exception\\Constraint\\{$exceptionName}";
         $this->expectedExceptionPath = $path;
         $this->expectedExceptionTarget = $target;
+        $this->expectException();
     }
 
     /**

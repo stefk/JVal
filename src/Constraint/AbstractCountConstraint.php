@@ -10,7 +10,7 @@ use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
 
-abstract class AbstractMaxConstraint implements Constraint
+abstract class AbstractCountConstraint implements Constraint
 {
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -21,7 +21,7 @@ abstract class AbstractMaxConstraint implements Constraint
             throw new InvalidTypeException($context, Types::TYPE_INTEGER);
         }
 
-        if ($schema->{$keyword} <= 0) {
+        if ($schema->{$keyword} < 0) {
             throw new LessThanZeroException($context);
         }
 

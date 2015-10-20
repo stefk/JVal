@@ -32,7 +32,7 @@
           "violations": [
             {
               "path": "",
-              "message": "number of properties should be less than, or equal to, 3"
+              "message": "number of properties should be lesser than or equal to 3"
             }
           ]
         }

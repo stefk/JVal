@@ -7,11 +7,11 @@ use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
 
-class MaxPropertiesConstraint extends AbstractCountConstraint
+class MinPropertiesConstraint extends AbstractCountConstraint
 {
     public function keywords()
     {
-        return ['maxProperties'];
+        return ['minProperties'];
     }
 
     public function supports($type)
@@ -21,10 +21,10 @@ class MaxPropertiesConstraint extends AbstractCountConstraint
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        if (count(get_object_vars($instance)) > $schema->maxProperties) {
+        if (count(get_object_vars($instance)) < $schema->minProperties) {
             $context->addViolation(
-                'number of properties should be lesser than or equal to %s',
-                [$schema->maxProperties]
+                'number of properties should be greater than or equal to %s',
+                [$schema->minProperties]
             );
         }
     }

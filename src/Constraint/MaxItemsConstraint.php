@@ -7,7 +7,7 @@ use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
 
-class MaxItemsConstraint extends AbstractMaxConstraint
+class MaxItemsConstraint extends AbstractCountConstraint
 {
     public function keywords()
     {
@@ -23,7 +23,7 @@ class MaxItemsConstraint extends AbstractMaxConstraint
     {
         if (count($instance) > $schema->maxItems) {
             $context->addViolation(
-                'number of items should be less than, or equal to, %s',
+                'number of items should be lesser than or equal to %s',
                 [$schema->maxItems]
             );
         }

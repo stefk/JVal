@@ -15,15 +15,10 @@ class MaxPropertiesConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @dataProvider nonPositiveMaxPropertiesProvider
-     *
-     * @param $schemaName
-     */
-    public function testNormalizeThrowsIfMaxPropertiesIsNotPositive($schemaName)
+    public function testNormalizeThrowsIfMaxPropertiesIsNotPositive()
     {
         $this->expectConstraintException('LessThanZeroException', '/maxProperties');
-        $schema = $this->loadSchema($schemaName);
+        $schema = $this->loadSchema('invalid/maxProperties-not-positive');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
@@ -35,13 +30,5 @@ class MaxPropertiesConstraintTest extends ConstraintTestCase
     protected function getCaseFileNames()
     {
         return ['maxProperties'];
-    }
-
-    public function nonPositiveMaxPropertiesProvider()
-    {
-        return [
-            ['invalid/maxProperties-not-positive-1'],
-            ['invalid/maxProperties-not-positive-2']
-        ];
     }
 }

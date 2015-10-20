@@ -1,11 +1,10 @@
 {
-  "title": "maxItems constraint",
+  "title": "minItems constraint",
   "tests": [
     {
       "title": "against array data",
-      "schema": { "maxItems": 3 },
+      "schema": { "minItems": 3 },
       "valid": [
-        [1],
         [
           "foo",
           ["bar1", "bar2"],
@@ -16,16 +15,18 @@
             "foo": 1,
             "bar": 2
           },
-          true
+          true,
+          null,
+          []
         ]
       ],
       "invalid": [
         {
-          "instance": [1, 2, 3, 4],
+          "instance": [1, 2],
           "violations": [
             {
               "path": "",
-              "message": "number of items should be lesser than or equal to 3"
+              "message": "number of items should be greater than or equal to 3"
             }
           ]
         }
