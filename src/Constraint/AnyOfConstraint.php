@@ -13,11 +13,6 @@ class AnyOfConstraint extends AbstractOfConstraint
         return ['anyOf'];
     }
 
-    public function supports($type)
-    {
-        return true;
-    }
-
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $accumulatingContext = $context->duplicate();

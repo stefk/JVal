@@ -13,11 +13,6 @@ class OneOfConstraint extends AbstractOfConstraint
         return ['oneOf'];
     }
 
-    public function supports($type)
-    {
-        return true;
-    }
-
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $violationCount = count($context->getViolations());

@@ -1,0 +1,86 @@
+{
+  "title": "minimum constraint",
+  "tests": [
+    {
+      "title": "without exclusiveMinimum",
+      "schema": { "minimum": 3 },
+      "valid": [10, 3.1, 3],
+      "invalid": [
+        {
+          "instance": -1,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than or equal to 3"
+            }
+          ]
+        },
+        {
+          "instance": 2.4,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than or equal to 3"
+            }
+          ]
+        }
+      ]
+    },
+ {
+      "title": "with exclusiveMinimum set to false",
+      "schema": {
+        "minimum": -2,
+        "exclusiveMinimum": false
+      },
+      "valid": [10, -1.9],
+      "invalid": [
+        {
+          "instance": -4,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than or equal to -2"
+            }
+          ]
+        },
+        {
+          "instance": -2.1,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than or equal to -2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "with exclusiveMinimum set to true",
+      "schema": {
+        "minimum": 5.3,
+        "exclusiveMinimum": true
+      },
+      "valid": [6, 5.31],
+      "invalid": [
+        {
+          "instance": -1,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than 5.3"
+            }
+          ]
+        },
+        {
+          "instance": 5.3,
+          "violations": [
+            {
+              "path": "",
+              "message": "should be greater than 5.3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

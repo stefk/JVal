@@ -12,6 +12,11 @@ use stdClass;
 
 abstract class AbstractOfConstraint implements Constraint
 {
+    public function supports($type)
+    {
+        return true;
+    }
+
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $keyword = $this->keywords()[0];

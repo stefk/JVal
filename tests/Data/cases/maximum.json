@@ -11,7 +11,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be less than, or equal to, 3"
+              "message": "should be lesser than or equal to 3"
             }
           ]
         },
@@ -20,7 +20,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be less than, or equal to, 3"
+              "message": "should be lesser than or equal to 3"
             }
           ]
         }
@@ -36,7 +36,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be less than, or equal to, 3"
+              "message": "should be lesser than or equal to 3"
             }
           ]
         },
@@ -45,7 +45,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be less than, or equal to, 3"
+              "message": "should be lesser than or equal to 3"
             }
           ]
         }
@@ -64,7 +64,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be less than 5.3"
+              "message": "should be lesser than 5.3"
             }
           ]
         },
@@ -73,7 +73,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be less than 5.3"
+              "message": "should be lesser than 5.3"
             }
           ]
         }
