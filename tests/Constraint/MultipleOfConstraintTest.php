@@ -7,23 +7,21 @@ use JsonSchema\Testing\ConstraintTestCase;
 
 class MultipleOfConstraintTest extends ConstraintTestCase
 {
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\MultipleOfNotNumberException
-     */
     public function testNormalizeThrowsIfNotANumber()
     {
+        $this->expectConstraintException('InvalidTypeException', '/multipleOf');
         $schema = $this->loadSchema('invalid/multiple-of-not-number');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
     /**
      * @dataProvider nonPositiveMultipleOfProvider
-     * @expectedException \JsonSchema\Exception\Constraint\MultipleOfNotPositiveException
      *
      * @param string $schemaName
      */
     public function testNormalizeThrowsOnNonPositiveNumber($schemaName)
     {
+        $this->expectConstraintException('NotStrictlyPositiveException', '/multipleOf');
         $schema = $this->loadSchema($schemaName);
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

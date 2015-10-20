@@ -8,49 +8,37 @@ use JsonSchema\Testing\ConstraintTestCase;
 
 class TypeConstraintTest extends ConstraintTestCase
 {
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\TypeInvalidTypeException
-     */
     public function testNormalizeThrowsIfTypeIsNotStringOrArray()
     {
+        $this->expectConstraintException('InvalidTypeException', '/type');
         $schema = $this->loadSchema('invalid/type-not-string-or-array');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\TypeElementNotStringException
-     */
     public function testNormalizeThrowsIfTypeArrayElementIsNotAString()
     {
+        $this->expectConstraintException('InvalidTypeException', '/type/2');
         $schema = $this->loadSchema('invalid/type-element-not-string');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\TypeElementNotUniqueException
-     */
-    public function testNormalizeThrowsIfTypeArrayElementIsNotUnique()
+    public function testNormalizeThrowsIfTypeArrayElementAreNotUnique()
     {
-
+        $this->expectConstraintException('NotUniqueException', '/type');
         $schema = $this->loadSchema('invalid/type-element-not-unique');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\TypeNotPrimitiveTypeException
-     */
     public function testNormalizeThrowsIfTypeIsNotADefinedPrimitiveType()
     {
-
+        $this->expectConstraintException('NotPrimitiveTypeException', '/type');
         $schema = $this->loadSchema('invalid/type-not-primitive');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\TypeNotPrimitiveTypeException
-     */
     public function testNormalizeThrowsIfTypeElementIsNotADefinedPrimitiveType()
     {
+        $this->expectConstraintException('NotPrimitiveTypeException', '/type/2');
         $schema = $this->loadSchema('invalid/type-element-not-primitive');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

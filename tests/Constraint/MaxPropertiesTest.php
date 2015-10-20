@@ -8,23 +8,21 @@ use JsonSchema\Testing\ConstraintTestCase;
 
 class MaxPropertiesConstraintTest extends ConstraintTestCase
 {
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\MaxPropertiesNotIntegerException
-     */
     public function testNormalizeThrowsIfMaxPropertiesIsNotAnInteger()
     {
+        $this->expectConstraintException('InvalidTypeException', '/maxProperties');
         $schema = $this->loadSchema('invalid/maxProperties-not-integer');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
     /**
      * @dataProvider nonPositiveMaxPropertiesProvider
-     * @expectedException \JsonSchema\Exception\Constraint\MaxPropertiesNotPositiveException
      *
      * @param $schemaName
      */
     public function testNormalizeThrowsIfMaxPropertiesIsNotPositive($schemaName)
     {
+        $this->expectConstraintException('LessThanZeroException', '/maxProperties');
         $schema = $this->loadSchema($schemaName);
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

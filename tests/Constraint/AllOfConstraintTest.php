@@ -8,29 +8,23 @@ use JsonSchema\Testing\ConstraintTestCase;
 
 class AllOfConstraintTest extends ConstraintTestCase
 {
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\AllOfNotArrayException
-     */
     public function testNormalizeIfAllOfIsNotArray()
     {
+        $this->expectConstraintException('InvalidTypeException', '/allOf');
         $schema = $this->loadSchema('invalid/allOf-not-array');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\AllOfEmptyException
-     */
     public function testNormalizeThrowsIfAllOfIsEmpty()
     {
+        $this->expectConstraintException('EmptyArrayException', '/allOf');
         $schema = $this->loadSchema('invalid/allOf-empty');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\AllOfElementNotObjectException
-     */
     public function testNormalizeThrowsIfAllOfElementIsNotObject()
     {
+        $this->expectConstraintException('InvalidTypeException', '/allOf/2');
         $schema = $this->loadSchema('invalid/allOf-element-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

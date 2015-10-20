@@ -8,23 +8,21 @@ use JsonSchema\Testing\ConstraintTestCase;
 
 class MaxItemsConstraintTest extends ConstraintTestCase
 {
-    /**
-     * @expectedException \JsonSchema\Exception\Constraint\MaxItemsNotIntegerException
-     */
     public function testNormalizeThrowsIfMaxItemsIsNotAnInteger()
     {
+        $this->expectConstraintException('InvalidTypeException', '/maxItems');
         $schema = $this->loadSchema('invalid/maxItems-not-integer');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
     /**
      * @dataProvider nonPositiveMaxItemsProvider
-     * @expectedException \JsonSchema\Exception\Constraint\MaxItemsNotPositiveException
      *
      * @param $schemaName
      */
     public function testNormalizeThrowsIfMaxItemsIsNotPositive($schemaName)
     {
+        $this->expectConstraintException('LessThanZeroException', '/maxItems');
         $schema = $this->loadSchema($schemaName);
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

@@ -4,8 +4,8 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\MultipleOfNotNumberException;
-use JsonSchema\Exception\Constraint\MultipleOfNotPositiveException;
+use JsonSchema\Exception\Constraint\InvalidTypeException;
+use JsonSchema\Exception\Constraint\NotStrictlyPositiveException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -24,13 +24,17 @@ class MultipleOfConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
+        $context->enterNode($schema->multipleOf, 'multipleOf');
+
         if (!Types::isA($schema->multipleOf, Types::TYPE_NUMBER)) {
-            throw new MultipleOfNotNumberException($context);
+            throw new InvalidTypeException($context, Types::TYPE_NUMBER);
         }
 
         if ($schema->multipleOf <= 0) {
-            throw new MultipleOfNotPositiveException($context);
+            throw new NotStrictlyPositiveException($context);
         }
+
+        $context->leaveNode();
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

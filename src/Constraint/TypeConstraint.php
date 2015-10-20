@@ -4,10 +4,9 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\TypeElementNotStringException;
-use JsonSchema\Exception\Constraint\TypeElementNotUniqueException;
-use JsonSchema\Exception\Constraint\TypeInvalidTypeException;
-use JsonSchema\Exception\Constraint\TypeNotPrimitiveTypeException;
+use JsonSchema\Exception\Constraint\InvalidTypeException;
+use JsonSchema\Exception\Constraint\NotPrimitiveTypeException;
+use JsonSchema\Exception\Constraint\NotUniqueException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -26,26 +25,32 @@ class TypeConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
+        $context->enterNode($schema->type, 'type');
+
         if (is_string($schema->type)) {
             if (!Types::isPrimitive($schema->type)) {
-                throw new TypeNotPrimitiveTypeException($context, [$schema->type]);
+                throw new NotPrimitiveTypeException($context);
             }
         } else if (is_array($schema->type)) {
             foreach ($schema->type as $index => $type) {
+                $context->enterNode($type, $index + 1);
+
                 if (!is_string($type)) {
-                    throw new TypeElementNotStringException($context, [$index]);
+                    throw new InvalidTypeException($context, Types::TYPE_STRING);
                 }
 
                 if (!Types::isPrimitive($type)) {
-                    throw new TypeNotPrimitiveTypeException($context, [$type]);
+                    throw new NotPrimitiveTypeException($context);
                 }
+
+                $context->leaveNode();
             }
 
             if (count(array_unique($schema->type)) !== count($schema->type)) {
-                throw new TypeElementNotUniqueException($context);
+                throw new NotUniqueException($context);
             }
         } else {
-            throw new TypeInvalidTypeException($context);
+            throw new InvalidTypeException($context, [Types::TYPE_STRING, Types::TYPE_ARRAY]);
         }
     }
 

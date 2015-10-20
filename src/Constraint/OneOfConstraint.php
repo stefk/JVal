@@ -4,9 +4,9 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\OneOfElementNotObjectException;
-use JsonSchema\Exception\Constraint\OneOfEmptyException;
-use JsonSchema\Exception\Constraint\OneOfNotArrayException;
+use JsonSchema\Exception\Constraint\EmptyArrayException;
+use JsonSchema\Exception\Constraint\InvalidTypeException;
+use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
 
@@ -24,27 +24,28 @@ class OneOfConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $startPath = $context->getCurrentPath();
+        $context->enterNode($schema->oneOf, 'oneOf');
 
         if (!is_array($schema->oneOf)) {
-            throw new OneOfNotArrayException($context);
+            throw new InvalidTypeException($context, Types::TYPE_ARRAY);
         }
 
         if (count($schema->oneOf) === 0) {
-            throw new OneOfEmptyException($context);
+            throw new EmptyArrayException($context);
         }
 
         foreach ($schema->oneOf as $index => $subSchema) {
-            $context->setNode($subSchema, "{$startPath}/{$index}");
+            $context->enterNode($subSchema, $index + 1);
 
             if (!is_object($subSchema)) {
-                throw new OneOfElementNotObjectException($context, [$index]);
+                throw new InvalidTypeException($context, Types::TYPE_OBJECT);
             }
 
             $walker->parseSchema($subSchema, $context);
+            $context->leaveNode();
         }
 
-        $context->setNode($schema, $startPath);
+        $context->leaveNode();
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

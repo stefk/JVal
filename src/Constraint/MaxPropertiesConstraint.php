@@ -4,8 +4,8 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\MaxPropertiesNotIntegerException;
-use JsonSchema\Exception\Constraint\MaxPropertiesNotPositiveException;
+use JsonSchema\Exception\Constraint\InvalidTypeException;
+use JsonSchema\Exception\Constraint\LessThanZeroException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -24,13 +24,17 @@ class MaxPropertiesConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
+        $context->enterNode($schema->maxProperties, 'maxProperties');
+
         if (!is_int($schema->maxProperties)) {
-            throw new MaxPropertiesNotIntegerException($context);
+            throw new InvalidTypeException($context, Types::TYPE_INTEGER);
         }
 
         if ($schema->maxProperties <= 0) {
-            throw new MaxPropertiesNotPositiveException($context);
+            throw new LessThanZeroException($context);
         }
+
+        $context->leaveNode();
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)

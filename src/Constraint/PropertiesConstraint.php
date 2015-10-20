@@ -4,12 +4,8 @@ namespace JsonSchema\Constraint;
 
 use JsonSchema\Constraint;
 use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\AdditionalPropertiesInvalidTypeException;
-use JsonSchema\Exception\Constraint\PatternPropertiesInvalidRegexException;
-use JsonSchema\Exception\Constraint\PatternPropertiesNotObjectException;
-use JsonSchema\Exception\Constraint\PatternPropertyNotObjectException;
-use JsonSchema\Exception\Constraint\PropertiesNotObjectException;
-use JsonSchema\Exception\Constraint\PropertyValueNotObjectException;
+use JsonSchema\Exception\Constraint\InvalidRegexException;
+use JsonSchema\Exception\Constraint\InvalidTypeException;
 use JsonSchema\Types;
 use JsonSchema\Walker;
 use stdClass;
@@ -40,57 +36,57 @@ class PropertiesConstraint implements Constraint
             $schema->patternProperties = new stdClass();
         }
 
-        $startPath = $context->getCurrentPath();
-        $context->setNode($schema->properties, "{$startPath}/properties");
+        $context->enterNode($schema->properties, 'properties');
 
         if (!is_object($schema->properties)) {
-            throw new PropertiesNotObjectException($context);
+            throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
 
         foreach ($schema->properties as $property => $value) {
-            $context->setNode($schema->properties, "{$startPath}/properties/{$property}");
+            $context->enterNode($schema->properties->{$property}, $property);
 
             if (!is_object($value)) {
-                throw new PropertyValueNotObjectException($context);
+                throw new InvalidTypeException($context, Types::TYPE_OBJECT);
             }
 
             $walker->parseSchema($value, $context);
+            $context->leaveNode();
         }
 
-        $context->setNode($schema->additionalProperties, "{$startPath}/additionalProperties");
+        $context->enterSibling($schema->additionalProperties, 'additionalProperties');
 
         if (is_object($schema->additionalProperties)) {
             $walker->parseSchema($schema->additionalProperties, $context);
         } elseif (!is_bool($schema->additionalProperties)) {
-            throw new AdditionalPropertiesInvalidTypeException($context);
+            throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_BOOLEAN]);
         }
 
-        $context->setNode($schema->patternProperties, "{$startPath}/patternProperties");
+        $context->enterSibling($schema->patternProperties, 'patternProperties');
 
         if (!is_object($schema->patternProperties)) {
-            throw new PatternPropertiesNotObjectException($context);
+            throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
 
         foreach ($schema->patternProperties as $regex => $value) {
-            $context->setNode($schema->patternProperties, "{$startPath}/patternProperties/{$regex}");
+            $context->enterNode($value, $regex);
 
             if (@preg_match("/{$regex}/", '') === false) {
-                throw new PatternPropertiesInvalidRegexException($context);
+                throw new InvalidRegexException($context);
             }
 
             if (!is_object($value)) {
-                throw new PatternPropertyNotObjectException($context);
+                throw new InvalidTypeException($context, Types::TYPE_OBJECT);
             }
 
             $walker->parseSchema($value, $context);
+            $context->leaveNode();
         }
 
-        $context->setNode($schema, $startPath);
+        $context->leaveNode();
     }
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        $startPath = $context->getCurrentPath();
         $propertySet = array_keys(get_object_vars($schema->properties));
         $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
 
@@ -119,7 +115,7 @@ class PropertiesConstraint implements Constraint
 
         // 2) validation of the instance's children (algorithm described in 8.3)
         foreach ($instance as $property => $value) {
-            $context->setNode($value, "{$startPath}/{$property}");
+            $context->enterNode($value, $property);
             $schemas = [];
 
             if (in_array($property, $propertySet)) {
@@ -139,8 +135,8 @@ class PropertiesConstraint implements Constraint
             foreach ($schemas as $childSchema) {
                 $walker->applyConstraints($value, $childSchema, $context);
             }
-        }
 
-        $context->setNode($instance, $startPath);
+            $context->leaveNode();
+        }
     }
 }

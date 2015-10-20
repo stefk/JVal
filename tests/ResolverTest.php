@@ -2,7 +2,6 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Exception\ResolverException;
 use JsonSchema\Testing\BaseTestCase;
 use stdClass;
 
@@ -16,7 +15,6 @@ class ResolverTest extends BaseTestCase
     protected function setUp()
     {
         $this->resolver = new Resolver();
-        $this->setExceptionClass('JsonSchema\Exception\ResolverException');
     }
 
     /**

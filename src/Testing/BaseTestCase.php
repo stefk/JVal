@@ -4,27 +4,36 @@ namespace JsonSchema\Testing;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
-    private $exceptionClass;
-
     /**
-     * Sets a default exception class for #expectException().
+     * Wraps the default #runTest() method to provide an exception hook.
      *
-     * @param string $class
+     * @return mixed|null
+     * @throws \Exception
      */
-    protected function setExceptionClass($class)
+    protected function runTest()
     {
-        $this->exceptionClass = $class;
+        try {
+            $result = parent::runTest();
+        } catch (\Exception $ex) {
+            $this->exceptionHook($ex);
+
+            return null;
+        }
+
+        return $result;
     }
 
     /**
-     * Asserts an exception of the class previously set will be thrown
-     * with a given code.
+     * Hook called when an unexpected exception is thrown.
      *
-     * @param int $code
+     * Override this hook to make custom assertions on exceptions.
+     *
+     * @param \Exception $ex
+     * @throws \Exception
      */
-    protected function expectException($code)
+    protected function exceptionHook(\Exception $ex)
     {
-        $this->setExpectedException($this->exceptionClass, null, $code);
+        throw $ex;
     }
 
     /**

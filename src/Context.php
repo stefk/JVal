@@ -6,13 +6,34 @@ class Context
 {
     private $version = Registry::VERSION_DRAFT_4;
     private $violations = [];
+    private $pathSegments = [];
+    private $instanceStack = [];
     private $path = '';
-    private $instance;
 
-    public function setNode($instance, $path)
+    public function enterNode($instance, $pathSegment)
     {
-        $this->instance = $instance;
-        $this->path = $path;
+        $this->instanceStack[] = $instance;
+        $this->pathSegments[] = $pathSegment;
+        $this->path .= '/' . $pathSegment;
+    }
+
+    public function enterSibling($instance, $pathSegment)
+    {
+        $this->leaveNode();
+        $this->enterNode($instance, $pathSegment);
+    }
+
+    public function leaveNode()
+    {
+        if (count($this->instanceStack) === 0) {
+            throw new \LogicException('Cannot leave node: instance stack is empty');
+        }
+
+        array_pop($this->instanceStack);
+        array_pop($this->pathSegments);
+
+        $this->path = '/' . implode('/', $this->pathSegments);
+        $this->path = $this->path === '/' ? '' : $this->path;
     }
 
     public function getCurrentPath()

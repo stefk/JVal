@@ -7,20 +7,53 @@ use JsonSchema\Context;
 abstract class ConstraintException extends \Exception
 {
     private $context;
+    private $target;
 
-    public function __construct(Context $context, array $parameters = [])
+    public function __construct(Context $context, $target = null)
     {
+        parent::__construct();
         $this->context = $context;
-        $message = $this->buildMessage($context, $parameters);
-        $path = $context->getCurrentPath() === '' ? '/' : $context->getCurrentPath();
-        $message = sprintf('%s (path: %s)', $message, $path);
-        parent::__construct($message);
+        $this->target = $target;
+        $this->buildMessage();
     }
 
-    public function getContext()
+    public function getPath()
     {
-        return $this->context;
+        return $this->context->getCurrentPath();
     }
 
-    abstract protected function buildMessage(Context $context, array $parameters);
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    abstract protected function buildMessage();
+
+    /**
+     * Returns a printable representation of the exception
+     * target. If no target has been explicitly passed in,
+     * the last non-array segments of the path are returned.
+     *
+     * @return string
+     */
+    protected function getTargetNode()
+    {
+        if ($this->target === null) {
+            $segments = explode('/', $this->getPath());
+            $target = '';
+
+            while (count($segments) > 0) {
+                $segment = array_pop($segments);
+                $target = $segment . '/' . $target;
+
+                if (!is_numeric($segment)) {
+                    break;
+                }
+            }
+
+            return rtrim($target, '/');
+        }
+
+        return $this->target;
+    }
 }
