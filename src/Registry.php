@@ -12,6 +12,7 @@ use JsonSchema\Constraint\MultipleOfConstraint;
 use JsonSchema\Constraint\OneOfConstraint;
 use JsonSchema\Constraint\PropertiesConstraint;
 use JsonSchema\Constraint\TypeConstraint;
+use JsonSchema\Constraint\UniqueItemsConstraint;
 
 class Registry
 {

@@ -1,0 +1,58 @@
+{
+  "title": "uniqueItems constraint",
+  "tests": [
+    {
+      "title": "set to false",
+      "schema": {
+        "uniqueItems": false
+      },
+      "valid": [
+        [1, 2, 3],
+        [1, 2, 1],
+        [
+          { "foo": "bar" },
+          { "foo": "bar" },
+          true
+        ]
+      ]
+    },
+    {
+      "title": "set to true",
+      "schema": {
+        "uniqueItems": true
+      },
+      "valid": [
+        [1, 2, 3],
+        [
+          { "foo": "bar" },
+          { "foo": "baz" },
+          true
+        ]
+      ],
+      "invalid": [
+        {
+          "instance": [1, 2, 2],
+          "violations": [
+            {
+              "path": "",
+              "message": "elements must be unique"
+            }
+          ]
+        },
+        {
+          "instance": [
+            { "foo": "bar" },
+            [false, null],
+            { "foo": "bar" }
+          ],
+          "violations": [
+            {
+              "path": "",
+              "message": "elements must be unique"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
