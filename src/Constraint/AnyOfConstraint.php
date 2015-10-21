@@ -19,10 +19,10 @@ class AnyOfConstraint extends AbstractOfConstraint
         $hasMatch = false;
 
         foreach ($schema->anyOf as $subSchema) {
-            $violationCount = count($accumulatingContext->getViolations());
+            $originalCount = $accumulatingContext->countViolations();
             $walker->applyConstraints($instance, $subSchema, $accumulatingContext);
 
-            if (count($accumulatingContext->getViolations()) === $violationCount) {
+            if ($accumulatingContext->countViolations() === $originalCount) {
                 $hasMatch = true;
                 break;
             }

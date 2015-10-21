@@ -15,7 +15,7 @@ class OneOfConstraint extends AbstractOfConstraint
 
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        $violationCount = count($context->getViolations());
+        $originalCount = $context->countViolations();
         $hasMatch = false;
         $hasDoubleMatch = false;
 
@@ -23,7 +23,7 @@ class OneOfConstraint extends AbstractOfConstraint
             $subContext = $context->duplicate();
             $walker->applyConstraints($instance, $subSchema, $subContext);
 
-            if (count($subContext->getViolations()) === $violationCount) {
+            if ($subContext->countViolations() === $originalCount) {
                 if (!$hasMatch) {
                     $hasMatch = true;
                 } else {

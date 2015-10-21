@@ -54,6 +54,11 @@ class Context
         return $this->violations;
     }
 
+    public function countViolations()
+    {
+        return count($this->violations);
+    }
+
     public function getVersion()
     {
         return $this->version;

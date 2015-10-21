@@ -7,7 +7,7 @@ use JsonSchema\Testing\ConstraintTestCase;
 
 class UniqueItemsConstraintTest extends ConstraintTestCase
 {
-    public function testNormalizeThrowsIfMaxLengthIsNotAnInteger()
+    public function testNormalizeThrowsIfUniqueItemsIsNotBoolean()
     {
         $this->expectConstraintException('InvalidTypeException', '/uniqueItems');
         $schema = $this->loadSchema('invalid/uniqueItems-not-boolean');

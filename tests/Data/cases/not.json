@@ -1,0 +1,26 @@
+{
+  "title": "not constraint",
+  "tests": [
+    {
+      "title": "with non-empty schema",
+      "schema": {
+        "not": {
+          "type": "integer",
+          "maximum": 10
+        }
+      },
+      "valid": [{}, 1.2, 123, true],
+      "invalid": [
+        {
+          "instance": 5,
+          "violations": [
+            {
+              "path": "",
+              "message": "should not match schema in \"not\""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
