@@ -1,0 +1,119 @@
+{
+  "title": "dependencies constraint",
+  "tests": [
+    {
+      "title": "with schema dependencies",
+      "schema": {
+        "dependencies": {
+          "foo": {
+            "properties": {
+              "quz": {
+                "type": "integer"
+              }
+            }
+          },
+          "bar": {
+            "maxProperties": 2
+          }
+        }
+      },
+      "valid": [
+        {
+          "foo": 1
+        },
+        {
+          "foo": 1,
+          "quz": 2
+        },
+        {
+          "bar": 1,
+          "baz": 2
+        }
+      ],
+      "invalid": [
+        {
+          "instance": {
+            "foo": 1,
+            "quz": "not-integer"
+          },
+          "violations": [
+            {
+              "path": "/quz",
+              "message": "instance must be of type integer"
+            }
+          ]
+        },
+        {
+          "instance": {
+            "bar": 1,
+            "baz": 2,
+            "quz": 3
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "number of properties should be lesser than or equal to 2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "with property dependencies",
+      "schema": {
+        "dependencies": {
+          "foo": ["bar"],
+          "baz": ["quz-1", "quz-2"]
+        }
+      },
+      "valid": [
+        {
+          "quz": 1
+        },
+        {
+          "foo": 1,
+          "bar": 2
+        },
+        {
+          "foo": 1,
+          "bar": 2,
+          "quz": 3
+        },
+        {
+          "baz": 1,
+          "quz-1": 2,
+          "quz-2": 3
+        }
+      ],
+      "invalid": [
+        {
+          "instance": {
+            "foo": 1,
+            "quz": 2
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "dependency property \"bar\" is missing"
+            }
+          ]
+        },
+        {
+          "instance": {
+            "baz": 1
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "dependency property \"quz-1\" is missing"
+            },
+            {
+              "path": "",
+              "message": "dependency property \"quz-2\" is missing"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

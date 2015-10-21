@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "foo": {
+      "properties": {
+        "baz": {
+          "type": "boolean"
+        }
+      }
+    },
+    "bar": {}
+  }
+}

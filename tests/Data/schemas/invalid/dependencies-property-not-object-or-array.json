@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "foo": {},
+    "bar": "not-object-or-array"
+  }
+}
