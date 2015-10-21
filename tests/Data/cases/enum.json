@@ -1,0 +1,51 @@
+{
+  "title": "enum constraint",
+  "tests": [
+    {
+      "title": "with various types",
+      "schema": {
+        "enum": [
+          1.5,
+          null,
+          ["foo", "bar"],
+          { "baz": false }
+        ]
+      },
+      "valid": [
+        1.5,
+        null,
+        ["foo", "bar"],
+        { "baz": false }
+      ],
+      "invalid": [
+        {
+          "instance": 1.6,
+          "violations": [
+            {
+              "path": "",
+              "message": "should match one element in enum"
+            }
+          ]
+        },
+        {
+          "instance": ["foo", "baz", "bar"],
+          "violations": [
+            {
+              "path": "",
+              "message": "should match one element in enum"
+            }
+          ]
+        },
+        {
+          "instance": { "baz": true },
+          "violations": [
+            {
+              "path": "",
+              "message": "should match one element in enum"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
