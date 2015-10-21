@@ -1,0 +1,49 @@
+{
+  "title": "required constraint",
+  "tests": [
+    {
+      "title": "with two required properties",
+      "schema": {
+        "required": ["foo", "bar"]
+      },
+      "valid": [
+        {
+          "foo": 1,
+          "bar": 2
+        },
+        {
+          "foo": 1,
+          "bar": 2,
+          "baz": 3
+        }
+      ],
+      "invalid": [
+        {
+          "instance": { "foo": 1 },
+          "violations": [
+            {
+              "path": "",
+              "message": "property \"bar\" is missing"
+            }
+          ]
+        },
+        {
+          "instance": {
+            "baz": 1,
+            "quz": 2
+          },
+          "violations": [
+            {
+              "path": "",
+              "message": "property \"foo\" is missing"
+            },
+            {
+              "path": "",
+              "message": "property \"bar\" is missing"
+            }
+          ]
+        }
+        ]
+    }
+  ]
+}
