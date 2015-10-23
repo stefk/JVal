@@ -23,11 +23,11 @@ abstract class AbstractRangeConstraint implements Constraint
         $property = $this->keywords()[0];
         $secondaryProperty = $this->keywords()[1];
 
-        if (!isset($schema->{$property})) {
+        if (!property_exists($schema, $property)) {
             throw new MissingKeywordException($context, $property);
         }
 
-        if (!isset($schema->{$secondaryProperty})) {
+        if (!property_exists($schema, $secondaryProperty)) {
             $schema->{$secondaryProperty} = false;
         }
 

@@ -53,7 +53,7 @@ class RequiredConstraint implements Constraint
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         foreach ($schema->required as $property) {
-            if (!isset($instance->{$property})) {
+            if (!property_exists($instance, $property)) {
                 $context->addViolation('property "%s" is missing', [$property]);
             }
         }

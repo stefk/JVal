@@ -23,11 +23,11 @@ class ItemsConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        if (!isset($schema->items)) {
+        if (!property_exists($schema, 'items')) {
             $schema->items = new stdClass();
         }
 
-        if (!isset($schema->additionalItems) || $schema->additionalItems === true) {
+        if (!property_exists($schema, 'additionalItems') || $schema->additionalItems === true) {
             $schema->additionalItems = new stdClass();
         }
 

@@ -16,7 +16,7 @@ class Walker
     // resolve, normalize and validate schema
     public function parseSchema(stdClass $schema, Context $context)
     {
-        if (isset($schema->{'$ref'})) {
+        if (property_exists($schema, '$ref')) {
             // if local ref ()
 
             // if pointer in registry, get schema from there
@@ -29,13 +29,13 @@ class Walker
         } else {
             $this->loadConstraints($schema, $context);
 
-            if (isset($schema->id)) {
+            if (property_exists($schema, 'id')) {
                 // alter scope
             }
 
             foreach ($this->registry->getConstraints() as $constraint) {
                 foreach ($constraint->keywords() as $keyword) {
-                    if (isset($schema->{$keyword})) {
+                    if (property_exists($schema, $keyword)) {
                         $constraint->normalize($schema, $context, $this);
                         break;
                     }
@@ -52,7 +52,7 @@ class Walker
         foreach ($this->registry->getConstraints() as $constraint) {
             foreach ($constraint->keywords() as $keyword) {
                 if ($constraint->supports($instanceType)) {
-                    if (isset($schema->{$keyword})) {
+                    if (property_exists($schema, $keyword)) {
                         $constraint->apply($instance, $schema, $context, $this);
                         break;
                     }
@@ -63,7 +63,7 @@ class Walker
 
     private function loadConstraints(stdClass $schema, Context $context)
     {
-        if (isset($schema->{'$schema'})) {
+        if (property_exists($schema, '$schema')) {
             $context->setVersion($schema->{'$schema'});
         }
 

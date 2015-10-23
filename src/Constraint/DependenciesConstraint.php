@@ -65,14 +65,14 @@ class DependenciesConstraint implements Constraint
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         foreach ($schema->dependencies as $property => $value) {
-            if (isset($instance->{$property})) {
+            if (property_exists($instance, $property)) {
                 if (is_object($value)) {
                     // 5.4.5.2.1. Schema dependencies
                     $walker->applyConstraints($instance, $value, $context);
                 } else {
                     // 5.4.5.2.2. Property dependencies
                     foreach ($value as $propertyDependency) {
-                        if (!isset($instance->{$propertyDependency})) {
+                        if (!property_exists($instance, $propertyDependency)) {
                             $context->addViolation(
                                 'dependency property "%s" is missing',
                                 [$propertyDependency]

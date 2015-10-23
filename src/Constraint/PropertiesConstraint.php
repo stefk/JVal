@@ -24,15 +24,16 @@ class PropertiesConstraint implements Constraint
 
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        if (!isset($schema->properties)) {
+        if (!property_exists($schema, 'properties')) {
             $schema->properties = new stdClass();
         }
 
-        if (!isset($schema->additionalProperties) || $schema->additionalProperties === true) {
+        if (!property_exists($schema, 'additionalProperties')
+            || $schema->additionalProperties === true) {
             $schema->additionalProperties = new stdClass();
         }
 
-        if (!isset($schema->patternProperties)) {
+        if (!property_exists($schema, 'patternProperties')) {
             $schema->patternProperties = new stdClass();
         }
 

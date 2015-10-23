@@ -85,6 +85,6 @@ class Draft4Test extends BaseTestCase
 
     private function whiteList()
     {
-        return false;
+        return ['allOf.json'];
     }
 }

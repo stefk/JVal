@@ -152,7 +152,7 @@ class Resolver
             $segments[$i] = str_replace('~0', '~', $segments[$i]);
 
             if (is_object($currentNode)) {
-                if (isset($currentNode->{$segments[$i]})) {
+                if (property_exists($currentNode, $segments[$i])) {
                     $currentNode = $currentNode->{$segments[$i]};
                     continue;
                 }
