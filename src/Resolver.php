@@ -21,6 +21,16 @@ class Resolver
     private $baseSchema;
 
     /**
+     * Returns whether a base schema has been set.
+     *
+     * @return bool
+     */
+    public function hasBaseSchema()
+    {
+        return isset($this->baseSchema);
+    }
+
+    /**
      * Sets the current schema, on which resolutions will be based.
      *
      * @param stdClass  $schema
@@ -133,10 +143,13 @@ class Resolver
     /**
      * Resolves a JSON pointer according to RFC 6901.
      *
-     * @param stdClass  $schema
-     * @param string    $pointer
+     * @param stdClass $schema
+     * @param string $pointer
      * @return mixed
-     * @throws ResolverException
+     * @throws InvalidPointerIndexException
+     * @throws InvalidSegmentTypeException
+     * @throws UnresolvedPointerIndexException
+     * @throws UnresolvedPointerPropertyException
      */
     private function resolvePointer(stdClass $schema, $pointer)
     {
@@ -165,7 +178,7 @@ class Resolver
                     throw new InvalidPointerIndexException([$segments[$i], $i, $pointer]);
                 }
 
-                if (!isset($currentNode[$index = (int) $segments[$i] - 1])) {
+                if (!isset($currentNode[$index = (int) $segments[$i]])) {
                     throw new UnresolvedPointerIndexException([$segments[$i], $i, $pointer]);
                 }
 

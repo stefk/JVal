@@ -7,16 +7,24 @@ use stdClass;
 class Walker
 {
     private $registry;
+    private $resolver;
 
     public function __construct(Registry $registry, Resolver $resolver)
     {
         $this->registry = $registry;
+        $this->resolver = $resolver;
     }
 
     // resolve, normalize and validate schema
     public function parseSchema(stdClass $schema, Context $context)
     {
+        if (!$this->resolver->hasBaseSchema()) {
+            $this->resolver->setBaseSchema($schema, '');
+        }
+
         if (property_exists($schema, '$ref')) {
+
+            $this->resolver->resolve($schema);
             // if local ref ()
 
             // if pointer in registry, get schema from there

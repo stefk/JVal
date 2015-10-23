@@ -42,7 +42,7 @@
           ],
           "violations": [
             {
-              "path": "/2/3",
+              "path": "/1/2",
               "message": "additional items are not allowed"
             }
           ]
@@ -96,7 +96,7 @@
           "instance": [1, 2, 3, 4],
           "violations": [
             {
-              "path": "/4",
+              "path": "/3",
               "message": "additional items are not allowed"
             }
           ]
@@ -113,11 +113,11 @@
           ],
           "violations": [
             {
-              "path": "/4",
+              "path": "/3",
               "message": "additional items are not allowed"
             },
             {
-              "path": "/5",
+              "path": "/4",
               "message": "additional items are not allowed"
             }
           ]
@@ -130,7 +130,7 @@
           ],
           "violations": [
             {
-              "path": "/3/2",
+              "path": "/2/1",
               "message": "additional items are not allowed"
             }
           ]
@@ -155,7 +155,7 @@
           "instance": [1, 2, [3, 4]],
           "violations": [
             {
-              "path": "/3/2",
+              "path": "/2/1",
               "message": "additional items are not allowed"
             }
           ]

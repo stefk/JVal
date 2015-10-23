@@ -217,8 +217,8 @@ class ResolverTest extends BaseTestCase
             [$schema, '#/bar/baz', $schema->bar->baz],
             [$schema, '#/bar/baz/bat', $schema->bar->baz->bat],
             [$schema, '#/bar/baz/bat/', $schema->bar->baz->bat],
-            [$schema, '#/bat/1', $schema->bat[0]],
-            [$schema, '#/bat/2/quz/1', $schema->bat[1]->quz[0]],
+            [$schema, '#/bat/0', $schema->bat[0]],
+            [$schema, '#/bat/1/quz/0', $schema->bat[1]->quz[0]],
             [$schema, '#/with%25percent', $schema->{'with%percent'}],
             [$schema, '#/bar/with~1slash', $schema->bar->{'with/slash'}],
             [$schema, '#/bar/with~1slash', $schema->bar->{'with/slash'}],
@@ -242,8 +242,8 @@ class ResolverTest extends BaseTestCase
         $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
-            [$schema, '#/bat/2/quz/bar'],
-            [$schema, '#/bat/2/quz/1/bar/baz']
+            [$schema, '#/bat/1/quz/bar'],
+            [$schema, '#/bat/1/quz/0/bar/baz']
         ];
     }
 
@@ -262,8 +262,8 @@ class ResolverTest extends BaseTestCase
         $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
-            [$schema, '#/bat/3/bar'],
-            [$schema, '#/bat/2/quz/2/foo']
+            [$schema, '#/bat/2/bar'],
+            [$schema, '#/bat/1/quz/1/foo']
         ];
     }
 

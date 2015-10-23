@@ -23,7 +23,7 @@ class RequiredConstraintTest extends ConstraintTestCase
 
     public function testNormalizeThrowsIfRequiredPropertyIsNotString()
     {
-        $this->expectConstraintException('InvalidTypeException', '/required/2');
+        $this->expectConstraintException('InvalidTypeException', '/required/1');
         $schema = $this->loadSchema('invalid/required-property-not-string');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

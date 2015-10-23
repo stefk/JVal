@@ -37,7 +37,7 @@ class RequiredConstraint implements Constraint
 
         foreach ($schema->required as $index => $property) {
             if (!is_string($property)) {
-                $context->enterNode($property, $index + 1);
+                $context->enterNode($property, $index);
 
                 throw new InvalidTypeException($context, Types::TYPE_STRING);
             }

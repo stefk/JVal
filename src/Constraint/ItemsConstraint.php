@@ -37,7 +37,7 @@ class ItemsConstraint implements Constraint
             $walker->parseSchema($schema->items, $context);
         } elseif (is_array($schema->items)) {
             foreach ($schema->items as $index => $item) {
-                $context->enterNode($schema->items[$index], $index + 1);
+                $context->enterNode($schema->items[$index], $index);
 
                 if (!is_object($item)) {
                     throw new InvalidTypeException($context, Types::TYPE_OBJECT);
@@ -68,7 +68,7 @@ class ItemsConstraint implements Constraint
             // valid against this schema, regardless of its index, and
             // regardless of the value of "additionalItems".
             foreach ($instance as $index => $item) {
-                $context->enterNode($item, $index + 1);
+                $context->enterNode($item, $index);
                 $walker->applyConstraints($item, $schema->items, $context);
                 $context->leaveNode();
             }
@@ -76,7 +76,7 @@ class ItemsConstraint implements Constraint
             $itemSize = count($schema->items);
 
             foreach ($instance as $index => $item) {
-                $context->enterNode($item, $index + 1);
+                $context->enterNode($item, $index);
 
                 // 8.2.3.2.  If the index is less than, or equal to, the size of
                 // "items", the child instance must be valid against the

@@ -33,7 +33,7 @@ class TypeConstraint implements Constraint
             }
         } else if (is_array($schema->type)) {
             foreach ($schema->type as $index => $type) {
-                $context->enterNode($type, $index + 1);
+                $context->enterNode($type, $index);
 
                 if (!is_string($type)) {
                     throw new InvalidTypeException($context, Types::TYPE_STRING);

@@ -43,7 +43,7 @@ class DependenciesConstraintTest extends ConstraintTestCase
 
     public function testNormalizeThrowsIfPropertyDependencyIsNotString()
     {
-        $this->expectConstraintException('InvalidTypeException', '/dependencies/bar/2');
+        $this->expectConstraintException('InvalidTypeException', '/dependencies/bar/1');
         $schema = $this->loadSchema('invalid/dependencies-property-not-string');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

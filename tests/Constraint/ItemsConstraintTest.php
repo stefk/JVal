@@ -50,7 +50,7 @@ class ItemsConstraintTest extends ConstraintTestCase
 
     public function testNormalizeThrowsIfItemsElementIsNotObject()
     {
-        $this->expectConstraintException('InvalidTypeException', '/items/2');
+        $this->expectConstraintException('InvalidTypeException', '/items/1');
         $schema = $this->loadSchema('invalid/items-element-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

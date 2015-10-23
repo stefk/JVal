@@ -24,7 +24,7 @@ class AnyOfConstraintTest extends ConstraintTestCase
 
     public function testNormalizeThrowsIfAnyOfElementIsNotObject()
     {
-        $this->expectConstraintException('InvalidTypeException', '/anyOf/2');
+        $this->expectConstraintException('InvalidTypeException', '/anyOf/1');
         $schema = $this->loadSchema('invalid/anyOf-element-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

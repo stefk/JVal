@@ -98,6 +98,6 @@ class Draft4Test extends BaseTestCase
 
     private function whiteListFiles()
     {
-        return false;
+        return ['ref.json'];
     }
 }

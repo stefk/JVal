@@ -24,7 +24,7 @@ class OneOfConstraintTest extends ConstraintTestCase
 
     public function testNormalizeThrowsIfOneOfElementIsNotObject()
     {
-        $this->expectConstraintException('InvalidTypeException', '/oneOf/2');
+        $this->expectConstraintException('InvalidTypeException', '/oneOf/1');
         $schema = $this->loadSchema('invalid/oneOf-element-not-object');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }

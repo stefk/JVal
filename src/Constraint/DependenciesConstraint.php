@@ -43,7 +43,7 @@ class DependenciesConstraint implements Constraint
 
                 foreach ($value as $index => $subProperty) {
                     if (!is_string($subProperty)) {
-                        $context->enterNode($subProperty, $index + 1);
+                        $context->enterNode($subProperty, $index);
 
                         throw new InvalidTypeException($context, Types::TYPE_STRING);
                     }
