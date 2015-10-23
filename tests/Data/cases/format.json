@@ -1,0 +1,167 @@
+{
+  "title": "format constraint",
+  "tests": [
+    {
+      "title": "date-time",
+      "schema": {
+        "format": "date-time"
+      },
+      "valid": ["2015-10-23T15:22:16+02:00"],
+      "invalid": [
+        {
+          "instance": {},
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a string"
+            }
+          ]
+        },
+        {
+          "instance": "bad date",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a valid date-time (RFC3339)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "email",
+      "schema": {
+        "format": "email"
+      },
+      "valid": ["foo@mail.bar"],
+      "invalid": [
+        {
+          "instance": {},
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a string"
+            }
+          ]
+        },
+        {
+          "instance": "bad email",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a valid email"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "hostname",
+      "schema": {
+        "format": "hostname"
+      },
+      "valid": ["localhost", "foo.bar"],
+      "invalid": [
+        {
+          "instance": {},
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a string"
+            }
+          ]
+        },
+        {
+          "instance": "bad host",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a valid hostname"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ipv4",
+      "schema": {
+        "format": "ipv4"
+      },
+      "valid": ["255.255.0.1", "0.0.0.0"],
+      "invalid": [
+        {
+          "instance": {},
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a string"
+            }
+          ]
+        },
+        {
+          "instance": "bad ipv4",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a valid IPv4 address"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ipv6",
+      "schema": {
+        "format": "ipv6"
+      },
+      "valid": ["2001:0db8:85a3:0000:0000:8a2e:0370:7334"],
+      "invalid": [
+        {
+          "instance": {},
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a string"
+            }
+          ]
+        },
+        {
+          "instance": "bad ipv6",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a valid IPv6 address"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "uri",
+      "schema": {
+        "format": "uri"
+      },
+      "valid": ["http://foo.bar/baz?quz=1", "file://foo.bar"],
+      "invalid": [
+        {
+          "instance": {},
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a string"
+            }
+          ]
+        },
+        {
+          "instance": "bad uri",
+          "violations": [
+            {
+              "path": "",
+              "message": "should be a valid URI"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
