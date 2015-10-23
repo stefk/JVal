@@ -157,7 +157,7 @@
           "violations": [
             {
               "path": "",
-              "message": "should be a valid URI"
+              "message": "should be a valid URI (RFC3986)"
             }
           ]
         }

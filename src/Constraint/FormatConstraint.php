@@ -15,7 +15,22 @@ class FormatConstraint implements Constraint
     /**
      * @see http://stackoverflow.com/a/1420225
      */
-    const HOSTNAME_REGEX = '/^(?=.{1,255}$)[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?(?:\.[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?)*\.?$/i';
+    const HOSTNAME_REGEX = '/^
+      (?=.{1,255}$)
+      [0-9a-z]
+      (([0-9a-z]|-){0,61}[0-9a-z])?
+      (\.[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?)*
+      \.?
+    $/ix';
+
+    /**
+     * @see http://tools.ietf.org/html/rfc3986#appendix-B
+     *
+     * Original regex has been modified to reject URI references. It just
+     * enforces the general structure of the URI (each part, like scheme,
+     * authority, etc. should be validated separately)
+     */
+    const URI_REGEX = '#^(([^:/?\#]+):)?//([^/?\#]*)(\?([^\#]*))?(\#(.*))?#ix';
 
     public function keywords()
     {
@@ -43,9 +58,10 @@ class FormatConstraint implements Constraint
         if (!is_string($instance)) {
             $context->addViolation('should be a string');
         } elseif ($schema->format === 'date-time') {
-            $dateTime = DateTime::createFromFormat(DateTime::RFC3339, $instance);
-
-            if (!$dateTime || $dateTime->format(DateTime::RFC3339) !== $instance) {
+            // PHP support for RFC3339 doesn't include fractional time
+            // (milliseconds) so we must add another check if needed
+            if (!$this->isDateTimeValid($instance, DATE_RFC3339)
+                && !$this->isDateTimeValid($instance, 'Y-m-d\TH:i:s.uP')) {
                 $context->addViolation('should be a valid date-time (RFC3339)');
             }
         } elseif ($schema->format === 'email') {
@@ -65,11 +81,22 @@ class FormatConstraint implements Constraint
                 $context->addViolation('should be a valid IPv6 address');
             }
         } elseif ($schema->format === 'uri') {
-            // TODO: implement an RFC3986-compliant validation (this one is RFC2396)
-
-            if (!filter_var($instance, FILTER_VALIDATE_URL)) {
-                $context->addViolation('should be a valid URI');
+            if (!preg_match(self::URI_REGEX, $instance)) {
+                $context->addViolation('should be a valid URI (RFC3986)');
             }
         }
+    }
+
+    private function isDateTimeValid($date, $format)
+    {
+        $dateTime = DateTime::createFromFormat($format, $date);
+
+        if (!$dateTime) {
+            return false;
+        }
+
+        $errors = DateTime::getLastErrors();
+
+        return $errors['warning_count'] === 0 && $errors['error_count'] === 0;
     }
 }
