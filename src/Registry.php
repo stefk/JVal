@@ -57,8 +57,6 @@ class Registry
             new Constraint\MaxItemsConstraint(),
             new Constraint\MinItemsConstraint(),
             new Constraint\UniqueItemsConstraint(),
-            new Constraint\MaxPropertiesConstraint(),
-            new Constraint\MinPropertiesConstraint(),
             new Constraint\RequiredConstraint(),
             new Constraint\PropertiesConstraint(),
             new Constraint\DependenciesConstraint(),
@@ -72,13 +70,12 @@ class Registry
     {
         return [
             new Constraint\MultipleOfConstraint(),
+            new Constraint\MinPropertiesConstraint(),
             new Constraint\MaxPropertiesConstraint(),
             new Constraint\AllOfConstraint(),
             new Constraint\AnyOfConstraint(),
             new Constraint\OneOfConstraint(),
-            new Constraint\NotConstraint(),
-            new Constraint\MinPropertiesConstraint(),
-            new Constraint\MaxPropertiesConstraint()
+            new Constraint\NotConstraint()
         ];
     }
 }
