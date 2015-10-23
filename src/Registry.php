@@ -2,17 +2,7 @@
 
 namespace JsonSchema;
 
-use JsonSchema\Constraint\AllOfConstraint;
-use JsonSchema\Constraint\AnyOfConstraint;
-use JsonSchema\Constraint\ItemsConstraint;
-use JsonSchema\Constraint\MaximumConstraint;
-use JsonSchema\Constraint\MaxItemsConstraint;
-use JsonSchema\Constraint\MaxPropertiesConstraint;
-use JsonSchema\Constraint\MultipleOfConstraint;
-use JsonSchema\Constraint\OneOfConstraint;
-use JsonSchema\Constraint\PropertiesConstraint;
-use JsonSchema\Constraint\TypeConstraint;
-use JsonSchema\Constraint\UniqueItemsConstraint;
+use JsonSchema\Constraint;
 
 class Registry
 {
@@ -58,22 +48,37 @@ class Registry
     private function createCommonConstraints()
     {
         return [
-            new MaximumConstraint(),
-            new MaxItemsConstraint(),
-            new ItemsConstraint(),
-            new PropertiesConstraint(),
-            new TypeConstraint()
+            new Constraint\MaximumConstraint(),
+            new Constraint\MinimumConstraint(),
+            new Constraint\MaxLengthConstraint(),
+            new Constraint\MinLengthConstraint(),
+            new Constraint\PatternConstraint(),
+            new Constraint\ItemsConstraint(),
+            new Constraint\MaxItemsConstraint(),
+            new Constraint\MinItemsConstraint(),
+            new Constraint\UniqueItemsConstraint(),
+            new Constraint\MaxPropertiesConstraint(),
+            new Constraint\MinPropertiesConstraint(),
+            new Constraint\RequiredConstraint(),
+            new Constraint\PropertiesConstraint(),
+            new Constraint\DependenciesConstraint(),
+            new Constraint\EnumConstraint(),
+            new Constraint\TypeConstraint(),
+            new Constraint\FormatConstraint()
         ];
     }
 
     private function createDraft4Constraints()
     {
         return [
-            new MultipleOfConstraint(),
-            new MaxPropertiesConstraint(),
-            new AllOfConstraint(),
-            new AnyOfConstraint(),
-            new OneOfConstraint()
+            new Constraint\MultipleOfConstraint(),
+            new Constraint\MaxPropertiesConstraint(),
+            new Constraint\AllOfConstraint(),
+            new Constraint\AnyOfConstraint(),
+            new Constraint\OneOfConstraint(),
+            new Constraint\NotConstraint(),
+            new Constraint\MinPropertiesConstraint(),
+            new Constraint\MaxPropertiesConstraint()
         ];
     }
 }

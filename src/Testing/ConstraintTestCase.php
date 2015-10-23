@@ -16,70 +16,14 @@ abstract class ConstraintTestCase extends BaseTestCase
     private $expectedExceptionTarget;
 
     /**
-     * Asserts a constraint exception will be thrown at a given path
-     * and optionally on a given target.
-     *
-     * @param string $exceptionName
-     * @param string $path
-     * @param string $target
-     */
-    protected function expectConstraintException($exceptionName, $path, $target = null)
-    {
-        $this->expectedExceptionClass = "JsonSchema\\Exception\\Constraint\\{$exceptionName}";
-        $this->expectedExceptionPath = $path;
-        $this->expectedExceptionTarget = $target;
-        $this->expectException();
-    }
-
-    /**
-     * Implements the default hook, asserting that the exception thrown
-     * is an instance of ConstraintException and that its path and target
-     * match the expectations.
-     *
-     * @param \Exception $ex
-     * @throws \Exception
-     */
-    protected function exceptionHook(\Exception $ex)
-    {
-        if (empty($this->expectedExceptionClass)) {
-            throw $ex;
-        }
-
-        $this->assertThat(
-            $ex,
-            new \PHPUnit_Framework_Constraint_Exception(
-                $this->expectedExceptionClass
-            )
-        );
-
-        if (!$ex instanceof ConstraintException) {
-            $this->fail('Exception thrown is not a ConstraintException');
-        }
-
-        $this->assertEquals(
-            $this->expectedExceptionPath,
-            $ex->getPath(),
-            'Exception was not thrown at the expected path.'
-        );
-
-        if (!empty($this->expectedExceptionTarget)) {
-            $this->assertEquals(
-                $this->expectedExceptionTarget,
-                $ex->getTarget(),
-                'Exception doesn not have the expected target.'
-            );
-        }
-    }
-
-    /**
      * @dataProvider applyTestProvider
+     *
      * @param string    $file
      * @param string    $title
      * @param mixed     $instance
      * @param \stdClass $schema
      * @param bool      $isInstanceValid
      * @param array     $expectedErrors
-     * @internal param string $caseName
      */
     public function testApply(
         $file,
@@ -147,5 +91,61 @@ abstract class ConstraintTestCase extends BaseTestCase
     protected function mockWalker()
     {
         return $this->mock('JsonSchema\Walker');
+    }
+
+    /**
+     * Asserts a constraint exception will be thrown at a given path
+     * and optionally on a given target.
+     *
+     * @param string $exceptionName
+     * @param string $path
+     * @param string $target
+     */
+    protected function expectConstraintException($exceptionName, $path, $target = null)
+    {
+        $this->expectedExceptionClass = "JsonSchema\\Exception\\Constraint\\{$exceptionName}";
+        $this->expectedExceptionPath = $path;
+        $this->expectedExceptionTarget = $target;
+        $this->expectException();
+    }
+
+    /**
+     * Implements the default hook, asserting that the exception thrown
+     * is an instance of ConstraintException and that its path and target
+     * match the expectations.
+     *
+     * @param \Exception $ex
+     * @throws \Exception
+     */
+    protected function exceptionHook(\Exception $ex)
+    {
+        if (empty($this->expectedExceptionClass)) {
+            throw $ex;
+        }
+
+        $this->assertThat(
+            $ex,
+            new \PHPUnit_Framework_Constraint_Exception(
+                $this->expectedExceptionClass
+            )
+        );
+
+        if (!$ex instanceof ConstraintException) {
+            $this->fail('Exception thrown is not a ConstraintException');
+        }
+
+        $this->assertEquals(
+            $this->expectedExceptionPath,
+            $ex->getPath(),
+            'Exception was not thrown at the expected path.'
+        );
+
+        if (!empty($this->expectedExceptionTarget)) {
+            $this->assertEquals(
+                $this->expectedExceptionTarget,
+                $ex->getTarget(),
+                'Exception doesn not have the expected target.'
+            );
+        }
     }
 }
