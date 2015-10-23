@@ -48,8 +48,8 @@ class Draft4Test extends BaseTestCase
 
         foreach (new \RecursiveIteratorIterator($iterator) as $item) {
             if ($item->isFile()) {
-                $whiteList = $this->whiteList();
-                $blackList = $this->blackList();
+                $whiteList = $this->whiteListFiles();
+                $blackList = $this->blackListFiles();
 
                 if ($whiteList !== false && !in_array($item->getBaseName(), $whiteList)) {
                     continue;
@@ -63,6 +63,10 @@ class Draft4Test extends BaseTestCase
 
                 foreach ($cases as $case) {
                     foreach ($case->tests as $test) {
+                        if (in_array($test->description, $this->blackListTests())) {
+                            continue;
+                        }
+
                         $tests[] = array(
                             $item->getFilename(),
                             "{$case->description} - {$test->description}",
@@ -78,13 +82,22 @@ class Draft4Test extends BaseTestCase
         return $tests;
     }
 
-    private function blackList()
+    private function blackListFiles()
     {
         return [];
     }
 
-    private function whiteList()
+    private function blackListTests()
     {
-        return ['allOf.json'];
+        // those two tests won't never pass in PHP
+        return [
+            'a bignum is an integer',
+            'a negative bignum is an integer'
+        ];
+    }
+
+    private function whiteListFiles()
+    {
+        return false;
     }
 }
