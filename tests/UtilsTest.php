@@ -26,6 +26,21 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(Utils::areEqual($a, $b));
     }
 
+    public function testAreEqualWithRecursiveReference()
+    {
+        $a = new \stdClass();
+        $a->foo = [1, 2, 3];
+        $a->bar = new \stdClass();
+        $a->bar->baz = $a;
+
+        $b = new \stdClass();
+        $b->foo = [1, 2, 3];
+        $b->bar = new \stdClass();
+        $b->bar->baz = $b;
+
+        $this->assertTrue(Utils::areEqual($a, $b));
+    }
+
     public function equalDataProvider()
     {
         $a = new \stdClass();

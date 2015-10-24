@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "foo": {
+      "type": "string"
+    },
+    "bar": {
+      "$ref": "#/properties/foo"
+    }
+  }
+}

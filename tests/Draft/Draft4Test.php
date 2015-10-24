@@ -23,7 +23,15 @@ class Draft4Test extends BaseTestCase
         $isInstanceValid
     )
     {
-        $validator = Validator::buildDefault();
+        $validator = Validator::buildDefault(function ($uri) {
+            $remoteDir = realpath(__DIR__ . '/../../vendor/json-schema/test-suite/remotes');
+
+            return str_replace(
+                'http://localhost:1234',
+                'file://' . $remoteDir,
+                $uri
+            );
+        });
         $actualErrors = $validator->validate($instance, $schema);
 
         $this->assertValidationResult(
@@ -59,19 +67,25 @@ class Draft4Test extends BaseTestCase
                     continue;
                 }
 
-                $cases = $this->loadJsonFromFile($item->getPathname());
+                $caseCount = count($this->loadJsonFromFile($item->getPathname()));
 
-                foreach ($cases as $case) {
-                    foreach ($case->tests as $test) {
+                for ($i = 0; $i < $caseCount; ++$i) {
+
+                    // As validation begins with a normalization step, we cannot
+                    // share the same schema instance between tests, so we reload
+                    // it for each case.
+                    $cases = $this->loadJsonFromFile($item->getPathname());
+
+                    foreach ($cases[$i]->tests as $test) {
                         if (in_array($test->description, $this->blackListTests())) {
                             continue;
                         }
 
                         $tests[] = array(
                             $item->getFilename(),
-                            "{$case->description} - {$test->description}",
+                            "{$cases[$i]->description} - {$test->description}",
                             $test->data,
-                            $case->schema,
+                            $cases[$i]->schema,
                             $test->valid
                         );
                     }
@@ -84,7 +98,7 @@ class Draft4Test extends BaseTestCase
 
     private function blackListFiles()
     {
-        return [];
+        return ['refRemote.json', 'definitions.json'];
     }
 
     private function blackListTests()
@@ -93,11 +107,15 @@ class Draft4Test extends BaseTestCase
         return [
             'a bignum is an integer',
             'a negative bignum is an integer'
+
+            ,
+            'remote ref valid',
+            'remote ref invalid'
         ];
     }
 
     private function whiteListFiles()
     {
-        return ['ref.json'];
+        return false;
     }
 }

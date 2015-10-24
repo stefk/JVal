@@ -15,6 +15,20 @@ class Utils
      */
     public static function areEqual($a, $b)
     {
+        return self::doAreEqual($a, $b, []);
+    }
+
+    public static function doAreEqual($a, $b, array $stack)
+    {
+        // keep track of object references to avoid infinite recursion
+        if (is_object($a)) {
+            if (in_array($a , $stack)) {
+                return true;
+            }
+
+            $stack[] = $a;
+        }
+
         if (gettype($a) !== gettype($b)) {
             return false;
         }
@@ -32,7 +46,11 @@ class Utils
             }
 
             foreach ($a as $key => $value) {
-                if (!self::areEqual($value, $b[$key])) {
+                if (!array_key_exists($key, $b)) {
+                    return false;
+                }
+
+                if (!self::doAreEqual($value, $b[$key], $stack)) {
                     return false;
                 }
             }

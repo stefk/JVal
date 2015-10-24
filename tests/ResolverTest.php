@@ -197,6 +197,59 @@ class ResolverTest extends BaseTestCase
         $this->resolver->resolve($reference);
     }
 
+    public function testReplaceInAncestorWithNoMatch()
+    {
+        $subSchema = new stdClass();
+        $subSchema->foo = 1;
+        $replacementSchema = new stdClass();
+        $replacementSchema->bar = 2;
+        $ancestorSchema = new stdClass();
+        $ancestorSchema->baz = 3;
+
+        $this->resolver->replaceInAncestor($subSchema, $replacementSchema, $ancestorSchema);
+        $this->assertEquals(1, count(get_object_vars($ancestorSchema)));
+        $this->assertObjectHasAttribute('baz', $ancestorSchema);
+        $this->assertEquals(3, $ancestorSchema->baz);
+    }
+
+    public function testReplaceInAncestorWithPropertyMatch()
+    {
+        $subSchema = new stdClass();
+        $subSchema->foo = 1;
+        $replacementSchema = new stdClass();
+        $replacementSchema->bar = 2;
+        $ancestorSchema = new stdClass();
+        $ancestorSchema->baz = new stdClass();
+        $ancestorSchema->baz->quz = $subSchema;
+
+        $this->resolver->replaceInAncestor($subSchema, $replacementSchema, $ancestorSchema);
+        $this->assertEquals(1, count(get_object_vars($ancestorSchema)));
+        $this->assertObjectHasAttribute('baz', $ancestorSchema);
+        $this->assertEquals(1, count(get_object_vars($ancestorSchema->baz)));
+        $this->assertObjectHasAttribute('quz', $ancestorSchema->baz);
+        $this->assertSame($replacementSchema, $ancestorSchema->baz->quz);
+    }
+
+    public function testReplaceInAncestorWithArrayElementMatch()
+    {
+        $subSchema = new stdClass();
+        $subSchema->foo = 1;
+        $replacementSchema = new stdClass();
+        $replacementSchema->bar = 2;
+        $ancestorSchema = new stdClass();
+        $ancestorSchema->baz = [];
+        $ancestorSchema->baz[0] = new stdClass();
+        $ancestorSchema->baz[1] = $subSchema;
+
+        $this->resolver->replaceInAncestor($subSchema, $replacementSchema, $ancestorSchema);
+        $this->assertEquals(1, count(get_object_vars($ancestorSchema)));
+        $this->assertObjectHasAttribute('baz', $ancestorSchema);
+        $this->assertInternalType('array', $ancestorSchema->baz);
+        $this->assertEquals(2, count($ancestorSchema->baz));
+        $this->assertEquals(new stdClass(), $ancestorSchema->baz[0]);
+        $this->assertSame($replacementSchema, $ancestorSchema->baz[1]);
+    }
+
     public function rootRefProvider()
     {
         return [

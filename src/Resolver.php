@@ -12,6 +12,7 @@ use JsonSchema\Exception\Resolver\SelfReferencingPointerException;
 use JsonSchema\Exception\Resolver\UnfetchableUriException;
 use JsonSchema\Exception\Resolver\UnresolvedPointerIndexException;
 use JsonSchema\Exception\Resolver\UnresolvedPointerPropertyException;
+use Closure;
 use stdClass;
 
 class Resolver
@@ -19,6 +20,7 @@ class Resolver
     private $schemas = [];
     private $baseUri;
     private $baseSchema;
+    private $resolveHook;
 
     /**
      * Returns whether a base schema has been set.
@@ -59,6 +61,33 @@ class Resolver
     }
 
     /**
+     * Returns the URI of the current base schema.
+     *
+     * @return string
+     * @throws NoBaseSchemaException
+     */
+    public function getBaseUri()
+    {
+        if (!isset($this->baseSchema)) {
+            throw new NoBaseSchemaException();
+        }
+
+        return $this->baseUri;
+    }
+
+    /**
+     * Sets a resolve hook. The hook function will be called each time a
+     * reference is resolved. It is passed the original pointer URI and must
+     * return a new URI string.
+     *
+     * @param Closure $resolveHook
+     */
+    public function setResolveHook(Closure $resolveHook)
+    {
+        $this->resolveHook = $resolveHook;
+    }
+
+    /**
      * Resolves a schema reference according to the JSON Reference
      * specification draft.
      *
@@ -70,7 +99,13 @@ class Resolver
      */
     public function resolve(stdClass $reference)
     {
-        $pointerUri = rawurldecode($reference->{'$ref'});
+        $pointerUri = $reference->{'$ref'};
+
+        if ($hook = $this->resolveHook) {
+            $pointerUri = $hook($pointerUri);
+        }
+
+        $pointerUri = rawurldecode($pointerUri);
         $uriParts = explode('#', $pointerUri);
         $uri = $uriParts[0];
         $pointer = isset($uriParts[1]) ? $uriParts[1] : '';
@@ -94,6 +129,37 @@ class Resolver
         }
 
         return $resolved;
+    }
+
+    /**
+     * Recursively searches occurrences of a subSchema in an ancestor schema,
+     * and replaces them by references to another schema.
+     *
+     * @param stdClass $subSchema
+     * @param stdClass $replacementSchema
+     * @param stdClass $ancestor
+     */
+    public function replaceInAncestor(
+        stdClass $subSchema,
+        stdClass $replacementSchema,
+        stdClass $ancestor
+    )
+    {
+        foreach ($ancestor as $property => $value) {
+            if ($value === $subSchema) {
+                $ancestor->{$property} = $replacementSchema;
+            } elseif (is_object($value)) {
+                $this->replaceInAncestor($subSchema, $replacementSchema, $value);
+            } elseif (is_array($value)) {
+                foreach ($value as $index => $element) {
+                    if ($element === $subSchema) {
+                        $ancestor->{$property}[$index] = $replacementSchema;
+                    } elseif (is_object($element)) {
+                        $this->replaceInAncestor($subSchema, $replacementSchema, $element);
+                    }
+                }
+            }
+        }
     }
 
     /**

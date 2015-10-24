@@ -9,10 +9,15 @@ class Validator
 {
     private $walker;
 
-    public static function buildDefault()
+    public static function buildDefault(\Closure $resolveHook = null)
     {
         $registry = new Registry();
         $resolver = new Resolver();
+
+        if ($resolveHook) {
+            $resolver->setResolveHook($resolveHook);
+        }
+
         $walker = new Walker($registry, $resolver);
 
         return new Validator($walker);
@@ -28,7 +33,11 @@ class Validator
         $parseContext = new Context();
         $constraintContext = new Context();
 
-        $this->walker->parseSchema($schema, $parseContext);
+//        var_dump('validating', $instance, 'with', $schema);
+
+        $schema = $this->walker->parseSchema($schema, $parseContext);
+
+//        var_dump('schema after parsing', $schema);
 
         // todo: keep ref of already parsed schemas
 
