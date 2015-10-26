@@ -25,60 +25,74 @@ class WalkerTest extends BaseTestCase
         $this->walker = new Walker($registry, $resolver);
     }
 
-    public function testParseSchemaWithLocalReferences()
+    public function testResolveReferencesWithNoReferences()
+    {
+        $schema = $this->loadSchema('valid/items-array');
+        $resolved = $this->walker->resolveReferences($schema, 'file:///foo/bar');
+        $this->assertEquals($schema, $resolved);
+        $this->assertSame($schema, $resolved);
+    }
+
+    public function testResolveReferencesWithLocalReferences()
     {
         $schema = $this->loadSchema('valid/local-references');
-        $parsed = $this->walker->parseSchema($schema, new Context());
-        $this->assertObjectHasAttribute('properties', $parsed);
+        $resolved = $this->walker->resolveReferences($schema, 'file:///foo/bar');
+        $this->assertObjectHasAttribute('properties', $resolved);
 
-        $this->assertObjectHasAttribute('foo', $parsed->properties);
-        $this->assertObjectNotHasAttribute('$ref', $parsed->properties->foo);
-        $this->assertSame($schema->definitions->foo, $parsed->properties->foo);
+        $this->assertObjectHasAttribute('foo', $resolved->properties);
+        $this->assertObjectNotHasAttribute('$ref', $resolved->properties->foo);
+        $this->assertSame($schema->definitions->foo, $resolved->properties->foo);
 
-        $this->assertObjectHasAttribute('bar', $parsed->properties);
-        $this->assertObjectNotHasAttribute('$ref', $parsed->properties->bar);
-        $this->assertSame($schema->definitions->bar, $parsed->properties->bar);
+        $this->assertObjectHasAttribute('bar', $resolved->properties);
+        $this->assertObjectNotHasAttribute('$ref', $resolved->properties->bar);
+        $this->assertSame($schema->definitions->bar, $resolved->properties->bar);
+
+        $this->assertObjectHasAttribute('items', $resolved);
+        $this->assertArrayHasKey(0, $resolved->items);
+        $this->assertSame($schema->definitions->baz[0], $resolved->items[0]);
     }
 
-    public function testParseSchemaWithRecursiveReferences()
+    public function testResolveReferencesWithRecursiveReferences()
     {
         $schema = $this->loadSchema('valid/recursive-references');
-        $parsed = $this->walker->parseSchema($schema, new Context());
+        $resolved = $this->walker->resolveReferences($schema, 'file:///foo/bar');
 
-        $this->assertObjectHasAttribute('properties', $parsed);
-        $this->assertObjectHasAttribute('additionalProperties', $parsed);
-        $this->assertObjectHasAttribute('patternProperties', $parsed);
+        $this->assertObjectHasAttribute('properties', $resolved);
 
-        $this->assertEquals(false, $parsed->additionalProperties);
-        $this->assertEquals(new \stdClass(), $parsed->patternProperties);
+        $this->assertObjectHasAttribute('foo', $resolved->properties);
+        $this->assertObjectNotHasAttribute('$ref', $resolved->properties->foo);
+        $this->assertSame($resolved, $resolved->properties->foo);
 
-        $this->assertObjectHasAttribute('foo', $parsed->properties);
-        $this->assertObjectNotHasAttribute('$ref', $parsed->properties->foo);
-        $this->assertSame($parsed, $parsed->properties->foo);
-
-        $this->assertObjectHasAttribute('bar', $parsed->properties);
-        $this->assertObjectNotHasAttribute('$ref', $parsed->properties->bar);
-        $this->assertSame($parsed->properties->bar, $parsed->definitions->bar);
+        $this->assertObjectHasAttribute('bar', $resolved->properties);
+        $this->assertObjectNotHasAttribute('$ref', $resolved->properties->bar);
+        $this->assertSame($resolved->properties->bar, $resolved->definitions->bar);
     }
 
-    public function testParseSchemaWithReferenceOnly()
+    public function testResolveReferencesWithOneAbsoluteRemoteReferenceOnly()
     {
-        $schema = $this->loadSchema('valid/remote-reference-only');
-        $parsed = $this->walker->parseSchema($schema, new Context());
-        $this->assertEquals(2, count(get_object_vars($parsed)));
-        $this->assertObjectHasAttribute('maximum', $parsed);
-        $this->assertObjectHasAttribute('exclusiveMaximum', $parsed);
+        $schema = $this->loadSchema('valid/remote-absolute-reference');
+        $resolved = $this->walker->resolveReferences($schema, 'file:///foo/bar');
+        $this->assertEquals(1, count(get_object_vars($resolved)));
+        $this->assertObjectHasAttribute('maximum', $resolved);
     }
 
-    public function testApplyConstraintsWithRecursiveReference()
+    public function testResolveReferencesWithOneARelativeRemoteReferenceOnly()
     {
-        $schema = $this->loadSchema('valid/recursive-references');
-        $this->walker->parseSchema($schema, new Context());
-
-        $instance = new \stdClass();
-        $instance->foo = new \stdClass();
-        $instance->foo->foo = false;
-
-        $this->walker->applyConstraints($instance, $schema, new Context());
+        $schema = $this->loadSchema('valid/remote-relative-reference');
+        $resolved = $this->walker->resolveReferences($schema, 'http://localhost:1342/base.json');
+        $this->assertEquals(1, count(get_object_vars($resolved)));
+        $this->assertObjectHasAttribute('maximum', $resolved);
     }
+//
+//    public function testApplyConstraintsWithRecursiveReference()
+//    {
+//        $schema = $this->loadSchema('valid/recursive-references');
+//        $this->walker->parseSchema($schema, new Context());
+//
+//        $instance = new \stdClass();
+//        $instance->foo = new \stdClass();
+//        $instance->foo->foo = false;
+//
+//        $this->walker->applyConstraints($instance, $schema, new Context());
+//    }
 }

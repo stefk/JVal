@@ -5,7 +5,12 @@
     },
     "bar": {
       "type": "string"
-    }
+    },
+    "baz": [
+      {
+        "type": "array"
+      }
+    ]
   },
   "properties": {
     "foo": {
@@ -14,5 +19,10 @@
     "bar": {
       "$ref": "#/definitions/bar"
     }
-  }
+  },
+  "items": [
+    {
+      "$ref": "#/definitions/baz/0"
+    }
+  ]
 }

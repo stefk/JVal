@@ -23,6 +23,8 @@ class Resolver
     private $resolveHook;
 
     private $currentUri;
+
+    private $uriStack = [];
     private $scopeStack = [];
 
     /**
@@ -39,13 +41,14 @@ class Resolver
      * Sets the current schema, on which resolutions will be based.
      *
      * @param stdClass  $schema
-     * @param string    $uri
+     * @param Uri       $uri
      */
-    public function setBaseSchema(stdClass $schema, $uri)
+    public function setBaseSchema(stdClass $schema, Uri $uri)
     {
         $this->registerSchema($schema, $uri);
-        $this->baseUri = $uri;
+        $this->baseUri = new $uri;
         $this->baseSchema = $schema;
+        $this->uriStack = [$this->baseUri];
     }
 
     /**
@@ -64,18 +67,17 @@ class Resolver
     }
 
     /**
-     * Returns the URI of the current base schema.
+     * Returns the URI of the current schema.
      *
-     * @return string
-     * @throws NoBaseSchemaException
+     * @return Uri
      */
-    public function getBaseUri()
+    public function getCurrentUri()
     {
-        if (!isset($this->baseSchema)) {
-            throw new NoBaseSchemaException();
+        if (count($this->uriStack) === 0) {
+            throw new \Exception('URI stack is empty');
         }
 
-        return $this->baseUri;
+        return end($this->uriStack);
     }
 
     /**
@@ -105,19 +107,7 @@ class Resolver
         array_pop($this->scopeStack);
     }
 
-    public function normalizePointer($pointerUri)
-    {
-        // throw if pointer is empty
-
-        return $pointerUri;
-    }
-
-    public function enterPointer($pointerUri)
-    {
-
-    }
-
-    public function leavePointer()
+    public function leaveUri()
     {
 
     }
@@ -132,26 +122,35 @@ class Resolver
      * @throws SelfReferencingPointerException
      * @return stdClass
      */
-    public function resolve(stdClass $reference)
+    public function resolve(Uri $uri)
     {
-        $pointerUri = $reference->{'$ref'};
+        $currentUri = $this->getCurrentUri();
+        $this->uriStack[] = $uri;
 
-        if ($hook = $this->resolveHook) {
-            $pointerUri = $hook($pointerUri);
+        if (!$currentUri->isSamePrimaryResource($uri)) {
+            $identifier = $uri->getPrimaryResourceIdentifier();
+            $schema = isset($this->schemas[$identifier]) ?
+                $this->schemas[$identifier] :
+                $this->fetchSchemaAt($uri->getRawUri());
+            $this->registerSchema($schema, $identifier);
         }
 
-        $pointerUri = rawurldecode($pointerUri);
-        $uriParts = explode('#', $pointerUri);
-        $uri = $uriParts[0];
-        $pointer = isset($uriParts[1]) ? $uriParts[1] : '';
-        $baseSchema = $this->getBaseSchema();
+//        if ($hook = $this->resolveHook) {
+//            $pointerUri = $hook($pointerUri);
+//        }
 
-        if ($uri !== '' && $uri !== $this->baseUri) {
-            $baseSchema = isset($this->schemas[$uri]) ?
-                $this->schemas[$uri] :
-                $this->fetchSchemaAt($uriParts[0]);
-            $this->registerSchema($baseSchema, $uriParts[0]);
-        }
+//        $pointerUri = rawurldecode($pointerUri);
+//        $uriParts = explode('#', $pointerUri);
+//        $uri = $uriParts[0];
+//        $pointer = isset($uriParts[1]) ? $uriParts[1] : '';
+//        $baseSchema = $this->getBaseSchema();
+//
+//        if ($uri !== '' && $uri !== $this->baseUri) {
+//            $baseSchema = isset($this->schemas[$uri]) ?
+//                $this->schemas[$uri] :
+//                $this->fetchSchemaAt($uriParts[0]);
+//            $this->registerSchema($baseSchema, $uriParts[0]);
+//        }
 
         //var_dump([$baseSchema, $pointer]);
 

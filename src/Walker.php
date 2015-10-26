@@ -17,8 +17,12 @@ class Walker
         $this->resolver = $resolver;
     }
 
-    public function resolveSchema(stdClass $schema, $uri)
+    public function resolveReferences(stdClass $schema, Uri $uri)
     {
+        if (!$this->resolver->hasBaseSchema()) {
+            $this->resolver->setBaseSchema($schema, $uri);
+        }
+
         $inScope = false;
 
         if (property_exists($schema, 'id')) {
@@ -27,25 +31,26 @@ class Walker
         }
 
         if (property_exists($schema, '$ref')) {
-            $pointer = $this->resolver->normalizePointer($schema->{'$ref'});
-            $this->resolver->enterPointer($pointer);
-            $schema = $this->resolver->resolve($schema);
-            $this->resolver->leavePointer();
+            $uri = new Uri($schema->{'$ref'});
+            $uri->resolveAgainst($this->resolver->getCurrentUri());
+            $schema = $this->resolver->resolve(new Uri($schema->{'$ref'}));
+            $schema = $this->resolveReferences($schema, $uri);
+            $this->resolver->leaveUri();
         } else {
             foreach ($schema as $property => $value) {
                 if (is_object($value)) {
-                    $schema->{$property} = $this->resolveSchema($value, $uri);
+                    $schema->{$property} = $this->resolveReferences($value, $uri);
                 } elseif (is_array($value)) {
                     foreach ($value as $index => $element) {
                         if (is_object($element)) {
-                            $schema->{$property}[$index] = $this->resolveSchema($element, $uri);
+                            $schema->{$property}[$index] = $this->resolveReferences($element, $uri);
                         }
                     }
                 }
             }
         }
 
-        if (!$inScope) {
+        if ($inScope) {
             $this->resolver->leaveScope();
         }
 
