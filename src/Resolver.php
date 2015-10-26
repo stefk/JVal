@@ -22,6 +22,9 @@ class Resolver
     private $baseSchema;
     private $resolveHook;
 
+    private $currentUri;
+    private $scopeStack = [];
+
     /**
      * Returns whether a base schema has been set.
      *
@@ -87,6 +90,38 @@ class Resolver
         $this->resolveHook = $resolveHook;
     }
 
+
+    public function enterScope(stdClass $schema)
+    {
+
+    }
+
+    public function leaveScope()
+    {
+        if (count($this->scopeStack[$this->currentUri]) === 0) {
+            throw new \Exception('Cannot leave scope: stack for current URI is empty');
+        }
+
+        array_pop($this->scopeStack);
+    }
+
+    public function normalizePointer($pointerUri)
+    {
+        // throw if pointer is empty
+
+        return $pointerUri;
+    }
+
+    public function enterPointer($pointerUri)
+    {
+
+    }
+
+    public function leavePointer()
+    {
+
+    }
+
     /**
      * Resolves a schema reference according to the JSON Reference
      * specification draft.
@@ -118,6 +153,8 @@ class Resolver
             $this->registerSchema($baseSchema, $uriParts[0]);
         }
 
+        //var_dump([$baseSchema, $pointer]);
+
         $resolved = $this->resolvePointer($baseSchema, $pointer);
 
         if ($resolved === $reference) {
@@ -145,17 +182,33 @@ class Resolver
         stdClass $ancestor
     )
     {
+        $this->doReplaceInAncestor($subSchema, $replacementSchema, $ancestor, []);
+    }
+
+    public function doReplaceInAncestor(
+        stdClass $subSchema,
+        stdClass $replacementSchema,
+        stdClass $ancestor,
+        array $stack
+    )
+    {
+        if (in_array($ancestor, $stack)) {
+            return;
+        }
+
+        $stack[] = $ancestor;
+
         foreach ($ancestor as $property => $value) {
-            if ($value === $subSchema) {
+            if (Utils::areEqual($value, $subSchema)) {
                 $ancestor->{$property} = $replacementSchema;
             } elseif (is_object($value)) {
-                $this->replaceInAncestor($subSchema, $replacementSchema, $value);
+                $this->doReplaceInAncestor($subSchema, $replacementSchema, $value, $stack);
             } elseif (is_array($value)) {
                 foreach ($value as $index => $element) {
-                    if ($element === $subSchema) {
+                    if (Utils::areEqual($element, $subSchema)) {
                         $ancestor->{$property}[$index] = $replacementSchema;
                     } elseif (is_object($element)) {
-                        $this->replaceInAncestor($subSchema, $replacementSchema, $element);
+                        $this->doReplaceInAncestor($subSchema, $replacementSchema, $element, $stack);
                     }
                 }
             }

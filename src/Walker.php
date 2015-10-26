@@ -17,6 +17,41 @@ class Walker
         $this->resolver = $resolver;
     }
 
+    public function resolveSchema(stdClass $schema, $uri)
+    {
+        $inScope = false;
+
+        if (property_exists($schema, 'id')) {
+            $this->resolver->enterScope($schema);
+            $inScope = true;
+        }
+
+        if (property_exists($schema, '$ref')) {
+            $pointer = $this->resolver->normalizePointer($schema->{'$ref'});
+            $this->resolver->enterPointer($pointer);
+            $schema = $this->resolver->resolve($schema);
+            $this->resolver->leavePointer();
+        } else {
+            foreach ($schema as $property => $value) {
+                if (is_object($value)) {
+                    $schema->{$property} = $this->resolveSchema($value, $uri);
+                } elseif (is_array($value)) {
+                    foreach ($value as $index => $element) {
+                        if (is_object($element)) {
+                            $schema->{$property}[$index] = $this->resolveSchema($element, $uri);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!$inScope) {
+            $this->resolver->leaveScope();
+        }
+
+        return $schema;
+    }
+
     // resolve, normalize and validate schema
     public function parseSchema(stdClass $schema, Context $context)
     {
@@ -32,9 +67,9 @@ class Walker
             $this->resolver->setBaseSchema($schema, '');
         }
 
-        $isBaseSchema = $schema === $this->resolver->getBaseSchema();
-
         if (property_exists($schema, '$ref')) {
+            $isBaseSchema = $schema === $this->resolver->getBaseSchema();
+
             do {
                 $resolved = $this->resolver->resolve($schema);
                 $ancestor = $this->resolver->getBaseSchema();

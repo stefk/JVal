@@ -98,24 +98,21 @@ class Draft4Test extends BaseTestCase
 
     private function blackListFiles()
     {
-        return ['refRemote.json', 'definitions.json'];
+        return [];
     }
 
     private function blackListTests()
     {
-        // those two tests won't never pass in PHP
+        // those two tests won't never pass in PHP (bignums encountered in
+        // JSON strings are automatically converted to float)
         return [
             'a bignum is an integer',
             'a negative bignum is an integer'
-
-            ,
-            'remote ref valid',
-            'remote ref invalid'
         ];
     }
 
     private function whiteListFiles()
-    {
-        return false;
+    {return false;
+        return ['refRemote.json'];
     }
 }

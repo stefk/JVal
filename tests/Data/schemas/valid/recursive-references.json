@@ -1,0 +1,16 @@
+{
+  "definitions": {
+    "bar": {
+      "type": "integer"
+    }
+  },
+  "properties": {
+    "foo": {
+      "$ref": "#"
+    },
+    "bar": {
+      "$ref": "#/definitions/bar"
+    }
+  },
+  "additionalProperties": false
+}
