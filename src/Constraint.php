@@ -17,7 +17,7 @@ interface Constraint
      * Returns whether the constraint is applicable to a given type.
      * If not, the validation of that constraint should be considered
      * successful event without applying it (4.1). Type passed in is
-     * one of the primitive types listed in Registry::TYPE_*.
+     * one of the primitive types listed in Types::TYPE_*.
      *
      * @param string $type
      * @return bool
