@@ -1,10 +1,8 @@
 {
     "name": "stefk/alt-json-schema",
-    "require": {
-        "json-schema/json-schema": "dev-master"
-    },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
+        "json-schema/json-schema": "dev-master",
         "json-schema/test-suite": "dev-master"
     },
     "repositories": [
