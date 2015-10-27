@@ -8,8 +8,8 @@ class Walker
 {
     private $registry;
     private $resolver;
-
     private $parsedSchemas = [];
+    private $resolvedSchemas = [];
 
     public function __construct(Registry $registry, Resolver $resolver)
     {
@@ -19,23 +19,26 @@ class Walker
 
     public function resolveReferences(stdClass $schema, Uri $uri)
     {
+        if ($this->isLooping($schema, $this->resolvedSchemas)) {
+            return $schema;
+        }
+
         if (!$this->resolver->hasBaseSchema()) {
             $this->resolver->setBaseSchema($schema, $uri);
         }
 
         $inScope = false;
 
-        if (property_exists($schema, 'id')) {
-            $this->resolver->enterScope($schema);
+        if (property_exists($schema, 'id') && is_string($schema->id)) {
+            $this->resolver->enter(new Uri($schema->id));
             $inScope = true;
         }
 
         if (property_exists($schema, '$ref')) {
-            $uri = new Uri($schema->{'$ref'});
-            $uri->resolveAgainst($this->resolver->getCurrentUri());
-            $schema = $this->resolver->resolve(new Uri($schema->{'$ref'}));
-            $schema = $this->resolveReferences($schema, $uri);
-            $this->resolver->leaveUri();
+            $resolved = $this->resolver->resolve($schema);
+            $this->resolver->enter($resolved[0], $resolved[1]);
+            $schema = $this->resolveReferences($resolved[1], $resolved[0]);
+            $this->resolver->leave();
         } else {
             foreach ($schema as $property => $value) {
                 if (is_object($value)) {
@@ -51,47 +54,19 @@ class Walker
         }
 
         if ($inScope) {
-            $this->resolver->leaveScope();
+            $this->resolver->leave();
         }
 
         return $schema;
     }
 
-    // resolve, normalize and validate schema
     public function parseSchema(stdClass $schema, Context $context)
     {
-        foreach ($this->parsedSchemas as $parsedSchema) {
-            if ($schema === $parsedSchema || Utils::areEqual($schema, $parsedSchema)) {
-                return $schema;
-            }
-        }
-
-        $this->parsedSchemas[] = $schema;
-
-        if (!$this->resolver->hasBaseSchema()) {
-            $this->resolver->setBaseSchema($schema, '');
-        }
-
-        if (property_exists($schema, '$ref')) {
-            $isBaseSchema = $schema === $this->resolver->getBaseSchema();
-
-            do {
-                $resolved = $this->resolver->resolve($schema);
-                $ancestor = $this->resolver->getBaseSchema();
-                $this->resolver->replaceInAncestor($schema, $resolved, $ancestor);
-                $schema = $resolved;
-            } while (property_exists($resolved, '$ref'));
-
-            if ($isBaseSchema) {
-                $this->resolver->setBaseSchema($schema, $this->resolver->getBaseUri());
-            }
+        if ($this->isLooping($schema, $this->parsedSchemas)) {
+            return $schema;
         }
 
         $this->loadConstraints($schema, $context);
-
-        if (property_exists($schema, 'id')) {
-            // alter scope
-        }
 
         foreach ($this->registry->getConstraints() as $constraint) {
             foreach ($constraint->keywords() as $keyword) {
@@ -120,6 +95,24 @@ class Walker
                 }
             }
         }
+    }
+
+    private function isLooping($item, array &$stack)
+    {
+        $isKnown = false;
+
+        foreach ($stack as $knownItem) {
+            if ($item === $knownItem) {
+                $isKnown = true;
+                break;
+            }
+        }
+
+        if (!$isKnown) {
+            $stack[] = $item;
+        }
+
+        return $isKnown;
     }
 
     private function loadConstraints(stdClass $schema, Context $context)

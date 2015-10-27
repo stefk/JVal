@@ -23,16 +23,11 @@ class Draft4Test extends BaseTestCase
         $isInstanceValid
     )
     {
-        $validator = Validator::buildDefault(function ($uri) {
-            $remoteDir = realpath(__DIR__ . '/../../vendor/json-schema/test-suite/remotes');
-
-            return str_replace(
-                'http://localhost:1234',
-                'file://' . $remoteDir,
-                $uri
-            );
+        $remoteDir = realpath(__DIR__ . '/../../vendor/json-schema/test-suite/remotes');
+        $validator = Validator::buildDefault(function ($uri) use ($remoteDir) {
+            return str_replace('http://localhost:1234', 'file://' . $remoteDir, $uri);
         });
-        $actualErrors = $validator->validate($instance, $schema);
+        $actualErrors = $validator->validate($instance, $schema, 'file://' . $file);
 
         $this->assertValidationResult(
             $file,
@@ -70,7 +65,6 @@ class Draft4Test extends BaseTestCase
                 $caseCount = count($this->loadJsonFromFile($item->getPathname()));
 
                 for ($i = 0; $i < $caseCount; ++$i) {
-
                     // As validation begins with a normalization step, we cannot
                     // share the same schema instance between tests, so we reload
                     // it for each case.
@@ -82,7 +76,7 @@ class Draft4Test extends BaseTestCase
                         }
 
                         $tests[] = array(
-                            $item->getFilename(),
+                            $item->getPathName(),
                             "{$cases[$i]->description} - {$test->description}",
                             $test->data,
                             $cases[$i]->schema,
@@ -112,7 +106,7 @@ class Draft4Test extends BaseTestCase
     }
 
     private function whiteListFiles()
-    {return false;
-        return ['refRemote.json'];
+    {
+        return false;
     }
 }

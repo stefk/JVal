@@ -18,7 +18,7 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JsonSchema\Exception\Resolver\NoBaseSchemaException
+     * @expectedException \JsonSchema\Exception\Resolver\EmptyStackException
      */
     public function testGetSchemaThrowsIfNoBaseSchema()
     {
@@ -33,25 +33,25 @@ class ResolverTest extends BaseTestCase
     public function testResolveLocalRoot($schemaName)
     {
         $schema = $this->loadSchema($schemaName);
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $resolved = $this->resolver->resolve($schema->foo->bar);
-        $this->assertEquals($schema, $resolved);
+        $this->assertEquals($schema, $resolved[1]);
     }
 
     /**
      * @dataProvider chainProvider
      *
-     * @param stdClass $schema
+     * @param stdClass  $schema
      * @param string    $pointerUri
-     * @param stdClass $resolved
+     * @param stdClass  $resolved
      */
     public function testResolveChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $actual = $this->resolver->resolve($reference);
-        $this->assertSame($actual, $resolved);
+        $this->assertSame($actual[1], $resolved);
     }
 
     /**
@@ -63,7 +63,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUnresolvedPointerProperty(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -78,7 +78,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -93,7 +93,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUnresolvedPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -108,7 +108,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidPointerSegment(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -123,7 +123,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidPointerTarget(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -138,7 +138,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnSelfReferencingPointer(stdClass $schema, stdClass $reference)
     {
-        $this->resolver->setBaseSchema($schema, 'file:///foo/bar');
+        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
         $this->resolver->resolve($reference);
     }
 
@@ -151,7 +151,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUnfetchableUri($pointerUri)
     {
-        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -166,11 +166,11 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveRemoteSchema($pointerUri, stdClass $expectedSchema)
     {
-        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $resolved = $this->resolver->resolve($reference);
-        $this->assertEquals($expectedSchema, $resolved);
+        $this->assertEquals($resolved[1], $expectedSchema);
     }
 
     /**
@@ -178,7 +178,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {
-        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
         $schemaFile = __DIR__ . '/Data/schemas/invalid/undecodable.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
@@ -190,64 +190,11 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidRemoteSchema()
     {
-        $this->resolver->setBaseSchema(new stdClass(), 'file:///foo/bar');
+        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
         $schemaFile = __DIR__ . '/Data/schemas/invalid/not-an-object.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $this->resolver->resolve($reference);
-    }
-
-    public function testReplaceInAncestorWithNoMatch()
-    {
-        $subSchema = new stdClass();
-        $subSchema->foo = 1;
-        $replacementSchema = new stdClass();
-        $replacementSchema->bar = 2;
-        $ancestorSchema = new stdClass();
-        $ancestorSchema->baz = 3;
-
-        $this->resolver->replaceInAncestor($subSchema, $replacementSchema, $ancestorSchema);
-        $this->assertEquals(1, count(get_object_vars($ancestorSchema)));
-        $this->assertObjectHasAttribute('baz', $ancestorSchema);
-        $this->assertEquals(3, $ancestorSchema->baz);
-    }
-
-    public function testReplaceInAncestorWithPropertyMatch()
-    {
-        $subSchema = new stdClass();
-        $subSchema->foo = 1;
-        $replacementSchema = new stdClass();
-        $replacementSchema->bar = 2;
-        $ancestorSchema = new stdClass();
-        $ancestorSchema->baz = new stdClass();
-        $ancestorSchema->baz->quz = $subSchema;
-
-        $this->resolver->replaceInAncestor($subSchema, $replacementSchema, $ancestorSchema);
-        $this->assertEquals(1, count(get_object_vars($ancestorSchema)));
-        $this->assertObjectHasAttribute('baz', $ancestorSchema);
-        $this->assertEquals(1, count(get_object_vars($ancestorSchema->baz)));
-        $this->assertObjectHasAttribute('quz', $ancestorSchema->baz);
-        $this->assertSame($replacementSchema, $ancestorSchema->baz->quz);
-    }
-
-    public function testReplaceInAncestorWithArrayElementMatch()
-    {
-        $subSchema = new stdClass();
-        $subSchema->foo = 1;
-        $replacementSchema = new stdClass();
-        $replacementSchema->bar = 2;
-        $ancestorSchema = new stdClass();
-        $ancestorSchema->baz = [];
-        $ancestorSchema->baz[0] = new stdClass();
-        $ancestorSchema->baz[1] = $subSchema;
-
-        $this->resolver->replaceInAncestor($subSchema, $replacementSchema, $ancestorSchema);
-        $this->assertEquals(1, count(get_object_vars($ancestorSchema)));
-        $this->assertObjectHasAttribute('baz', $ancestorSchema);
-        $this->assertInternalType('array', $ancestorSchema->baz);
-        $this->assertEquals(2, count($ancestorSchema->baz));
-        $this->assertEquals(new stdClass(), $ancestorSchema->baz[0]);
-        $this->assertSame($replacementSchema, $ancestorSchema->baz[1]);
     }
 
     public function rootRefProvider()

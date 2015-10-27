@@ -1,0 +1,19 @@
+{
+  "id": "http://localhost:1234/valid/scoped.json",
+  "properties": {
+    "foo": {
+      "$ref": "items-array.json"
+    },
+    "bar": {
+      "$ref": "/valid/exclusiveMinimum-not-present.json"
+    },
+    "baz": {
+      "id": "exclusiveMaximum-not-present.json",
+      "oneOf": [
+        {
+          "$ref": "#"
+        }
+      ]
+    }
+  }
+}

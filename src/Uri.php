@@ -15,24 +15,17 @@ class Uri
 
     public function __construct($rawUri)
     {
-        $this->raw = rawurldecode($rawUri);
-        $this->parts = parse_url($this->raw);
-
-        if (!$this->parts) {
-            throw new \InvalidArgumentException('Cannot parse URI');
-        }
-
-        $this->scheme = isset($this->parts['scheme']) ? $this->parts['scheme'] : '';
-        $this->path = isset($this->parts['path']) ? $this->parts['path'] : '';
-        $this->query = isset($this->parts['query']) ? $this->parts['query'] : '';
-        $this->authority = $this->buildAuthority();
-        $this->segments = $this->buildSegments();
-        $this->primaryIdentifier = $this->buildPrimaryIdentifier();
+        $this->buildFromRawUri($rawUri);
     }
 
     public function getRawUri()
     {
         return $this->raw;
+    }
+
+    public function getRawPointer()
+    {
+        return isset($this->parts['fragment']) ? $this->parts['fragment'] : '';
     }
 
     public function isAbsolute()
@@ -119,16 +112,35 @@ class Uri
             $resolved .= '#' . $fragment;
         }
 
+        $this->buildFromRawUri($resolved);
+
         return $resolved;
     }
 
     public function isSamePrimaryResource(Uri $uri)
     {
         if (!$this->isAbsolute() || !$uri->isAbsolute()) {
-            throw new \LogicException('Both URI\'s must be absolute');
+            throw new \LogicException('Cannot compare URIs: both must be absolute');
         }
 
         return $this->primaryIdentifier === $uri->getPrimaryResourceIdentifier();
+    }
+
+    private function buildFromRawUri($rawUri)
+    {
+        $this->raw = rawurldecode($rawUri);
+        $this->parts = @parse_url($this->raw);
+
+        if (false === $this->parts) {
+            throw new \InvalidArgumentException("Cannot parse URI '{$rawUri}'");
+        }
+
+        $this->scheme = isset($this->parts['scheme']) ? $this->parts['scheme'] : '';
+        $this->path = isset($this->parts['path']) ? $this->parts['path'] : '';
+        $this->query = isset($this->parts['query']) ? $this->parts['query'] : '';
+        $this->authority = $this->buildAuthority();
+        $this->segments = $this->buildSegments();
+        $this->primaryIdentifier = $this->buildPrimaryIdentifier();
     }
 
     private function buildAuthority()
@@ -150,6 +162,10 @@ class Uri
 
         if (isset($this->parts['host'])) {
             $authority .= $this->parts['host'];
+        }
+
+        if (isset($this->parts['port'])) {
+            $authority .= ':' . $this->parts['port'];
         }
 
         return $authority;

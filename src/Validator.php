@@ -9,13 +9,13 @@ class Validator
 {
     private $walker;
 
-    public static function buildDefault(\Closure $resolveHook = null)
+    public static function buildDefault(\Closure $preFetchHook = null)
     {
         $registry = new Registry();
         $resolver = new Resolver();
 
-        if ($resolveHook) {
-            $resolver->setResolveHook($resolveHook);
+        if ($preFetchHook) {
+            $resolver->setPreFetchHook($preFetchHook);
         }
 
         $walker = new Walker($registry, $resolver);
@@ -28,19 +28,15 @@ class Validator
         $this->walker = $walker;
     }
 
-    public function validate($instance, stdClass $schema)
+    public function validate($instance, stdClass $schema, $schemaUri = '')
     {
         $parseContext = new Context();
         $constraintContext = new Context();
 
-//        var_dump('validating', $instance, 'with', $schema);
+        // todo: keep ref of already resolved/parsed schemas
 
+        $schema = $this->walker->resolveReferences($schema, new Uri($schemaUri));
         $schema = $this->walker->parseSchema($schema, $parseContext);
-
-//        var_dump('schema after parsing', $schema);
-
-        // todo: keep ref of already parsed schemas
-
         $this->walker->applyConstraints($instance, $schema, $constraintContext);
 
         return $constraintContext->getViolations();

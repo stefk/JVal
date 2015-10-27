@@ -2,12 +2,12 @@
 
 namespace JsonSchema;
 
+use JsonSchema\Exception\Resolver\EmptyStackException;
 use JsonSchema\Exception\Resolver\InvalidPointerIndexException;
 use JsonSchema\Exception\Resolver\InvalidPointerTargetException;
 use JsonSchema\Exception\Resolver\InvalidRemoteSchemaException;
 use JsonSchema\Exception\Resolver\InvalidSegmentTypeException;
 use JsonSchema\Exception\Resolver\JsonDecodeErrorException;
-use JsonSchema\Exception\Resolver\NoBaseSchemaException;
 use JsonSchema\Exception\Resolver\SelfReferencingPointerException;
 use JsonSchema\Exception\Resolver\UnfetchableUriException;
 use JsonSchema\Exception\Resolver\UnresolvedPointerIndexException;
@@ -17,15 +17,9 @@ use stdClass;
 
 class Resolver
 {
+    private $stack = [];
     private $schemas = [];
-    private $baseUri;
-    private $baseSchema;
-    private $resolveHook;
-
-    private $currentUri;
-
-    private $uriStack = [];
-    private $scopeStack = [];
+    private $preFetchHook;
 
     /**
      * Returns whether a base schema has been set.
@@ -34,7 +28,7 @@ class Resolver
      */
     public function hasBaseSchema()
     {
-        return isset($this->baseSchema);
+        return count($this->stack) > 0;
     }
 
     /**
@@ -46,184 +40,137 @@ class Resolver
     public function setBaseSchema(stdClass $schema, Uri $uri)
     {
         $this->registerSchema($schema, $uri);
-        $this->baseUri = new $uri;
-        $this->baseSchema = $schema;
-        $this->uriStack = [$this->baseUri];
+        $this->stack = [[$uri, $schema]];
     }
 
     /**
      * Returns the current base schema.
      *
      * @return stdClass
-     * @throws NoBaseSchemaException
+     * @throws EmptyStackException
      */
     public function getBaseSchema()
     {
-        if (!isset($this->baseSchema)) {
-            throw new NoBaseSchemaException();
+        if (count($this->stack) === 0) {
+            throw new EmptyStackException();
         }
 
-        return $this->baseSchema;
+        return $this->stack[0][1];
     }
 
     /**
      * Returns the URI of the current schema.
      *
      * @return Uri
+     * @throws EmptyStackException
      */
     public function getCurrentUri()
     {
-        if (count($this->uriStack) === 0) {
-            throw new \Exception('URI stack is empty');
+        if (count($this->stack) === 0) {
+            throw new EmptyStackException();
         }
 
-        return end($this->uriStack);
+        return end($this->stack)[0];
     }
 
     /**
-     * Sets a resolve hook. The hook function will be called each time a
-     * reference is resolved. It is passed the original pointer URI and must
-     * return a new URI string.
+     * Returns the current schema.
      *
-     * @param Closure $resolveHook
+     * @return stdClass
+     * @throws EmptyStackException
      */
-    public function setResolveHook(Closure $resolveHook)
+    public function getCurrentSchema()
     {
-        $this->resolveHook = $resolveHook;
-    }
-
-
-    public function enterScope(stdClass $schema)
-    {
-
-    }
-
-    public function leaveScope()
-    {
-        if (count($this->scopeStack[$this->currentUri]) === 0) {
-            throw new \Exception('Cannot leave scope: stack for current URI is empty');
+        if (count($this->stack) === 0) {
+            throw new EmptyStackException();
         }
 
-        array_pop($this->scopeStack);
+        return end($this->stack)[1];
     }
 
-    public function leaveUri()
+    /**
+     * Sets an URI pre-fetch hook. The hook function will be called each time
+     * a remote reference is about to be fetched. It is passed the original
+     * pointer URI and must return a new URI string.
+     *
+     * @param Closure $preFetchHook
+     */
+    public function setPreFetchHook(Closure $preFetchHook)
     {
+        $this->preFetchHook = $preFetchHook;
+    }
 
+    public function enter(Uri $uri, stdClass $schema = null)
+    {
+        $currentUri = $this->getCurrentUri();
+
+        if (!$uri->isAbsolute()) {
+            $uri->resolveAgainst($currentUri);
+        }
+
+        $this->stack[] = [$uri, $schema ?: $this->getCurrentSchema()];
+    }
+
+    public function leave()
+    {
+        if (count($this->stack) === 0) {
+            throw new EmptyStackException();
+        }
+
+        array_pop($this->stack);
     }
 
     /**
      * Resolves a schema reference according to the JSON Reference
-     * specification draft.
+     * specification draft. Returns an array containing the resolved
+     * URI and the resolved schema.
      *
      * @param stdClass $reference
      * @throws InvalidPointerTargetException
-     * @throws NoBaseSchemaException
      * @throws SelfReferencingPointerException
-     * @return stdClass
+     * @return array
      */
-    public function resolve(Uri $uri)
+    public function resolve(stdClass $reference)
     {
-        $currentUri = $this->getCurrentUri();
-        $this->uriStack[] = $uri;
+        $baseUri = $this->getCurrentUri();
+        $uri = new Uri($reference->{'$ref'});
 
-        if (!$currentUri->isSamePrimaryResource($uri)) {
-            $identifier = $uri->getPrimaryResourceIdentifier();
-            $schema = isset($this->schemas[$identifier]) ?
-                $this->schemas[$identifier] :
-                $this->fetchSchemaAt($uri->getRawUri());
-            $this->registerSchema($schema, $identifier);
+        if (!$uri->isAbsolute()) {
+            $uri->resolveAgainst($baseUri);
         }
 
-//        if ($hook = $this->resolveHook) {
-//            $pointerUri = $hook($pointerUri);
-//        }
+        $identifier = $uri->getPrimaryResourceIdentifier();
 
-//        $pointerUri = rawurldecode($pointerUri);
-//        $uriParts = explode('#', $pointerUri);
-//        $uri = $uriParts[0];
-//        $pointer = isset($uriParts[1]) ? $uriParts[1] : '';
-//        $baseSchema = $this->getBaseSchema();
-//
-//        if ($uri !== '' && $uri !== $this->baseUri) {
-//            $baseSchema = isset($this->schemas[$uri]) ?
-//                $this->schemas[$uri] :
-//                $this->fetchSchemaAt($uriParts[0]);
-//            $this->registerSchema($baseSchema, $uriParts[0]);
-//        }
+        if (!isset($this->schemas[$identifier])) {
+            $schema = $this->fetchSchemaAt($identifier);
+            $this->registerSchema($schema, $uri);
+        } else {
+            $schema = $this->schemas[$identifier];
+        }
 
-        //var_dump([$baseSchema, $pointer]);
-
-        $resolved = $this->resolvePointer($baseSchema, $pointer);
+        $resolved = $this->resolvePointer($schema, $uri);
 
         if ($resolved === $reference) {
             throw new SelfReferencingPointerException();
         }
 
         if (!is_object($resolved)) {
-            throw new InvalidPointerTargetException([$pointerUri]);
+            throw new InvalidPointerTargetException([$uri->getRawUri()]);
         }
 
-        return $resolved;
-    }
-
-    /**
-     * Recursively searches occurrences of a subSchema in an ancestor schema,
-     * and replaces them by references to another schema.
-     *
-     * @param stdClass $subSchema
-     * @param stdClass $replacementSchema
-     * @param stdClass $ancestor
-     */
-    public function replaceInAncestor(
-        stdClass $subSchema,
-        stdClass $replacementSchema,
-        stdClass $ancestor
-    )
-    {
-        $this->doReplaceInAncestor($subSchema, $replacementSchema, $ancestor, []);
-    }
-
-    public function doReplaceInAncestor(
-        stdClass $subSchema,
-        stdClass $replacementSchema,
-        stdClass $ancestor,
-        array $stack
-    )
-    {
-        if (in_array($ancestor, $stack)) {
-            return;
-        }
-
-        $stack[] = $ancestor;
-
-        foreach ($ancestor as $property => $value) {
-            if (Utils::areEqual($value, $subSchema)) {
-                $ancestor->{$property} = $replacementSchema;
-            } elseif (is_object($value)) {
-                $this->doReplaceInAncestor($subSchema, $replacementSchema, $value, $stack);
-            } elseif (is_array($value)) {
-                foreach ($value as $index => $element) {
-                    if (Utils::areEqual($element, $subSchema)) {
-                        $ancestor->{$property}[$index] = $replacementSchema;
-                    } elseif (is_object($element)) {
-                        $this->doReplaceInAncestor($subSchema, $replacementSchema, $element, $stack);
-                    }
-                }
-            }
-        }
+        return [$uri, $resolved];
     }
 
     /**
      * Caches a schema reference for future use.
      *
      * @param stdClass  $schema
-     * @param string    $uri
+     * @param Uri       $uri
      */
-    private function registerSchema(stdClass $schema, $uri)
+    private function registerSchema(stdClass $schema, Uri $uri)
     {
-        if (!isset($this->schemas[$uri])) {
-            $this->schemas[$uri] = $schema;
+        if (!isset($this->schemas[$uri->getPrimaryResourceIdentifier()])) {
+            $this->schemas[$uri->getPrimaryResourceIdentifier()] = $schema;
         }
     }
 
@@ -237,6 +184,10 @@ class Resolver
      */
     private function fetchSchemaAt($uri)
     {
+        if ($hook = $this->preFetchHook) {
+            $uri = $hook($uri);
+        }
+
         set_error_handler(function ($severity, $error) use ($uri) {
             restore_error_handler();
             throw new UnfetchableUriException([$uri, $error, $severity]);
@@ -261,27 +212,21 @@ class Resolver
     /**
      * Resolves a JSON pointer according to RFC 6901.
      *
-     * @param stdClass $schema
-     * @param string $pointer
+     * @param stdClass  $schema
+     * @param Uri       $pointerUri
      * @return mixed
      * @throws InvalidPointerIndexException
      * @throws InvalidSegmentTypeException
      * @throws UnresolvedPointerIndexException
      * @throws UnresolvedPointerPropertyException
      */
-    private function resolvePointer(stdClass $schema, $pointer)
+    private function resolvePointer(stdClass $schema, Uri $pointerUri)
     {
-        $segments = explode('/', $pointer);
+        $segments = $pointerUri->getPointerSegments();
+        $pointer = $pointerUri->getRawPointer();
         $currentNode = $schema;
 
         for ($i = 0, $max = count($segments); $i < $max; ++$i) {
-            if ($segments[$i] === '') {
-                continue;
-            }
-
-            $segments[$i] = str_replace('~1', '/', $segments[$i]);
-            $segments[$i] = str_replace('~0', '~', $segments[$i]);
-
             if (is_object($currentNode)) {
                 if (property_exists($currentNode, $segments[$i])) {
                     $currentNode = $currentNode->{$segments[$i]};
