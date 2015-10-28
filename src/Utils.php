@@ -14,6 +14,15 @@ namespace JVal;
  */
 class Utils
 {
+    private static $jsonErrors = [
+        JSON_ERROR_NONE             => 'No errors',
+        JSON_ERROR_DEPTH            => 'Maximum stack depth exceeded',
+        JSON_ERROR_STATE_MISMATCH   => 'Underflow or the modes mismatch',
+        JSON_ERROR_CTRL_CHAR        => 'Unexpected control character found',
+        JSON_ERROR_SYNTAX           => 'Syntax error, malformed JSON',
+        JSON_ERROR_UTF8             => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+    ];
+
     /**
      * Returns whether two variables are equal. Always compares
      * values, not references, and walks each variable recursively
@@ -26,6 +35,29 @@ class Utils
     public static function areEqual($a, $b)
     {
         return self::doAreEqual($a, $b, []);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * Returns the error message resulting from the last call to
+     * json_encode or json_decode functions.
+     *
+     * @return string
+     */
+    public static function lastJsonErrorMessage()
+    {
+        if (defined('json_last_error_msg')) {
+            return json_last_error_msg();
+        }
+
+        $lastError = json_last_error();
+
+        if (isset(static::$jsonErrors[$lastError])) {
+            return static::$jsonErrors[$lastError];
+        }
+
+        return 'Unknown error';
     }
 
     public static function doAreEqual($a, $b, array $stack)

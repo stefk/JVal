@@ -8,6 +8,7 @@
  */
 
 namespace JVal\Testing;
+use JVal\Utils;
 
 /**
  * Provides common methods for dealing with JSON data (loading, assertions,
@@ -83,7 +84,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             throw new \Exception(sprintf(
                 'json_decode error in file %s -> Error: %s',
                 $file,
-                json_last_error_msg()
+                Utils::lastJsonErrorMessage()
             ));
         }
 

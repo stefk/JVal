@@ -245,7 +245,7 @@ class Resolver
         $schema = json_decode($content);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new JsonDecodeErrorException([$uri, json_last_error_msg()]);
+            throw new JsonDecodeErrorException([$uri, Utils::lastJsonErrorMessage()]);
         }
 
         if (!is_object($schema)) {
