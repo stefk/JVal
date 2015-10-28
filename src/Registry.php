@@ -13,13 +13,41 @@ use JVal\Constraint;
 use JVal\Exception\UnsupportedVersionException;
 
 /**
- * Stores and exposes validation constraints.
+ * Stores and exposes validation constraints per version.
  */
 class Registry
 {
     const VERSION_CURRENT = 'http://json-schema.org/schema#';
     const VERSION_DRAFT_3 = 'http://json-schema.org/draft-03/schema#';
     const VERSION_DRAFT_4 = 'http://json-schema.org/draft-04/schema#';
+
+    private static $commonConstraints = [
+        'Maximum',
+        'Minimum',
+        'MaxLength',
+        'MinLength',
+        'Pattern',
+        'Items',
+        'MaxItems',
+        'MinItems',
+        'UniqueItems',
+        'Required',
+        'Properties',
+        'Dependencies',
+        'Enum',
+        'Type',
+        'Format'
+    ];
+
+    private static $draft4Constraints = [
+        'MultipleOf',
+        'MinProperties',
+        'MaxProperties',
+        'AllOf',
+        'AnyOf',
+        'OneOf',
+        'Not'
+    ];
 
     /**
      * @var Constraint[][]
@@ -43,9 +71,11 @@ class Registry
             switch ($version) {
                 case self::VERSION_CURRENT:
                 case self::VERSION_DRAFT_4:
-                    $this->constraints[$version] = array_merge(
-                        $this->createCommonConstraints(),
-                        $this->createDraft4Constraints()
+                    $this->constraints[$version] = $this->createConstraints(
+                        array_merge(
+                            self::$commonConstraints,
+                            self::$draft4Constraints
+                        )
                     );
                     break;
                 default:
@@ -75,37 +105,12 @@ class Registry
         return $this->constraints[$this->loadedVersion];
     }
 
-    private function createCommonConstraints()
+    private function createConstraints(array $constraintNames)
     {
-        return [
-            new Constraint\MaximumConstraint(),
-            new Constraint\MinimumConstraint(),
-            new Constraint\MaxLengthConstraint(),
-            new Constraint\MinLengthConstraint(),
-            new Constraint\PatternConstraint(),
-            new Constraint\ItemsConstraint(),
-            new Constraint\MaxItemsConstraint(),
-            new Constraint\MinItemsConstraint(),
-            new Constraint\UniqueItemsConstraint(),
-            new Constraint\RequiredConstraint(),
-            new Constraint\PropertiesConstraint(),
-            new Constraint\DependenciesConstraint(),
-            new Constraint\EnumConstraint(),
-            new Constraint\TypeConstraint(),
-            new Constraint\FormatConstraint()
-        ];
-    }
+        return array_map(function ($name) {
+            $class = "JVal\\Constraint\\{$name}Constraint";
 
-    private function createDraft4Constraints()
-    {
-        return [
-            new Constraint\MultipleOfConstraint(),
-            new Constraint\MinPropertiesConstraint(),
-            new Constraint\MaxPropertiesConstraint(),
-            new Constraint\AllOfConstraint(),
-            new Constraint\AnyOfConstraint(),
-            new Constraint\OneOfConstraint(),
-            new Constraint\NotConstraint()
-        ];
+            return new $class;
+        }, $constraintNames);
     }
 }
