@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
-use JsonSchema\Exception\UnsupportedTypeException;
+use JVal\Exception\UnsupportedTypeException;
 
 class Types
 {

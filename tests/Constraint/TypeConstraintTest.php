@@ -1,10 +1,10 @@
 <?php
 
-namespace JsonSchema\Constraint;
+namespace JVal\Constraint;
 
-use JsonSchema\Constraint;
-use JsonSchema\Context;
-use JsonSchema\Testing\ConstraintTestCase;
+use JVal\Constraint;
+use JVal\Context;
+use JVal\Testing\ConstraintTestCase;
 
 class TypeConstraintTest extends ConstraintTestCase
 {

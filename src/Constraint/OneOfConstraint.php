@@ -1,9 +1,9 @@
 <?php
 
-namespace JsonSchema\Constraint;
+namespace JVal\Constraint;
 
-use JsonSchema\Context;
-use JsonSchema\Walker;
+use JVal\Context;
+use JVal\Walker;
 use stdClass;
 
 class OneOfConstraint extends AbstractOfConstraint

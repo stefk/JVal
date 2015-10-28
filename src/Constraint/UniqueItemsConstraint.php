@@ -1,13 +1,13 @@
 <?php
 
-namespace JsonSchema\Constraint;
+namespace JVal\Constraint;
 
-use JsonSchema\Constraint;
-use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\InvalidTypeException;
-use JsonSchema\Types;
-use JsonSchema\Utils;
-use JsonSchema\Walker;
+use JVal\Constraint;
+use JVal\Context;
+use JVal\Exception\Constraint\InvalidTypeException;
+use JVal\Types;
+use JVal\Utils;
+use JVal\Walker;
 use stdClass;
 
 class UniqueItemsConstraint implements Constraint

@@ -1,6 +1,6 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
 use stdClass;
 
@@ -27,7 +27,7 @@ interface Constraint
     /**
      * Ensures the supported keywords have a valid value in a given
      * schema, and sets default ones if necessary. This method should
-     * be called only if one of the triggering keywords has been 
+     * be called only if one of the triggering keywords has been
      * encountered in the schema.
      *
      * @param stdClass  $schema

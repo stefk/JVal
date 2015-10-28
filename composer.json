@@ -1,5 +1,5 @@
 {
-    "name": "stefk/alt-json-schema",
+    "name": "stefk/jval",
     "require-dev": {
         "phpunit/phpunit": "~4.8",
         "json-schema/json-schema": "dev-master",
@@ -32,7 +32,7 @@
         }
     ],
     "autoload": {
-        "psr-4": { "JsonSchema\\": "src/" }
+        "psr-4": { "JVal\\": "src/" }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

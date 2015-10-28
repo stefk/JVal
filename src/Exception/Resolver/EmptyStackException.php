@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema\Exception\Resolver;
+namespace JVal\Exception\Resolver;
 
-use JsonSchema\Exception\ResolverException;
+use JVal\Exception\ResolverException;
 
 class EmptyStackException extends ResolverException
 {

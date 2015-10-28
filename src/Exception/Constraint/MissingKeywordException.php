@@ -1,9 +1,9 @@
 <?php
 
-namespace JsonSchema\Exception\Constraint;
+namespace JVal\Exception\Constraint;
 
-use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
+use JVal\Context;
+use JVal\Exception\ConstraintException;
 
 class MissingKeywordException extends ConstraintException
 {

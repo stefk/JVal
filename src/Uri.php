@@ -1,6 +1,6 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
 class Uri
 {

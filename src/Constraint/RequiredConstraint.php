@@ -1,14 +1,14 @@
 <?php
 
-namespace JsonSchema\Constraint;
+namespace JVal\Constraint;
 
-use JsonSchema\Constraint;
-use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\EmptyArrayException;
-use JsonSchema\Exception\Constraint\InvalidTypeException;
-use JsonSchema\Exception\Constraint\NotUniqueException;
-use JsonSchema\Types;
-use JsonSchema\Walker;
+use JVal\Constraint;
+use JVal\Context;
+use JVal\Exception\Constraint\EmptyArrayException;
+use JVal\Exception\Constraint\InvalidTypeException;
+use JVal\Exception\Constraint\NotUniqueException;
+use JVal\Types;
+use JVal\Walker;
 use stdClass;
 
 class RequiredConstraint implements Constraint

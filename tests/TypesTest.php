@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
-use JsonSchema\Testing\BaseTestCase;
+use JVal\Testing\BaseTestCase;
 
 class TypesTest extends BaseTestCase
 {
@@ -19,7 +19,7 @@ class TypesTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JsonSchema\Exception\UnsupportedTypeException
+     * @expectedException \JVal\Exception\UnsupportedTypeException
      */
     public function testGetPrimitiveTypeThrowsOnUnsupportedType()
     {

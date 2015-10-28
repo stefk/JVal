@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
-use JsonSchema\Constraint;
+use JVal\Constraint;
 
 class Registry
 {

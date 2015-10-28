@@ -1,10 +1,10 @@
 <?php
 
-namespace JsonSchema\Constraint;
+namespace JVal\Constraint;
 
-use JsonSchema\Context;
-use JsonSchema\Types;
-use JsonSchema\Walker;
+use JVal\Context;
+use JVal\Types;
+use JVal\Walker;
 use stdClass;
 
 class MinPropertiesConstraint extends AbstractCountConstraint

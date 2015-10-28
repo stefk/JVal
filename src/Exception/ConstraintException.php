@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema\Exception;
+namespace JVal\Exception;
 
-use JsonSchema\Context;
+use JVal\Context;
 
 abstract class ConstraintException extends \Exception
 {

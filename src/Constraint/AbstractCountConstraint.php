@@ -1,13 +1,13 @@
 <?php
 
-namespace JsonSchema\Constraint;
+namespace JVal\Constraint;
 
-use JsonSchema\Constraint;
-use JsonSchema\Context;
-use JsonSchema\Exception\Constraint\InvalidTypeException;
-use JsonSchema\Exception\Constraint\LessThanZeroException;
-use JsonSchema\Types;
-use JsonSchema\Walker;
+use JVal\Constraint;
+use JVal\Context;
+use JVal\Exception\Constraint\InvalidTypeException;
+use JVal\Exception\Constraint\LessThanZeroException;
+use JVal\Types;
+use JVal\Walker;
 use stdClass;
 
 abstract class AbstractCountConstraint implements Constraint

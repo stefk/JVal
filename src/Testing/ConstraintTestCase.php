@@ -1,13 +1,13 @@
 <?php
 
-namespace JsonSchema\Testing;
+namespace JVal\Testing;
 
-use JsonSchema\Constraint;
-use JsonSchema\Context;
-use JsonSchema\Exception\ConstraintException;
-use JsonSchema\Registry;
-use JsonSchema\Resolver;
-use JsonSchema\Walker;
+use JVal\Constraint;
+use JVal\Context;
+use JVal\Exception\ConstraintException;
+use JVal\Registry;
+use JVal\Resolver;
+use JVal\Walker;
 
 abstract class ConstraintTestCase extends BaseTestCase
 {
@@ -90,7 +90,7 @@ abstract class ConstraintTestCase extends BaseTestCase
      */
     protected function mockWalker()
     {
-        return $this->mock('JsonSchema\Walker');
+        return $this->mock('JVal\Walker');
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class ConstraintTestCase extends BaseTestCase
      */
     protected function expectConstraintException($exceptionName, $path, $target = null)
     {
-        $this->expectedExceptionClass = "JsonSchema\\Exception\\Constraint\\{$exceptionName}";
+        $this->expectedExceptionClass = "JVal\\Exception\\Constraint\\{$exceptionName}";
         $this->expectedExceptionPath = $path;
         $this->expectedExceptionTarget = $target;
         $this->expectException();

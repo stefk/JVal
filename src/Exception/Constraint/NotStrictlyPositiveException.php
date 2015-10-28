@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema\Exception\Constraint;
+namespace JVal\Exception\Constraint;
 
-use JsonSchema\Exception\ConstraintException;
+use JVal\Exception\ConstraintException;
 
 class NotStrictlyPositiveException extends ConstraintException
 {

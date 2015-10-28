@@ -1,6 +1,6 @@
 <?php
 
-namespace JsonSchema\Testing;
+namespace JVal\Testing;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {

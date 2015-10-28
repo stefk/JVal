@@ -1,6 +1,6 @@
 <?php
 
-namespace JsonSchema\Exception;
+namespace JVal\Exception;
 
 class UnsupportedTypeException extends \Exception
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
-use JsonSchema\Testing\BaseTestCase;
+use JVal\Testing\BaseTestCase;
 use stdClass;
 
 class ResolverTest extends BaseTestCase
@@ -18,7 +18,7 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JsonSchema\Exception\Resolver\EmptyStackException
+     * @expectedException \JVal\Exception\Resolver\EmptyStackException
      */
     public function testGetSchemaThrowsIfNoBaseSchema()
     {
@@ -56,7 +56,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider unresolvablePointerPropertyProvider
-     * @expectedException \JsonSchema\Exception\Resolver\UnresolvedPointerPropertyException
+     * @expectedException \JVal\Exception\Resolver\UnresolvedPointerPropertyException
      *
      * @param stdClass $schema
      * @param string    $pointerUri
@@ -71,7 +71,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider invalidPointerIndexProvider
-     * @expectedException \JsonSchema\Exception\Resolver\InvalidPointerIndexException
+     * @expectedException \JVal\Exception\Resolver\InvalidPointerIndexException
      *
      * @param stdClass $schema
      * @param string    $pointerUri
@@ -86,7 +86,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider unresolvablePointerIndexProvider
-     * @expectedException \JsonSchema\Exception\Resolver\UnresolvedPointerIndexException
+     * @expectedException \JVal\Exception\Resolver\UnresolvedPointerIndexException
      *
      * @param stdClass $schema
      * @param string    $pointerUri
@@ -101,7 +101,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider invalidPointerSegmentProvider
-     * @expectedException \JsonSchema\Exception\Resolver\InvalidSegmentTypeException
+     * @expectedException \JVal\Exception\Resolver\InvalidSegmentTypeException
      *
      * @param stdClass $schema
      * @param string    $pointerUri
@@ -116,7 +116,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider invalidPointerTargetProvider
-     * @expectedException \JsonSchema\Exception\Resolver\InvalidPointerTargetException
+     * @expectedException \JVal\Exception\Resolver\InvalidPointerTargetException
      *
      * @param stdClass $schema
      * @param string    $pointerUri
@@ -131,7 +131,7 @@ class ResolverTest extends BaseTestCase
 
     /**
      * @dataProvider selfReferencingPointerProvider
-     * @expectedException \JsonSchema\Exception\Resolver\SelfReferencingPointerException
+     * @expectedException \JVal\Exception\Resolver\SelfReferencingPointerException
      *
      * @param stdClass $schema
      * @param stdClass $reference
@@ -145,7 +145,7 @@ class ResolverTest extends BaseTestCase
     /**
      * @group network
      * @dataProvider unfetchableUriProvider
-     * @expectedException \JsonSchema\Exception\Resolver\UnfetchableUriException
+     * @expectedException \JVal\Exception\Resolver\UnfetchableUriException
      *
      * @param string $pointerUri
      */
@@ -174,7 +174,7 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JsonSchema\Exception\Resolver\JsonDecodeErrorException
+     * @expectedException \JVal\Exception\Resolver\JsonDecodeErrorException
      */
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {
@@ -186,7 +186,7 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JsonSchema\Exception\Resolver\InvalidRemoteSchemaException
+     * @expectedException \JVal\Exception\Resolver\InvalidRemoteSchemaException
      */
     public function testResolveThrowsOnInvalidRemoteSchema()
     {

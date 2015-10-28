@@ -1,8 +1,8 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
-use JsonSchema\Testing\BaseTestCase;
+use JVal\Testing\BaseTestCase;
 
 class Draft4Test extends BaseTestCase
 {

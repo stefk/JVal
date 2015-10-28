@@ -1,17 +1,17 @@
 <?php
 
-namespace JsonSchema;
+namespace JVal;
 
-use JsonSchema\Exception\Resolver\EmptyStackException;
-use JsonSchema\Exception\Resolver\InvalidPointerIndexException;
-use JsonSchema\Exception\Resolver\InvalidPointerTargetException;
-use JsonSchema\Exception\Resolver\InvalidRemoteSchemaException;
-use JsonSchema\Exception\Resolver\InvalidSegmentTypeException;
-use JsonSchema\Exception\Resolver\JsonDecodeErrorException;
-use JsonSchema\Exception\Resolver\SelfReferencingPointerException;
-use JsonSchema\Exception\Resolver\UnfetchableUriException;
-use JsonSchema\Exception\Resolver\UnresolvedPointerIndexException;
-use JsonSchema\Exception\Resolver\UnresolvedPointerPropertyException;
+use JVal\Exception\Resolver\EmptyStackException;
+use JVal\Exception\Resolver\InvalidPointerIndexException;
+use JVal\Exception\Resolver\InvalidPointerTargetException;
+use JVal\Exception\Resolver\InvalidRemoteSchemaException;
+use JVal\Exception\Resolver\InvalidSegmentTypeException;
+use JVal\Exception\Resolver\JsonDecodeErrorException;
+use JVal\Exception\Resolver\SelfReferencingPointerException;
+use JVal\Exception\Resolver\UnfetchableUriException;
+use JVal\Exception\Resolver\UnresolvedPointerIndexException;
+use JVal\Exception\Resolver\UnresolvedPointerPropertyException;
 use Closure;
 use stdClass;
 
