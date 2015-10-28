@@ -22,7 +22,7 @@ class Registry
     const VERSION_DRAFT_4 = 'http://json-schema.org/draft-04/schema#';
 
     /**
-     * @var Constraint[]
+     * @var Constraint[][]
      */
     private $constraints = [];
 
