@@ -9,12 +9,12 @@
 
 namespace JVal;
 
+use JVal\Exception\JsonDecodeException;
 use JVal\Exception\Resolver\EmptyStackException;
 use JVal\Exception\Resolver\InvalidPointerIndexException;
 use JVal\Exception\Resolver\InvalidPointerTargetException;
 use JVal\Exception\Resolver\InvalidRemoteSchemaException;
 use JVal\Exception\Resolver\InvalidSegmentTypeException;
-use JVal\Exception\Resolver\JsonDecodeErrorException;
 use JVal\Exception\Resolver\SelfReferencingPointerException;
 use JVal\Exception\Resolver\UnfetchableUriException;
 use JVal\Exception\Resolver\UnresolvedPointerIndexException;
@@ -210,7 +210,7 @@ class Resolver
      *
      * @param string $uri
      * @throws InvalidRemoteSchemaException
-     * @throws JsonDecodeErrorException
+     * @throws JsonDecodeException
      * @return stdClass
      */
     private function fetchSchemaAt($uri)
@@ -230,7 +230,11 @@ class Resolver
         $schema = json_decode($content);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new JsonDecodeErrorException([$uri, Utils::lastJsonErrorMessage()]);
+            throw new JsonDecodeException(sprintf(
+                'Cannot decode JSON from URI "%s" (error: %s)',
+                $uri,
+                Utils::lastJsonErrorMessage()
+            ));
         }
 
         if (!is_object($schema)) {

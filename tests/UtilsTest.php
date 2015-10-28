@@ -48,6 +48,22 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(Utils::areEqual($a, $b));
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testLoadJsonFromFileThrowsIfFileDoesNotExist()
+    {
+        Utils::loadJsonFromFile('/does/not/exist');
+    }
+
+    /**
+     * @expectedException \JVal\Exception\JsonDecodeException
+     */
+    public function testLoadJsonFromFileThrowsOnJsonDecodeError()
+    {
+        Utils::loadJsonFromFile(__DIR__ . '/Data/schemas/invalid/undecodable.json');
+    }
+
     public function equalDataProvider()
     {
         $a = new \stdClass();

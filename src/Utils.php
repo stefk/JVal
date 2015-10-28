@@ -8,6 +8,7 @@
  */
 
 namespace JVal;
+use JVal\Exception\JsonDecodeException;
 
 /**
  * Exposes common utility methods.
@@ -35,29 +36,6 @@ class Utils
     public static function areEqual($a, $b)
     {
         return self::doAreEqual($a, $b, []);
-    }
-
-    /**
-     * @codeCoverageIgnore
-     *
-     * Returns the error message resulting from the last call to
-     * json_encode or json_decode functions.
-     *
-     * @return string
-     */
-    public static function lastJsonErrorMessage()
-    {
-        if (defined('json_last_error_msg')) {
-            return json_last_error_msg();
-        }
-
-        $lastError = json_last_error();
-
-        if (isset(static::$jsonErrors[$lastError])) {
-            return static::$jsonErrors[$lastError];
-        }
-
-        return 'Unknown error';
     }
 
     /**
@@ -89,7 +67,57 @@ class Utils
         return preg_match("/{$regex}/", $string) > 0;
     }
 
-    public static function doAreEqual($a, $b, array $stack)
+    /**
+     * Returns the JSON-decoded content of a file.
+     *
+     * @param $filePath
+     * @return mixed
+     * @throws \RuntimeException
+     * @throws JsonDecodeException
+     */
+    public static function loadJsonFromFile($filePath)
+    {
+        if (!file_exists($filePath)) {
+            throw new \RuntimeException("File '{$filePath}' doesn't exist");
+        }
+
+        $content = json_decode(file_get_contents($filePath));
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new JsonDecodeException(sprintf(
+               'Cannot decode JSON from file "%s" (error: %s)',
+               $filePath,
+               static::lastJsonErrorMessage()
+            ));
+        }
+
+        return $content;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * Returns the error message resulting from the last call to
+     * json_encode or json_decode functions.
+     *
+     * @return string
+     */
+    public static function lastJsonErrorMessage()
+    {
+        if (defined('json_last_error_msg')) {
+            return json_last_error_msg();
+        }
+
+        $lastError = json_last_error();
+
+        if (isset(static::$jsonErrors[$lastError])) {
+            return static::$jsonErrors[$lastError];
+        }
+
+        return 'Unknown error';
+    }
+
+    private static function doAreEqual($a, $b, array $stack)
     {
         // keep track of object references to avoid infinite recursion
         if (is_object($a)) {

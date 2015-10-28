@@ -197,7 +197,7 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JVal\Exception\Resolver\JsonDecodeErrorException
+     * @expectedException \JVal\Exception\JsonDecodeException
      */
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {

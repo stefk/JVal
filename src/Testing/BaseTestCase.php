@@ -8,6 +8,7 @@
  */
 
 namespace JVal\Testing;
+
 use JVal\Utils;
 
 /**
@@ -38,7 +39,9 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         }
 
         if ($this->expectException && !$hasException) {
+            // @codeCoverageIgnoreStart
             $this->fail('An exception was expected but none has been thrown.');
+            // @codeCoverageIgnoreEnd
         }
 
         return $result;
@@ -53,6 +56,8 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * Hook called when an unexpected exception is thrown.
      *
      * Override this hook to make custom assertions on exceptions.
@@ -70,25 +75,10 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      *
      * @param string $file
      * @return mixed
-     * @throws \Exception
      */
     protected function loadJsonFromFile($file)
     {
-        if (!file_exists($file)) {
-            throw new \Exception("File {$file} doesn't exist");
-        }
-
-        $content = json_decode(file_get_contents($file));
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception(sprintf(
-                'json_decode error in file %s -> Error: %s',
-                $file,
-                Utils::lastJsonErrorMessage()
-            ));
-        }
-
-        return $content;
+        return Utils::loadJsonFromFile($file);
     }
 
     /**
