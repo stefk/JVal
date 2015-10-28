@@ -225,7 +225,11 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
                 $options |= JSON_PRESERVE_ZERO_FRACTION;
             }
 
-            return json_encode($variable, $options);
+            $output = @json_encode($variable, $options);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $output;
+            }
         }
 
         return print_r($variable, true);
