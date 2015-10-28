@@ -12,6 +12,8 @@ Features:
 - Distinct steps for references resolution, syntax parsing and data validation.
 
 [![Build Status](https://travis-ci.org/stefk/JVal.svg?branch=master)](https://travis-ci.org/stefk/JVal)
+[![Code Coverage](https://scrutinizer-ci.com/g/stefk/JVal/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/stefk/JVal/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stefk/JVal/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stefk/JVal/?branch=master)
 
 Installation
 ------------
