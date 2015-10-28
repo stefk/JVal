@@ -216,6 +216,12 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             ->getMock();
     }
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param mixed $variable
+     * @return string
+     */
     private function dump($variable)
     {
         if (defined('JSON_PRETTY_PRINT')) {
