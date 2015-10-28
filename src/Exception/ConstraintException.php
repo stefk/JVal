@@ -71,7 +71,7 @@ abstract class ConstraintException extends \Exception
      */
     protected function getTargetNode()
     {
-        if ($this->target === null) {
+        if (null === $target = $this->getTarget()) {
             $segments = explode('/', $this->getPath());
             $target = '';
 
@@ -87,6 +87,6 @@ abstract class ConstraintException extends \Exception
             return rtrim($target, '/');
         }
 
-        return $this->target;
+        return $target;
     }
 }

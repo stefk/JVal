@@ -21,6 +21,6 @@ class MissingKeywordException extends ConstraintException
 
     protected function buildMessage()
     {
-        $this->message = sprintf('keyword %s must be present', $this->getTarget());
+        $this->message = sprintf('keyword %s must be present', $this->getTargetNode());
     }
 }
