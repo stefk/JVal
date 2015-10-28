@@ -29,9 +29,9 @@ abstract class ConstraintException extends \Exception
     /**
      * Constructor.
      *
-     * @param Context   $context    The current validation context
-     * @param mixed     $target     An optional exception target not
-     *                              present in the current context
+     * @param Context $context The current validation context
+     * @param mixed   $target  An optional exception target not
+     *                         present in the current context
      */
     public function __construct(Context $context, $target = null)
     {
@@ -77,7 +77,7 @@ abstract class ConstraintException extends \Exception
 
             while (count($segments) > 0) {
                 $segment = array_pop($segments);
-                $target = $segment . '/' . $target;
+                $target = $segment.'/'.$target;
 
                 if (!is_numeric($segment)) {
                     break;

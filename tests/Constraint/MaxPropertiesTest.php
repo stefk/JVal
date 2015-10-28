@@ -9,11 +9,10 @@
 
 namespace JVal\Constraint;
 
-use JVal\Constraint;
 use JVal\Context;
 use JVal\Testing\ConstraintTestCase;
 
-class MaxPropertiesConstraintTest extends ConstraintTestCase
+class MaxPropertiesTest extends ConstraintTestCase
 {
     public function testNormalizeThrowsIfMaxPropertiesIsNotAnInteger()
     {

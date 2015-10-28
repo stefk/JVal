@@ -9,7 +9,6 @@
 
 namespace JVal\Constraint;
 
-use JVal\Constraint;
 use JVal\Context;
 use JVal\Testing\ConstraintTestCase;
 
@@ -17,6 +16,7 @@ class PropertiesTest extends ConstraintTestCase
 {
     /**
      * @dataProvider absentKeywordProvider
+     *
      * @param $schemaName
      */
     public function testNormalizeSetsAbsentKeywordsToEmptySchema($schemaName)
@@ -133,7 +133,7 @@ class PropertiesTest extends ConstraintTestCase
         return [
             ['valid/properties-not-present'],
             ['valid/additionalProperties-not-present'],
-            ['valid/patternProperties-not-present']
+            ['valid/patternProperties-not-present'],
         ];
     }
 }

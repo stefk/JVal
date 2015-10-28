@@ -24,7 +24,7 @@ use stdClass;
 class PatternConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -32,7 +32,7 @@ class PatternConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -40,7 +40,7 @@ class PatternConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -58,7 +58,7 @@ class PatternConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {

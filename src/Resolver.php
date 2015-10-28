@@ -64,8 +64,8 @@ class Resolver
     /**
      * Sets the current schema, on which resolutions will be based.
      *
-     * @param stdClass  $schema
-     * @param Uri       $uri
+     * @param stdClass $schema
+     * @param Uri      $uri
      */
     public function setBaseSchema(stdClass $schema, Uri $uri)
     {
@@ -77,6 +77,7 @@ class Resolver
      * Returns the URI of the current schema.
      *
      * @return Uri
+     *
      * @throws EmptyStackException
      */
     public function getCurrentUri()
@@ -92,6 +93,7 @@ class Resolver
      * Returns the current schema.
      *
      * @return stdClass
+     *
      * @throws EmptyStackException
      */
     public function getCurrentSchema()
@@ -121,8 +123,9 @@ class Resolver
      * current schema is reused (useful when entering a resolution scope
      * within the current schema).
      *
-     * @param Uri $uri
+     * @param Uri      $uri
      * @param stdClass $schema
+     *
      * @throws EmptyStackException
      */
     public function enter(Uri $uri, stdClass $schema = null)
@@ -157,8 +160,10 @@ class Resolver
      * URI and the resolved schema.
      *
      * @param stdClass $reference
+     *
      * @throws InvalidPointerTargetException
      * @throws SelfReferencingPointerException
+     *
      * @return array
      */
     public function resolve(stdClass $reference)
@@ -195,8 +200,8 @@ class Resolver
     /**
      * Caches a schema reference for future use.
      *
-     * @param stdClass  $schema
-     * @param Uri       $uri
+     * @param stdClass $schema
+     * @param Uri      $uri
      */
     private function registerSchema(stdClass $schema, Uri $uri)
     {
@@ -209,8 +214,10 @@ class Resolver
      * Fetches a remote schema and ensures it is valid.
      *
      * @param string $uri
+     *
      * @throws InvalidRemoteSchemaException
      * @throws JsonDecodeException
+     *
      * @return stdClass
      */
     private function fetchSchemaAt($uri)
@@ -247,9 +254,11 @@ class Resolver
     /**
      * Resolves a JSON pointer according to RFC 6901.
      *
-     * @param stdClass  $schema
-     * @param Uri       $pointerUri
+     * @param stdClass $schema
+     * @param Uri      $pointerUri
+     *
      * @return mixed
+     *
      * @throws InvalidPointerIndexException
      * @throws InvalidSegmentTypeException
      * @throws UnresolvedPointerIndexException

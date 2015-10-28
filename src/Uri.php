@@ -23,7 +23,7 @@ class Uri
         'port',
         'path',
         'query',
-        'fragment'
+        'fragment',
     ];
 
     /**
@@ -138,13 +138,14 @@ class Uri
 
     /**
      * Resolves the current (relative) URI against another (absolute) URI.
-     * Example:
+     * Example:.
      *
      * Current  = foo.json
      * Other    = http://localhost/bar/baz
      * Resolved = http://localhost/bar/foo.json
      *
      * @param Uri $uri
+     *
      * @return string
      */
     public function resolveAgainst(Uri $uri)
@@ -172,6 +173,7 @@ class Uri
      * i.e. whether they point to the same document.
      *
      * @param Uri $uri
+     *
      * @return bool
      */
     public function isSamePrimaryResource(Uri $uri)
@@ -209,15 +211,15 @@ class Uri
         $authority = $this->parts['host'];
 
         if ($this->parts['pass'] !== '') {
-            $userInfo .= ':' . $this->parts['pass'];
+            $userInfo .= ':'.$this->parts['pass'];
         }
 
         if ($this->parts['port'] !== '') {
-            $authority .= ':' . $this->parts['port'];
+            $authority .= ':'.$this->parts['port'];
         }
 
         if ($userInfo !== '') {
-            $authority = $userInfo . '@' . $authority;
+            $authority = $userInfo.'@'.$authority;
         }
 
         return $authority;
@@ -249,13 +251,13 @@ class Uri
         $identifier = '';
 
         if ($this->parts['scheme']) {
-            $identifier .= $this->parts['scheme'] . '://';
+            $identifier .= $this->parts['scheme'].'://';
         }
 
-        $identifier .= $this->authority . $this->parts['path'];
+        $identifier .= $this->authority.$this->parts['path'];
 
         if ($this->parts['query']) {
-            $identifier .= '?' . $this->parts['query'];
+            $identifier .= '?'.$this->parts['query'];
         }
 
         return $identifier;
@@ -302,11 +304,11 @@ class Uri
     private function appendRelativeParts($absolutePart, $query, $fragment)
     {
         if ($query) {
-            $absolutePart .= '?' . $query;
+            $absolutePart .= '?'.$query;
         }
 
         if ($fragment) {
-            $absolutePart .= '#' . $fragment;
+            $absolutePart .= '#'.$fragment;
         }
 
         return $absolutePart;

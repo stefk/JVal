@@ -16,8 +16,8 @@ class TypesTest extends BaseTestCase
     /**
      * @dataProvider instanceTypeProvider
      *
-     * @param mixed     $instance
-     * @param string    $expectedType
+     * @param mixed  $instance
+     * @param string $expectedType
      */
     public function testGetPrimitiveType($instance, $expectedType)
     {

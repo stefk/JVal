@@ -43,7 +43,7 @@ class FormatConstraint implements Constraint
     const URI_REGEX = '#^(([^:/?\#]+):)?//([^/?\#]*)(\?([^\#]*))?(\#(.*))?#ix';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -51,7 +51,7 @@ class FormatConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -59,7 +59,7 @@ class FormatConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -73,7 +73,7 @@ class FormatConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
@@ -110,7 +110,7 @@ class FormatConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     private function isDateTimeValid($date, $format)
     {

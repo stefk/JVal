@@ -22,8 +22,8 @@ class UriTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider absoluteAndRelativeProvider
      *
-     * @param string    $uri
-     * @param bool      $isAbsolute
+     * @param string $uri
+     * @param bool   $isAbsolute
      */
     public function testIsAbsolute($uri, $isAbsolute)
     {
@@ -100,8 +100,8 @@ class UriTest extends \PHPUnit_Framework_TestCase
      * @dataProvider sameResourceProvider
      *
      * @param string    uri
-     * @param string    $againstUri
-     * @param bool      $isSame
+     * @param string $againstUri
+     * @param bool   $isSame
      */
     public function testIsSamePrimaryResource($uri, $againstUri, $isSame)
     {
@@ -116,7 +116,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ['http://localhost?123', true],
             ['file://foo/bar', true],
             ['//foo.bar', false],
-            ['#/foo/bar', false]
+            ['#/foo/bar', false],
         ];
     }
 
@@ -131,7 +131,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ['/quz/#//', []],
             ['/quz/#//foo/1%25/bar', ['foo', '1%', 'bar']],
             ['/quz/#//foo/1~02/bar', ['foo', '1~2', 'bar']],
-            ['/quz/#//foo/1~12/bar', ['foo', '1/2', 'bar']]
+            ['/quz/#//foo/1~12/bar', ['foo', '1/2', 'bar']],
         ];
     }
 
@@ -150,7 +150,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ['//quz', 'http://foo/bar', 'http://quz'],
             ['//quz/baz#/baz', 'http://foo/bar#baz', 'http://quz/baz#/baz'],
             ['?foo=a#/baz', 'http://localhost/bar?foo=b#baz', 'http://localhost/bar?foo=a#/baz'],
-            ['//john:123@localhost', 'http://localhost:456/bar', 'http://john:123@localhost']
+            ['//john:123@localhost', 'http://localhost:456/bar', 'http://john:123@localhost'],
         ];
     }
 

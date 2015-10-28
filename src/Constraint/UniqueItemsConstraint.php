@@ -23,7 +23,7 @@ use stdClass;
 class UniqueItemsConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -31,7 +31,7 @@ class UniqueItemsConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -39,7 +39,7 @@ class UniqueItemsConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -51,7 +51,7 @@ class UniqueItemsConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {

@@ -23,7 +23,7 @@ use stdClass;
 abstract class AbstractOfConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -31,7 +31,7 @@ abstract class AbstractOfConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {

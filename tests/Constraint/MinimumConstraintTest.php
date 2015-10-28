@@ -9,13 +9,12 @@
 
 namespace JVal\Constraint;
 
-use JVal\Constraint;
 use JVal\Context;
 use JVal\Testing\ConstraintTestCase;
 
-class MinimumTest extends ConstraintTestCase
+class MinimumConstraintTest extends ConstraintTestCase
 {
-      public function testNormalizeThrowsIfMaxNotPresent()
+    public function testNormalizeThrowsIfMaxNotPresent()
     {
         $this->expectConstraintException('MissingKeywordException', '', 'minimum');
         $schema = $this->loadSchema('invalid/minimum-not-present');

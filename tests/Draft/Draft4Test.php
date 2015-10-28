@@ -28,13 +28,12 @@ class Draft4Test extends BaseTestCase
         $instance,
         \stdClass $schema,
         $isInstanceValid
-    )
-    {
-        $remoteDir = realpath(__DIR__ . '/../../vendor/json-schema/test-suite/remotes');
+    ) {
+        $remoteDir = realpath(__DIR__.'/../../vendor/json-schema/test-suite/remotes');
         $validator = Validator::buildDefault(function ($uri) use ($remoteDir) {
-            return str_replace('http://localhost:1234', 'file://' . $remoteDir, $uri);
+            return str_replace('http://localhost:1234', 'file://'.$remoteDir, $uri);
         });
-        $actualErrors = $validator->validate($instance, $schema, 'file://' . $file);
+        $actualErrors = $validator->validate($instance, $schema, 'file://'.$file);
 
         $this->assertValidationResult(
             $file,
@@ -52,7 +51,7 @@ class Draft4Test extends BaseTestCase
      */
     public function applyTestProvider()
     {
-        $testDir = realpath(__DIR__ . '/../../vendor/json-schema/test-suite/tests/draft4');
+        $testDir = realpath(__DIR__.'/../../vendor/json-schema/test-suite/tests/draft4');
         $iterator = new \RecursiveDirectoryIterator($testDir);
         $tests = [];
 
@@ -87,7 +86,7 @@ class Draft4Test extends BaseTestCase
                             "{$cases[$i]->description} - {$test->description}",
                             $test->data,
                             $cases[$i]->schema,
-                            $test->valid
+                            $test->valid,
                         );
                     }
                 }
@@ -108,7 +107,7 @@ class Draft4Test extends BaseTestCase
         // JSON strings are automatically converted to float)
         return [
             'a bignum is an integer',
-            'a negative bignum is an integer'
+            'a negative bignum is an integer',
         ];
     }
 

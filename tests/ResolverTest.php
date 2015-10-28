@@ -64,9 +64,9 @@ class ResolverTest extends BaseTestCase
     /**
      * @dataProvider chainProvider
      *
-     * @param stdClass  $schema
-     * @param string    $pointerUri
-     * @param stdClass  $resolved
+     * @param stdClass $schema
+     * @param string   $pointerUri
+     * @param stdClass $resolved
      */
     public function testResolveChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
@@ -82,7 +82,7 @@ class ResolverTest extends BaseTestCase
      * @expectedException \JVal\Exception\Resolver\UnresolvedPointerPropertyException
      *
      * @param stdClass $schema
-     * @param string    $pointerUri
+     * @param string   $pointerUri
      */
     public function testResolveThrowsOnUnresolvedPointerProperty(stdClass $schema, $pointerUri)
     {
@@ -97,7 +97,7 @@ class ResolverTest extends BaseTestCase
      * @expectedException \JVal\Exception\Resolver\InvalidPointerIndexException
      *
      * @param stdClass $schema
-     * @param string    $pointerUri
+     * @param string   $pointerUri
      */
     public function testResolveThrowsOnInvalidPointerIndex(stdClass $schema, $pointerUri)
     {
@@ -112,7 +112,7 @@ class ResolverTest extends BaseTestCase
      * @expectedException \JVal\Exception\Resolver\UnresolvedPointerIndexException
      *
      * @param stdClass $schema
-     * @param string    $pointerUri
+     * @param string   $pointerUri
      */
     public function testResolveThrowsOnUnresolvedPointerIndex(stdClass $schema, $pointerUri)
     {
@@ -127,7 +127,7 @@ class ResolverTest extends BaseTestCase
      * @expectedException \JVal\Exception\Resolver\InvalidSegmentTypeException
      *
      * @param stdClass $schema
-     * @param string    $pointerUri
+     * @param string   $pointerUri
      */
     public function testResolveThrowsOnInvalidPointerSegment(stdClass $schema, $pointerUri)
     {
@@ -142,7 +142,7 @@ class ResolverTest extends BaseTestCase
      * @expectedException \JVal\Exception\Resolver\InvalidPointerTargetException
      *
      * @param stdClass $schema
-     * @param string    $pointerUri
+     * @param string   $pointerUri
      */
     public function testResolveThrowsOnInvalidPointerTarget(stdClass $schema, $pointerUri)
     {
@@ -184,8 +184,8 @@ class ResolverTest extends BaseTestCase
      * @group network
      * @dataProvider remoteUriProvider
      *
-     * @param string    $pointerUri
-     * @param stdClass  $expectedSchema
+     * @param string   $pointerUri
+     * @param stdClass $expectedSchema
      */
     public function testResolveRemoteSchema($pointerUri, stdClass $expectedSchema)
     {
@@ -202,7 +202,7 @@ class ResolverTest extends BaseTestCase
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {
         $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
-        $schemaFile = __DIR__ . '/Data/schemas/invalid/undecodable.json';
+        $schemaFile = __DIR__.'/Data/schemas/invalid/undecodable.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $this->resolver->resolve($reference);
@@ -214,7 +214,7 @@ class ResolverTest extends BaseTestCase
     public function testResolveThrowsOnInvalidRemoteSchema()
     {
         $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
-        $schemaFile = __DIR__ . '/Data/schemas/invalid/not-an-object.json';
+        $schemaFile = __DIR__.'/Data/schemas/invalid/not-an-object.json';
         $reference = new stdClass();
         $reference->{'$ref'} = "file://{$schemaFile}";
         $this->resolver->resolve($reference);
@@ -225,7 +225,7 @@ class ResolverTest extends BaseTestCase
         return [
             ['valid/root-reference-1'],
             ['valid/root-reference-2'],
-            ['valid/root-reference-3']
+            ['valid/root-reference-3'],
         ];
     }
 
@@ -245,7 +245,7 @@ class ResolverTest extends BaseTestCase
             [$schema, '#/with%25percent', $schema->{'with%percent'}],
             [$schema, '#/bar/with~1slash', $schema->bar->{'with/slash'}],
             [$schema, '#/bar/with~1slash', $schema->bar->{'with/slash'}],
-            [$schema, '#/bar/with~0tilde', $schema->bar->{'with~tilde'}]
+            [$schema, '#/bar/with~0tilde', $schema->bar->{'with~tilde'}],
         ];
     }
 
@@ -256,7 +256,7 @@ class ResolverTest extends BaseTestCase
         return [
             [$schema, '#nope'],
             [$schema, '#/foo/nope'],
-            [$schema, '#bar/baz/nope']
+            [$schema, '#bar/baz/nope'],
         ];
     }
 
@@ -266,7 +266,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema, '#/bat/1/quz/bar'],
-            [$schema, '#/bat/1/quz/0/bar/baz']
+            [$schema, '#/bat/1/quz/0/bar/baz'],
         ];
     }
 
@@ -276,7 +276,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema, '#/bat/4'],
-            [$schema, '#/bat/7/quz/2/bar']
+            [$schema, '#/bat/7/quz/2/bar'],
         ];
     }
 
@@ -286,7 +286,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema, '#/bat/2/bar'],
-            [$schema, '#/bat/1/quz/1/foo']
+            [$schema, '#/bat/1/quz/1/foo'],
         ];
     }
 
@@ -296,7 +296,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema, '#/foo/bat'],
-            [$schema, '#bat']
+            [$schema, '#bat'],
         ];
     }
 
@@ -307,7 +307,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema1, $schema1],
-            [$schema2, $schema2->foo->bar]
+            [$schema2, $schema2->foo->bar],
         ];
     }
 
@@ -318,26 +318,26 @@ class ResolverTest extends BaseTestCase
             ['unknown://scheme'],
             ['http://non.existent/host'],
             ['http://localhost/non/existent/resource'],
-            ['http://localhost/same#/with/pointer']
+            ['http://localhost/same#/with/pointer'],
         ];
     }
 
     public function remoteUriProvider()
     {
         $schemaDir = $this->getVendorDir().'/json-schema/json-schema';
-        $schemaFile = $schemaDir . '/draft-03/schema';
+        $schemaFile = $schemaDir.'/draft-03/schema';
         $schema3 = $this->loadJsonFromFile($schemaFile);
 
         return [
             ['http://json-schema.org/draft-03/schema#', $schema3],
-            ["file://{$schemaFile}", $schema3]
+            ["file://{$schemaFile}", $schema3],
         ];
     }
 
     private function getVendorDir()
     {
-        $local = __DIR__ . '/../vendor';
-        $parent = __DIR__ . '/../../../../vendor';
+        $local = __DIR__.'/../vendor';
+        $parent = __DIR__.'/../../../../vendor';
 
         if (is_dir($local)) {
             return $local;

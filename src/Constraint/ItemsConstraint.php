@@ -22,7 +22,7 @@ use stdClass;
 class ItemsConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -30,7 +30,7 @@ class ItemsConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -38,7 +38,7 @@ class ItemsConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -53,7 +53,7 @@ class ItemsConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
@@ -130,5 +130,4 @@ class ItemsConstraint implements Constraint
             throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_BOOLEAN]);
         }
     }
-
 }

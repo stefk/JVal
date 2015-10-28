@@ -44,22 +44,22 @@ class Context
      * Pushes an instance and its associated path segment onto the context
      * stack, making it the current visited node.
      *
-     * @param mixed     $instance
-     * @param string    $pathSegment
+     * @param mixed  $instance
+     * @param string $pathSegment
      */
     public function enterNode($instance, $pathSegment)
     {
         $this->instanceStack[] = $instance;
         $this->pathSegments[] = $pathSegment;
-        $this->path .= '/' . $pathSegment;
+        $this->path .= '/'.$pathSegment;
     }
 
     /**
      * Leaves the current node and enters another node located at the same
      * depth in the hierarchy.
      *
-     * @param mixed     $instance
-     * @param string    $pathSegment
+     * @param mixed  $instance
+     * @param string $pathSegment
      */
     public function enterSibling($instance, $pathSegment)
     {
@@ -80,7 +80,7 @@ class Context
         array_pop($this->instanceStack);
         array_pop($this->pathSegments);
 
-        $this->path = '/' . implode('/', $this->pathSegments);
+        $this->path = '/'.implode('/', $this->pathSegments);
         $this->path = $this->path === '/' ? '' : $this->path;
     }
 
@@ -97,14 +97,14 @@ class Context
     /**
      * Adds a violation message for the current node.
      *
-     * @param string    $message
-     * @param array     $parameters
+     * @param string $message
+     * @param array  $parameters
      */
     public function addViolation($message, array $parameters = [])
     {
         $this->violations[] = [
             'path' => $this->path,
-            'message' => vsprintf($message, $parameters)
+            'message' => vsprintf($message, $parameters),
         ];
     }
 

@@ -37,7 +37,7 @@ class MultipleOfConstraintTest extends ConstraintTestCase
     {
         return [
             ['invalid/multiple-of-not-positive-1'],
-            ['invalid/multiple-of-not-positive-2']
+            ['invalid/multiple-of-not-positive-2'],
         ];
     }
 

@@ -19,7 +19,7 @@ use stdClass;
 class MinimumConstraint extends AbstractRangeConstraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -27,7 +27,7 @@ class MinimumConstraint extends AbstractRangeConstraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {

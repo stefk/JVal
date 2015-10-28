@@ -23,7 +23,7 @@ use stdClass;
 class MultipleOfConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -31,7 +31,7 @@ class MultipleOfConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -39,7 +39,7 @@ class MultipleOfConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -57,14 +57,14 @@ class MultipleOfConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $divider = $schema->multipleOf;
         $modulus = fmod($instance, $divider);
         $precision = abs(0.0000000001);
-        $diff = (float)($modulus - $divider);
+        $diff = (float) ($modulus - $divider);
 
         if (-$precision < $diff && $diff < $precision) {
             $fMod = 0.0;

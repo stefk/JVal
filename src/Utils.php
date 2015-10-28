@@ -8,6 +8,7 @@
  */
 
 namespace JVal;
+
 use JVal\Exception\JsonDecodeException;
 
 /**
@@ -16,12 +17,12 @@ use JVal\Exception\JsonDecodeException;
 class Utils
 {
     private static $jsonErrors = [
-        JSON_ERROR_NONE             => 'No errors',
-        JSON_ERROR_DEPTH            => 'Maximum stack depth exceeded',
-        JSON_ERROR_STATE_MISMATCH   => 'Underflow or the modes mismatch',
-        JSON_ERROR_CTRL_CHAR        => 'Unexpected control character found',
-        JSON_ERROR_SYNTAX           => 'Syntax error, malformed JSON',
-        JSON_ERROR_UTF8             => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+        JSON_ERROR_NONE => 'No errors',
+        JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
+        JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch',
+        JSON_ERROR_CTRL_CHAR => 'Unexpected control character found',
+        JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON',
+        JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded',
     ];
 
     /**
@@ -31,6 +32,7 @@ class Utils
      *
      * @param mixed $a
      * @param mixed $b
+     *
      * @return bool
      */
     public static function areEqual($a, $b)
@@ -43,6 +45,7 @@ class Utils
      * non-anchored (see JSON Schema Validation 3.3).
      *
      * @param string $regex
+     *
      * @return bool
      */
     public static function isValidRegex($regex)
@@ -56,8 +59,9 @@ class Utils
      * Returns whether a string matches a regex. Regex is supposed to be
      * non-anchored (see JSON Schema Validation 3.3).
      *
-     * @param string    $string
-     * @param string    $regex
+     * @param string $string
+     * @param string $regex
+     *
      * @return bool
      */
     public static function matchesRegex($string, $regex)
@@ -71,7 +75,9 @@ class Utils
      * Returns the JSON-decoded content of a file.
      *
      * @param $filePath
+     *
      * @return mixed
+     *
      * @throws \RuntimeException
      * @throws JsonDecodeException
      */
@@ -121,7 +127,7 @@ class Utils
     {
         // keep track of object references to avoid infinite recursion
         if (is_object($a)) {
-            if (in_array($a , $stack)) {
+            if (in_array($a, $stack)) {
                 return true;
             }
 

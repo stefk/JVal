@@ -23,7 +23,7 @@ use stdClass;
 abstract class AbstractCountConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {

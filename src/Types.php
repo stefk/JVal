@@ -17,19 +17,21 @@ use JVal\Exception\UnsupportedTypeException;
  */
 class Types
 {
-    const TYPE_ARRAY    = 'array';
-    const TYPE_BOOLEAN  = 'boolean';
-    const TYPE_INTEGER  = 'integer';
-    const TYPE_NUMBER   = 'number';
-    const TYPE_NULL     = 'null';
-    const TYPE_OBJECT   = 'object';
-    const TYPE_STRING   = 'string';
+    const TYPE_ARRAY = 'array';
+    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_NUMBER = 'number';
+    const TYPE_NULL = 'null';
+    const TYPE_OBJECT = 'object';
+    const TYPE_STRING = 'string';
 
     /**
      * Returns the type of an instance according to JSON Schema Core 3.5.
      *
      * @param mixed $instance
+     *
      * @return string
+     *
      * @throws UnsupportedTypeException
      */
     public static function getPrimitiveTypeOf($instance)
@@ -57,8 +59,9 @@ class Types
     /**
      * Returns whether an instance matches a given type.
      *
-     * @param mixed     $instance
-     * @param string    $type
+     * @param mixed  $instance
+     * @param string $type
+     *
      * @return bool
      */
     public static function isA($instance, $type)
@@ -74,6 +77,7 @@ class Types
      * defined by the specification.
      *
      * @param string $type
+     *
      * @return bool
      */
     public static function isPrimitive($type)

@@ -9,7 +9,6 @@
 
 namespace JVal;
 
-use JVal\Constraint;
 use JVal\Exception\UnsupportedVersionException;
 
 /**
@@ -36,7 +35,7 @@ class Registry
         'Dependencies',
         'Enum',
         'Type',
-        'Format'
+        'Format',
     ];
 
     private static $draft4Constraints = [
@@ -46,7 +45,7 @@ class Registry
         'AllOf',
         'AnyOf',
         'OneOf',
-        'Not'
+        'Not',
     ];
 
     /**
@@ -63,6 +62,7 @@ class Registry
      * Loads the constraints associated with a given JSON Schema version.
      *
      * @param string $version
+     *
      * @throws \Exception if the version is not supported
      */
     public function loadConstraintsFor($version)
@@ -92,6 +92,7 @@ class Registry
      * Returns the loaded constraints.
      *
      * @return Constraint[]
+     *
      * @throws \LogicException if no constraints have been loaded
      */
     public function getConstraints()
@@ -110,7 +111,7 @@ class Registry
         return array_map(function ($name) {
             $class = "JVal\\Constraint\\{$name}Constraint";
 
-            return new $class;
+            return new $class();
         }, $constraintNames);
     }
 }

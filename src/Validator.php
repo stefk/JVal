@@ -9,7 +9,6 @@
 
 namespace JVal;
 
-use JVal\Constraint;
 use Closure;
 use stdClass;
 
@@ -28,7 +27,9 @@ class Validator
      * hook.
      *
      * @see Resolver::setPreFetchHook
+     *
      * @param Closure $preFetchHook
+     *
      * @return Validator
      */
     public static function buildDefault(Closure $preFetchHook = null)
@@ -42,7 +43,7 @@ class Validator
 
         $walker = new Walker($registry, $resolver);
 
-        return new Validator($walker);
+        return new self($walker);
     }
 
     /**
@@ -60,9 +61,10 @@ class Validator
      * of violations, if any. If the schema contains relative remote
      * references, its (absolute) URI must be passed as argument.
      *
-     * @param mixed     $instance
-     * @param stdClass  $schema
-     * @param string    $schemaUri
+     * @param mixed    $instance
+     * @param stdClass $schema
+     * @param string   $schemaUri
+     *
      * @return array
      */
     public function validate($instance, stdClass $schema, $schemaUri = '')

@@ -13,7 +13,7 @@ use JVal\Utils;
 
 /**
  * Provides common methods for dealing with JSON data (loading, assertions,
- * etc.)
+ * etc.).
  */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +23,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * Wraps the default #runTest() method to provide an exception hook.
      *
      * @return mixed|null
+     *
      * @throws \Exception
      */
     protected function runTest()
@@ -32,7 +33,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         } catch (\Exception $ex) {
             $this->exceptionHook($ex);
 
-            return null;
+            return;
         }
 
         // @codeCoverageIgnoreStart
@@ -60,6 +61,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * Override this hook to make custom assertions on exceptions.
      *
      * @param \Exception $ex
+     *
      * @throws \Exception
      */
     protected function exceptionHook(\Exception $ex)
@@ -71,6 +73,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * Returns the JSON-decoded content of a file.
      *
      * @param string $file
+     *
      * @return mixed
      */
     protected function loadJsonFromFile($file)
@@ -82,11 +85,12 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * Returns a JSON-decoded schema from tests/Data/schemas.
      *
      * @param string $name Name of the file without the extension
+     *
      * @return mixed
      */
     protected function loadSchema($name)
     {
-        $schemaDir = realpath(__DIR__ . '/../../tests/Data/schemas');
+        $schemaDir = realpath(__DIR__.'/../../tests/Data/schemas');
 
         return $this->loadJsonFromFile("{$schemaDir}/{$name}.json");
     }
@@ -118,7 +122,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             $this->dump($schema),
             $this->dump($instance),
             count($expectedErrors) > 0 ? $this->dump($expectedErrors) : 'no error',
-            count($actualErrors) > 0 ? $this->dump($actualErrors) : 'no error'
+            count($actualErrors) > 0 ? $this->dump($actualErrors) : 'no error',
         );
 
         if (!$isInstanceValid && count($expectedErrors) === 0) {
@@ -133,6 +137,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * Returns a mock object, bypassing original constructor.
      *
      * @param string $class
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function mock($class)
@@ -146,12 +151,13 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @codeCoverageIgnore (cannot cover code whose behaviour depends on PHP version)
      *
      * @param mixed $variable
+     *
      * @return string
      */
     private function dump($variable)
     {
         if (defined('JSON_PRETTY_PRINT')) {
-            $options = JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES;
+            $options = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
 
             if (defined('JSON_PRESERVE_ZERO_FRACTION')) {
                 $options |= JSON_PRESERVE_ZERO_FRACTION;

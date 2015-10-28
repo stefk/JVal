@@ -24,7 +24,7 @@ use stdClass;
 class TypeConstraint implements Constraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -32,7 +32,7 @@ class TypeConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -40,7 +40,7 @@ class TypeConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
@@ -50,7 +50,7 @@ class TypeConstraint implements Constraint
             if (!Types::isPrimitive($schema->type)) {
                 throw new NotPrimitiveTypeException($context);
             }
-        } else if (is_array($schema->type)) {
+        } elseif (is_array($schema->type)) {
             foreach ($schema->type as $index => $type) {
                 $context->enterNode($type, $index);
 
@@ -74,7 +74,7 @@ class TypeConstraint implements Constraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {

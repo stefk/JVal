@@ -20,7 +20,7 @@ use stdClass;
 class MaxPropertiesConstraint extends AbstractCountConstraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -28,7 +28,7 @@ class MaxPropertiesConstraint extends AbstractCountConstraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -36,7 +36,7 @@ class MaxPropertiesConstraint extends AbstractCountConstraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {

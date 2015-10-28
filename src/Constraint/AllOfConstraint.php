@@ -19,7 +19,7 @@ use stdClass;
 class AllOfConstraint extends AbstractOfConstraint
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function keywords()
     {
@@ -27,7 +27,7 @@ class AllOfConstraint extends AbstractOfConstraint
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {

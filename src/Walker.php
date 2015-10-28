@@ -13,7 +13,7 @@ use stdClass;
 
 /**
  * Implements the three steps needed to perform a JSON Schema validation,
- * i.e. distinct methods to recursively:
+ * i.e. distinct methods to recursively:.
  *
  * 1) resolve JSON pointer references within schema
  * 2) normalize and validate the syntax of the schema
@@ -56,8 +56,9 @@ class Walker
     /**
      * Recursively resolve JSON pointer references within a given schema.
      *
-     * @param stdClass $schema  The schema to resolve
-     * @param Uri $uri          The URI of the schema
+     * @param stdClass $schema The schema to resolve
+     * @param Uri      $uri    The URI of the schema
+     *
      * @return stdClass
      */
     public function resolveReferences(stdClass $schema, Uri $uri)
@@ -107,7 +108,8 @@ class Walker
      * Recursively normalizes a given schema and validates its syntax.
      *
      * @param stdClass $schema
-     * @param Context $context
+     * @param Context  $context
+     *
      * @return stdClass
      */
     public function parseSchema(stdClass $schema, Context $context)
@@ -136,7 +138,7 @@ class Walker
      *
      * @param $instance
      * @param stdClass $schema
-     * @param Context $context
+     * @param Context  $context
      */
     public function applyConstraints($instance, stdClass $schema, Context $context)
     {
@@ -182,4 +184,3 @@ class Walker
         $this->registry->loadConstraintsFor($context->getVersion());
     }
 }
-

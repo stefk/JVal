@@ -25,7 +25,7 @@ class WalkerTest extends BaseTestCase
         $resolver->setPreFetchHook(function ($uri) {
             return str_replace(
                 'http://localhost:1234',
-                'file://' . __DIR__ . '/Data/schemas',
+                'file://'.__DIR__.'/Data/schemas',
                 $uri
             );
         });

@@ -61,7 +61,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadJsonFromFileThrowsOnJsonDecodeError()
     {
-        Utils::loadJsonFromFile(__DIR__ . '/Data/schemas/invalid/undecodable.json');
+        Utils::loadJsonFromFile(__DIR__.'/Data/schemas/invalid/undecodable.json');
     }
 
     public function equalDataProvider()
@@ -78,7 +78,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
             ['foo', 'foo'],
             [['foo', 'bar', []], ['foo', 'bar', []]],
             [new \stdClass(), new \stdClass()],
-            [$a, $b]
+            [$a, $b],
         ];
     }
 
@@ -98,7 +98,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
             ['foo', 'bar'],
             [['foo', ['bar', 'baz']], ['foo', ['bar', 'quz']]],
             [['foo', ['a' => 'bar', 'baz']], ['foo', ['bar', 'quz']]],
-            [$a, $b]
+            [$a, $b],
         ];
     }
 }

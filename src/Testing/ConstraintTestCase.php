@@ -42,8 +42,7 @@ abstract class ConstraintTestCase extends BaseTestCase
         \stdClass $schema,
         $isInstanceValid,
         array $expectedErrors
-    )
-    {
+    ) {
         $constraint = $this->getConstraint();
         $schemaContext = new Context();
         $validationContext = new Context();
@@ -70,7 +69,7 @@ abstract class ConstraintTestCase extends BaseTestCase
      */
     public function applyTestProvider()
     {
-        $caseDir = realpath(__DIR__ . '/../../tests/Data/cases');
+        $caseDir = realpath(__DIR__.'/../../tests/Data/cases');
         $tests = [];
 
         foreach ($this->getCaseFileNames() as $caseName) {
@@ -95,7 +94,7 @@ abstract class ConstraintTestCase extends BaseTestCase
                             $instance,
                             $test->schema,
                             true,
-                            []
+                            [],
                         ];
                     }
                 }
@@ -116,8 +115,8 @@ abstract class ConstraintTestCase extends BaseTestCase
                             $test->schema,
                             false,
                             array_map(function ($violation) {
-                                return (array)$violation;
-                            }, $set->violations)
+                                return (array) $violation;
+                            }, $set->violations),
                         ];
                     }
                 }
@@ -173,6 +172,7 @@ abstract class ConstraintTestCase extends BaseTestCase
      * match the expectations.
      *
      * @param \Exception $ex
+     *
      * @throws \Exception
      */
     protected function exceptionHook(\Exception $ex)

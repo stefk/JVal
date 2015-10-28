@@ -9,7 +9,6 @@
 
 namespace JVal\Constraint;
 
-use JVal\Constraint;
 use JVal\Context;
 use JVal\Testing\ConstraintTestCase;
 

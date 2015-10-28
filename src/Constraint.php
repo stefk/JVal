@@ -21,7 +21,7 @@ interface Constraint
      *
      * @return string[]
      */
-    function keywords();
+    public function keywords();
 
     /**
      * Returns whether the constraint is applicable to a given type.
@@ -30,9 +30,10 @@ interface Constraint
      * one of the primitive types listed in Types::TYPE_*.
      *
      * @param string $type
+     *
      * @return bool
      */
-    function supports($type);
+    public function supports($type);
 
     /**
      * Ensures the supported keywords have a valid value in a given
@@ -40,11 +41,11 @@ interface Constraint
      * be called only if one of the triggering keywords has been
      * encountered in the schema.
      *
-     * @param stdClass  $schema
-     * @param Context   $context
-     * @param Walker    $walker
+     * @param stdClass $schema
+     * @param Context  $context
+     * @param Walker   $walker
      */
-    function normalize(stdClass $schema, Context $context, Walker $walker);
+    public function normalize(stdClass $schema, Context $context, Walker $walker);
 
     /**
      * Applies the constraint to the given instance, and populates
@@ -52,10 +53,10 @@ interface Constraint
      * schema is passed in so that dependent keywords can be checked if
      * needed.
      *
-     * @param mixed     $instance
-     * @param stdClass  $schema
-     * @param Context   $context
-     * @param Walker    $walker
+     * @param mixed    $instance
+     * @param stdClass $schema
+     * @param Context  $context
+     * @param Walker   $walker
      */
-    function apply($instance, stdClass $schema, Context $context, Walker $walker);
+    public function apply($instance, stdClass $schema, Context $context, Walker $walker);
 }
