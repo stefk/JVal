@@ -81,6 +81,7 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
             [1, -1],
             ['foo', 'bar'],
             [['foo', ['bar', 'baz']], ['foo', ['bar', 'quz']]],
+            [['foo', ['a' => 'bar', 'baz']], ['foo', ['bar', 'quz']]],
             [$a, $b]
         ];
     }
