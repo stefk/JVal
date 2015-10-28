@@ -95,7 +95,7 @@ class Utils
     }
 
     /**
-     * @codeCoverageIgnore
+     * @codeCoverageIgnore (depends on PHP version)
      *
      * Returns the error message resulting from the last call to
      * json_encode or json_decode functions.

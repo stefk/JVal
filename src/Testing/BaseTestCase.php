@@ -38,11 +38,12 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             return null;
         }
 
+        // @codeCoverageIgnoreStart
         if ($this->expectException && !$hasException) {
-            // @codeCoverageIgnoreStart
             $this->fail('An exception was expected but none has been thrown.');
-            // @codeCoverageIgnoreEnd
+
         }
+        // @codeCoverageIgnoreEnd
 
         return $result;
     }
@@ -56,7 +57,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @codeCoverageIgnore
+     * @codeCoverageIgnore (shouldn't happen in a green test suite)
      *
      * Hook called when an unexpected exception is thrown.
      *
@@ -133,67 +134,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Extracts the tests from a JSON case file.
-     *
-     * @param string $caseFile
-     * @return array
-     * @throws \Exception
-     */
-    protected function collectTests($caseFile)
-    {
-        $case = $this->loadJsonFromFile($caseFile);
-        $tests = [];
-
-        foreach ($case->tests as $test) {
-            if (!isset($test->valid) && !isset($test->invalid)) {
-                throw new \Exception(sprintf(
-                    'Test case "%s %s" has neither "valid" or "invalid" data (file: %s)',
-                    $case->title,
-                    $test->title,
-                    $caseFile
-                ));
-            }
-
-            if (isset($test->valid)) {
-                foreach ($test->valid as $i => $instance) {
-                    $tests[] = [
-                        $caseFile,
-                        "{$case->title} {$test->title}, valid instance #{$i}",
-                        $instance,
-                        $test->schema,
-                        true,
-                        []
-                    ];
-                }
-            }
-
-            if (isset($test->invalid)) {
-                foreach ($test->invalid as $i => $set) {
-                    if (!isset($set->violations)) {
-                        throw new \Exception(sprintf(
-                            'Invalid test must have a "violations" property in %s',
-                            $caseFile
-                        ));
-                    }
-
-                    $tests[] = [
-                        $caseFile,
-                        "{$case->title} {$test->title}, invalid instance #{$i}",
-                        $set->instance,
-                        $test->schema,
-                        false,
-                        array_map(function ($violation) {
-                            return (array)$violation;
-                        }, $set->violations)
-                    ];
-                }
-            }
-        }
-
-        return $tests;
-    }
-
-    /**
      * Returns a mock object, bypassing original constructor.
      *
      * @param string $class
@@ -207,7 +147,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @codeCoverageIgnore
+     * @codeCoverageIgnore (cannot cover code whose behaviour depends on PHP version)
      *
      * @param mixed $variable
      * @return string
@@ -233,23 +173,29 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 
     private function assertHasError(array $errors, array $reportParameters)
     {
+        // @codeCoverageIgnoreStart
         if (count($errors) === 0) {
             $this->fail(vsprintf($this->getFailureReportMask(), $reportParameters));
         }
+        // @codeCoverageIgnoreEnd
     }
 
     private function assertErrorsAreEqual(array $actual, array $expected, array $reportParameters)
     {
         $report = vsprintf($this->getFailureReportMask(), $reportParameters);
 
+        // @codeCoverageIgnoreStart
         if (count($actual) !== count($expected)) {
             $this->fail($report);
         }
+        // @codeCoverageIgnoreEnd
 
         foreach ($expected as $error) {
+            // @codeCoverageIgnoreStart
             if (!in_array($error, $actual)) {
                 $this->fail($report);
             }
+            // @codeCoverageIgnoreEnd
         }
     }
 

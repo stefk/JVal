@@ -64,6 +64,8 @@ abstract class ConstraintTestCase extends BaseTestCase
     }
 
     /**
+     * @codeCoverageIgnore (data provider is executed before test is launched)
+     *
      * Provider of #testApply().
      */
     public function applyTestProvider()
@@ -72,8 +74,54 @@ abstract class ConstraintTestCase extends BaseTestCase
         $tests = [];
 
         foreach ($this->getCaseFileNames() as $caseName) {
-            $caseTests = $this->collectTests("{$caseDir}/{$caseName}.json");
-            $tests = array_merge($tests, $caseTests);
+            $caseFile = "{$caseDir}/{$caseName}.json";
+            $case = $this->loadJsonFromFile($caseFile);
+
+            foreach ($case->tests as $test) {
+                if (!isset($test->valid) && !isset($test->invalid)) {
+                    throw new \Exception(sprintf(
+                        'Test case "%s %s" has neither "valid" or "invalid" data (file: %s)',
+                        $case->title,
+                        $test->title,
+                        $caseFile
+                    ));
+                }
+
+                if (isset($test->valid)) {
+                    foreach ($test->valid as $i => $instance) {
+                        $tests[] = [
+                            $caseFile,
+                            "{$case->title} {$test->title}, valid instance #{$i}",
+                            $instance,
+                            $test->schema,
+                            true,
+                            []
+                        ];
+                    }
+                }
+
+                if (isset($test->invalid)) {
+                    foreach ($test->invalid as $i => $set) {
+                        if (!isset($set->violations)) {
+                            throw new \Exception(sprintf(
+                                'Invalid test must have a "violations" property in %s',
+                                $caseFile
+                            ));
+                        }
+
+                        $tests[] = [
+                            $caseFile,
+                            "{$case->title} {$test->title}, invalid instance #{$i}",
+                            $set->instance,
+                            $test->schema,
+                            false,
+                            array_map(function ($violation) {
+                                return (array)$violation;
+                            }, $set->violations)
+                        ];
+                    }
+                }
+            }
         }
 
         return $tests;
@@ -129,9 +177,11 @@ abstract class ConstraintTestCase extends BaseTestCase
      */
     protected function exceptionHook(\Exception $ex)
     {
+        // @codeCoverageIgnoreStart
         if (empty($this->expectedExceptionClass)) {
             throw $ex;
         }
+        // @codeCoverageIgnoreEnd
 
         $this->assertThat(
             $ex,
@@ -140,9 +190,12 @@ abstract class ConstraintTestCase extends BaseTestCase
             )
         );
 
+        // @codeCoverageIgnoreStart
         if (!$ex instanceof ConstraintException) {
+            // this isn't supposed to happen
             $this->fail('Exception thrown is not a ConstraintException');
         }
+        // @codeCoverageIgnoreEnd
 
         $this->assertEquals(
             $this->expectedExceptionPath,
@@ -154,7 +207,7 @@ abstract class ConstraintTestCase extends BaseTestCase
             $this->assertEquals(
                 $this->expectedExceptionTarget,
                 $ex->getTarget(),
-                'Exception doesn not have the expected target.'
+                'Exception does not have the expected target.'
             );
         }
     }
