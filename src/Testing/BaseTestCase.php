@@ -27,21 +27,17 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function runTest()
     {
-        $hasException = false;
-
         try {
             $result = parent::runTest();
         } catch (\Exception $ex) {
-            $hasException = true;
             $this->exceptionHook($ex);
 
             return null;
         }
 
         // @codeCoverageIgnoreStart
-        if ($this->expectException && !$hasException) {
+        if ($this->expectException) {
             $this->fail('An exception was expected but none has been thrown.');
-
         }
         // @codeCoverageIgnoreEnd
 
