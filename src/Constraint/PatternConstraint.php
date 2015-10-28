@@ -14,6 +14,7 @@ use JVal\Context;
 use JVal\Exception\Constraint\InvalidRegexException;
 use JVal\Exception\Constraint\InvalidTypeException;
 use JVal\Types;
+use JVal\Utils;
 use JVal\Walker;
 use stdClass;
 
@@ -49,7 +50,7 @@ class PatternConstraint implements Constraint
             throw new InvalidTypeException($context, Types::TYPE_STRING);
         }
 
-        if (@preg_match("/{$schema->pattern}/", '') === false) {
+        if (!Utils::isValidRegex($schema->pattern)) {
             throw new InvalidRegexException($context);
         }
 
@@ -61,7 +62,7 @@ class PatternConstraint implements Constraint
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        if (!preg_match("/{$schema->pattern}/", $instance)) {
+        if (!Utils::matchesRegex($instance, $schema->pattern)) {
             $context->addViolation('should match regex "%s"', [$schema->pattern]);
         }
     }

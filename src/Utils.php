@@ -60,6 +60,35 @@ class Utils
         return 'Unknown error';
     }
 
+    /**
+     * Returns whether a regex is valid. Regex is supposed to be
+     * non-anchored (see JSON Schema Validation 3.3).
+     *
+     * @param string $regex
+     * @return bool
+     */
+    public static function isValidRegex($regex)
+    {
+        $regex = str_replace('/', '\/', $regex);
+
+        return @preg_match("/{$regex}/", '') !== false;
+    }
+
+    /**
+     * Returns whether a string matches a regex. Regex is supposed to be
+     * non-anchored (see JSON Schema Validation 3.3).
+     *
+     * @param string    $string
+     * @param string    $regex
+     * @return bool
+     */
+    public static function matchesRegex($string, $regex)
+    {
+        $regex = str_replace('/', '\/', $regex);
+
+        return preg_match("/{$regex}/", $string) > 0;
+    }
+
     public static function doAreEqual($a, $b, array $stack)
     {
         // keep track of object references to avoid infinite recursion

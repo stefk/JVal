@@ -110,6 +110,14 @@ class PropertiesTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $walker);
     }
 
+    public function testDelimitersInPatternPropertiesAreEscapedBeforeTestingRegex()
+    {
+        $schema = $this->loadSchema('valid/patternProperties-with-slash');
+        $context = new Context();
+        $this->getConstraint()->normalize($schema, $context, $this->mockWalker());
+        $this->assertEquals(0, $context->countViolations());
+    }
+
     protected function getConstraint()
     {
         return new PropertiesConstraint();

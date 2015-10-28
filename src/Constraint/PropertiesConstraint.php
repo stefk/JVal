@@ -14,6 +14,7 @@ use JVal\Context;
 use JVal\Exception\Constraint\InvalidRegexException;
 use JVal\Exception\Constraint\InvalidTypeException;
 use JVal\Types;
+use JVal\Utils;
 use JVal\Walker;
 use stdClass;
 
@@ -91,7 +92,7 @@ class PropertiesConstraint implements Constraint
         foreach ($schema->patternProperties as $regex => $value) {
             $context->enterNode($value, $regex);
 
-            if (@preg_match("/{$regex}/", '') === false) {
+            if (!Utils::isValidRegex($regex)) {
                 throw new InvalidRegexException($context);
             }
 
@@ -126,7 +127,7 @@ class PropertiesConstraint implements Constraint
 
             foreach ($patternPropertySet as $regex) {
                 foreach ($instanceSet as $index => $property) {
-                    if (preg_match("/{$regex}/", $property)) {
+                    if (Utils::matchesRegex($property, $regex)) {
                         unset($instanceSet[$index]);
                     }
                 }
@@ -147,7 +148,7 @@ class PropertiesConstraint implements Constraint
             }
 
             foreach ($patternPropertySet as $regex) {
-                if (preg_match("/{$regex}/", $property)) {
+                if (Utils::matchesRegex($property, $regex)) {
                     $schemas[] = $schema->patternProperties->{$regex};
                 }
             }

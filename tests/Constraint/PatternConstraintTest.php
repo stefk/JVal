@@ -29,6 +29,14 @@ class PatternConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
+    public function testDelimitersAreEscapedBeforeTestingRegex()
+    {
+        $schema = $this->loadSchema('valid/pattern-with-slash');
+        $context = new Context();
+        $this->getConstraint()->normalize($schema, $context, $this->mockWalker());
+        $this->assertEquals(0, $context->countViolations());
+    }
+
     protected function getConstraint()
     {
         return new PatternConstraint();
