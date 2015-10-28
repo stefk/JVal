@@ -10,6 +10,7 @@
 namespace JVal;
 
 use JVal\Constraint;
+use JVal\Exception\UnsupportedVersionException;
 
 /**
  * Stores and exposes validation constraints.
@@ -48,7 +49,9 @@ class Registry
                     );
                     break;
                 default:
-                    throw new \Exception("Schema version '{$version}' not supported");
+                    throw new UnsupportedVersionException(
+                        "Schema version '{$version}' not supported"
+                    );
             }
         }
 
@@ -59,12 +62,14 @@ class Registry
      * Returns the loaded constraints.
      *
      * @return Constraint[]
-     * @throws \Exception if no constraints have been loaded
+     * @throws \LogicException if no constraints have been loaded
      */
     public function getConstraints()
     {
         if (!isset($this->loadedVersion)) {
-            throw new \Exception('No constraints have been loaded yet');
+            throw new \LogicException(
+                'Cannot return constraints: no constraints have been loaded yet'
+            );
         }
 
         return $this->constraints[$this->loadedVersion];
