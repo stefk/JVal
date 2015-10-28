@@ -1,5 +1,19 @@
 {
     "name": "stefk/jval",
+    "description": "JSON Schema validator",
+    "keywords": ["JSON", "JSON Schema", "validation"],
+    "homepage": "https://github.com/stefk/JVal",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stéphane Klein",
+            "email": "stephaneklein221@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.1"
+    },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
         "json-schema/json-schema": "dev-master",
