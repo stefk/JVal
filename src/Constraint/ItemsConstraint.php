@@ -42,41 +42,13 @@ class ItemsConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        if (!property_exists($schema, 'items')) {
-            $schema->items = new stdClass();
-        }
-
-        if (!property_exists($schema, 'additionalItems') || $schema->additionalItems === true) {
-            $schema->additionalItems = new stdClass();
-        }
+        $this->createDefaults($schema);
 
         $context->enterNode($schema->items, 'items');
-
-        if (is_object($schema->items)) {
-            $walker->parseSchema($schema->items, $context);
-        } elseif (is_array($schema->items)) {
-            foreach ($schema->items as $index => $item) {
-                $context->enterNode($schema->items[$index], $index);
-
-                if (!is_object($item)) {
-                    throw new InvalidTypeException($context, Types::TYPE_OBJECT);
-                }
-
-                $walker->parseSchema($item, $context);
-                $context->leaveNode();
-            }
-        } else {
-            throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_ARRAY]);
-        }
+        $this->parseItemsProperty($schema, $context, $walker);
 
         $context->enterSibling($schema->additionalItems, 'additionalItems');
-
-        if (is_object($schema->additionalItems)) {
-            $walker->parseSchema($schema->additionalItems, $context);
-        } elseif (!is_bool($schema->additionalItems)) {
-            throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_BOOLEAN]);
-        }
-
+        $this->parseAdditionalItemsProperty($schema, $context, $walker);
         $context->leaveNode();
     }
 
@@ -118,4 +90,45 @@ class ItemsConstraint implements Constraint
             }
         }
     }
+
+    private function createDefaults(stdClass $schema)
+    {
+        if (!property_exists($schema, 'items')) {
+            $schema->items = new stdClass();
+        }
+
+        if (!property_exists($schema, 'additionalItems') || $schema->additionalItems === true) {
+            $schema->additionalItems = new stdClass();
+        }
+    }
+
+    private function parseItemsProperty(stdClass $schema, Context $context, Walker $walker)
+    {
+        if (is_object($schema->items)) {
+            $walker->parseSchema($schema->items, $context);
+        } elseif (is_array($schema->items)) {
+            foreach ($schema->items as $index => $item) {
+                $context->enterNode($schema->items[$index], $index);
+
+                if (!is_object($item)) {
+                    throw new InvalidTypeException($context, Types::TYPE_OBJECT);
+                }
+
+                $walker->parseSchema($item, $context);
+                $context->leaveNode();
+            }
+        } else {
+            throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_ARRAY]);
+        }
+    }
+
+    private function parseAdditionalItemsProperty(stdClass $schema, Context $context, Walker $walker)
+    {
+        if (is_object($schema->additionalItems)) {
+            $walker->parseSchema($schema->additionalItems, $context);
+        } elseif (!is_bool($schema->additionalItems)) {
+            throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_BOOLEAN]);
+        }
+    }
+
 }

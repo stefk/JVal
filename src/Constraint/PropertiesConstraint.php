@@ -45,6 +45,30 @@ class PropertiesConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
+        $this->createDefaults($schema);
+
+        $context->enterNode($schema->properties, 'properties');
+        $this->parsePropertiesProperty($schema, $context, $walker);
+
+        $context->enterSibling($schema->additionalProperties, 'additionalProperties');
+        $this->parseAdditionalPropertiesProperty($schema, $context, $walker);
+
+        $context->enterSibling($schema->patternProperties, 'patternProperties');
+        $this->parsePatternPropertiesProperty($schema, $context, $walker);
+        $context->leaveNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function apply($instance, stdClass $schema, Context $context, Walker $walker)
+    {
+        $this->validateInstance($instance, $schema, $context);
+        $this->validateChildren($instance, $schema, $context, $walker);
+    }
+
+    private function createDefaults(stdClass $schema)
+    {
         if (!property_exists($schema, 'properties')) {
             $schema->properties = new stdClass();
         }
@@ -57,9 +81,10 @@ class PropertiesConstraint implements Constraint
         if (!property_exists($schema, 'patternProperties')) {
             $schema->patternProperties = new stdClass();
         }
+    }
 
-        $context->enterNode($schema->properties, 'properties');
-
+    private function parsePropertiesProperty(stdClass $schema, Context $context, Walker $walker)
+    {
         if (!is_object($schema->properties)) {
             throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
@@ -74,17 +99,19 @@ class PropertiesConstraint implements Constraint
             $walker->parseSchema($value, $context);
             $context->leaveNode();
         }
+    }
 
-        $context->enterSibling($schema->additionalProperties, 'additionalProperties');
-
+    private function parseAdditionalPropertiesProperty(stdClass $schema, Context $context, Walker $walker)
+    {
         if (is_object($schema->additionalProperties)) {
             $walker->parseSchema($schema->additionalProperties, $context);
         } elseif (!is_bool($schema->additionalProperties)) {
             throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_BOOLEAN]);
         }
+    }
 
-        $context->enterSibling($schema->patternProperties, 'patternProperties');
-
+    private function parsePatternPropertiesProperty(stdClass $schema, Context $context, Walker $walker)
+    {
         if (!is_object($schema->patternProperties)) {
             throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
@@ -103,19 +130,14 @@ class PropertiesConstraint implements Constraint
             $walker->parseSchema($value, $context);
             $context->leaveNode();
         }
-
-        $context->leaveNode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function apply($instance, stdClass $schema, Context $context, Walker $walker)
+    private function validateInstance($instance, stdClass $schema, Context $context)
     {
+        // implementation of the algorithm described in 5.4.4.4
         $propertySet = array_keys(get_object_vars($schema->properties));
         $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
 
-        // 1) validation of the instance itself (algorithm described in 5.4.4.4)
         if ($schema->additionalProperties === false) {
             $instanceSet = array_keys(get_object_vars($instance));
 
@@ -137,8 +159,14 @@ class PropertiesConstraint implements Constraint
                 $context->addViolation('additional properties are not allowed');
             }
         }
+    }
 
-        // 2) validation of the instance's children (algorithm described in 8.3)
+    private function validateChildren($instance, stdClass $schema, Context $context, Walker $walker)
+    {
+        // implementation of the algorithm described in 8.3
+        $propertySet = array_keys(get_object_vars($schema->properties));
+        $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
+
         foreach ($instance as $property => $value) {
             $context->enterNode($value, $property);
             $schemas = [];
