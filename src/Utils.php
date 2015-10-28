@@ -110,8 +110,8 @@ class Utils
 
         $lastError = json_last_error();
 
-        if (isset(static::$jsonErrors[$lastError])) {
-            return static::$jsonErrors[$lastError];
+        if (isset(self::$jsonErrors[$lastError])) {
+            return self::$jsonErrors[$lastError];
         }
 
         return 'Unknown error';
