@@ -89,10 +89,10 @@ class DependenciesConstraint implements Constraint
         foreach ($schema->dependencies as $property => $value) {
             if (property_exists($instance, $property)) {
                 if (is_object($value)) {
-                    // Schema dependencies (5.4.5.2.1)
+                    // Schema dependencies (see §5.4.5.2.1)
                     $walker->applyConstraints($instance, $value, $context);
                 } else {
-                    // Property dependencies (5.4.5.2.2)
+                    // Property dependencies (see §5.4.5.2.2)
                     foreach ($value as $propertyDependency) {
                         if (!property_exists($instance, $propertyDependency)) {
                             $context->addViolation(
