@@ -15,6 +15,17 @@ namespace JVal;
  */
 class Uri
 {
+    private static $partNames = [
+        'scheme',
+        'user',
+        'pass',
+        'host',
+        'port',
+        'path',
+        'query',
+        'fragment'
+    ];
+
     /**
      * @var string
      */
@@ -28,22 +39,7 @@ class Uri
     /**
      * @var string
      */
-    private $scheme;
-
-    /**
-     * @var string
-     */
     private $authority;
-
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * @var string
-     */
-    private $query;
 
     /**
      * @var string[]
@@ -86,7 +82,7 @@ class Uri
      */
     public function isAbsolute()
     {
-        return $this->scheme !== '';
+        return $this->parts['scheme'] !== '';
     }
 
     /**
@@ -94,7 +90,7 @@ class Uri
      */
     public function getScheme()
     {
-        return $this->scheme;
+        return $this->parts['scheme'];
     }
 
     /**
@@ -110,7 +106,7 @@ class Uri
      */
     public function getPath()
     {
-        return $this->path;
+        return $this->parts['path'];
     }
 
     /**
@@ -118,7 +114,7 @@ class Uri
      */
     public function getQuery()
     {
-        return $this->query;
+        return $this->parts['query'];
     }
 
     /**
@@ -165,41 +161,7 @@ class Uri
             );
         }
 
-        $scheme = $uri->getScheme();
-        $authority = $uri->getAuthority();
-        $path = $uri->getPath();
-        $query = $uri->getQuery();
-
-        if ($this->getAuthority()) {
-            $authority = $this->getAuthority();
-            $path = $this->getPath();
-            $query = $this->getQuery();
-        } elseif ($this->getPath()) {
-            $ownPath = $this->getPath();
-            $againstPath = $uri->getPath();
-            $query = $this->getQuery();
-
-            if (0 !== strpos($ownPath, '/')) {
-                $againstPath = $againstPath ?: '/';
-                $path = preg_replace('#/([^/]*)$#', "/{$ownPath}", $againstPath);
-            } else {
-                $path = $ownPath;
-            }
-        } elseif ($this->getQuery()) {
-            $query = $this->getQuery();
-        }
-
-        $fragment = isset($this->parts['fragment']) ? $this->parts['fragment'] : '';
-        $resolved = "{$scheme}://{$authority}{$path}";
-
-        if ($query) {
-            $resolved .= '?' . $query;
-        }
-
-        if ($fragment) {
-            $resolved .= '#' . $fragment;
-        }
-
+        $resolved = $this->buildResolvedUriAgainst($uri);
         $this->buildFromRawUri($resolved);
 
         return $resolved;
@@ -230,9 +192,12 @@ class Uri
             throw new \InvalidArgumentException("Cannot parse URI '{$rawUri}'");
         }
 
-        $this->scheme = isset($this->parts['scheme']) ? $this->parts['scheme'] : '';
-        $this->path = isset($this->parts['path']) ? $this->parts['path'] : '';
-        $this->query = isset($this->parts['query']) ? $this->parts['query'] : '';
+        foreach (self::$partNames as $part) {
+            if (!isset($this->parts[$part])) {
+                $this->parts[$part] = '';
+            }
+        }
+
         $this->authority = $this->buildAuthority();
         $this->segments = $this->buildSegments();
         $this->primaryIdentifier = $this->buildPrimaryIdentifier();
@@ -240,27 +205,19 @@ class Uri
 
     private function buildAuthority()
     {
-        $authority = '';
-        $userInfo = '';
+        $userInfo = $this->parts['user'];
+        $authority = $this->parts['host'];
 
-        if (isset($this->parts['user'])) {
-            $userInfo.= $this->parts['user'];
-        }
-
-        if (isset($this->parts['pass'])) {
+        if ($this->parts['pass'] !== '') {
             $userInfo .= ':' . $this->parts['pass'];
         }
 
-        if ($userInfo !== '') {
-            $authority .= $userInfo . '@';
-        }
-
-        if (isset($this->parts['host'])) {
-            $authority .= $this->parts['host'];
-        }
-
-        if (isset($this->parts['port'])) {
+        if ($this->parts['port'] !== '') {
             $authority .= ':' . $this->parts['port'];
+        }
+
+        if ($userInfo !== '') {
+            $authority = $userInfo . '@' . $authority;
         }
 
         return $authority;
@@ -291,16 +248,60 @@ class Uri
     {
         $identifier = '';
 
-        if ($this->scheme) {
-            $identifier .= $this->scheme . '://';
+        if ($this->parts['scheme']) {
+            $identifier .= $this->parts['scheme'] . '://';
         }
 
-        $identifier .= $this->authority . $this->path;
+        $identifier .= $this->authority . $this->parts['path'];
 
-        if ($this->query) {
-            $identifier .= '?' . $this->query;
+        if ($this->parts['query']) {
+            $identifier .= '?' . $this->parts['query'];
         }
 
         return $identifier;
+    }
+
+    private function buildResolvedUriAgainst(Uri $uri)
+    {
+        $scheme = $uri->getScheme();
+        $authority = $uri->getAuthority();
+        $path = $uri->getPath();
+        $query = $uri->getQuery();
+
+        if ($this->getAuthority()) {
+            $authority = $this->getAuthority();
+            $path = $this->getPath();
+            $query = $this->getQuery();
+        } elseif ($this->getPath()) {
+            $path = $this->buildResolvedPathAgainst($uri->getPath());
+            $query = $this->getQuery();
+        } elseif ($this->getQuery()) {
+            $query = $this->getQuery();
+        }
+
+        $resolved = "{$scheme}://{$authority}{$path}";
+
+        if ($query) {
+            $resolved .= '?' . $query;
+        }
+
+        if ($this->parts['fragment']) {
+            $resolved .= '#' . $this->parts['fragment'];
+        }
+
+        return $resolved;
+    }
+
+    private function buildResolvedPathAgainst($againstPath)
+    {
+        $ownPath = $this->getPath();
+
+        if (0 !== strpos($ownPath, '/')) {
+            $againstPath = $againstPath ?: '/';
+
+            return preg_replace('#/([^/]*)$#', "/{$ownPath}", $againstPath);
+        }
+
+        return $ownPath;
     }
 }
