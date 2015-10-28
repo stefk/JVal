@@ -190,25 +190,26 @@ abstract class ConstraintTestCase extends BaseTestCase
             )
         );
 
-        // @codeCoverageIgnoreStart
-        if (!$ex instanceof ConstraintException) {
-            // this isn't supposed to happen
-            $this->fail('Exception thrown is not a ConstraintException');
-        }
-        // @codeCoverageIgnoreEnd
-
-        $this->assertEquals(
-            $this->expectedExceptionPath,
-            $ex->getPath(),
-            'Exception was not thrown at the expected path.'
-        );
-
-        if (!empty($this->expectedExceptionTarget)) {
+        if ($ex instanceof ConstraintException) {
             $this->assertEquals(
-                $this->expectedExceptionTarget,
-                $ex->getTarget(),
-                'Exception does not have the expected target.'
+                $this->expectedExceptionPath,
+                $ex->getPath(),
+                'Exception was not thrown at the expected path.'
             );
+
+            if (!empty($this->expectedExceptionTarget)) {
+                $this->assertEquals(
+                    $this->expectedExceptionTarget,
+                    $ex->getTarget(),
+                    'Exception does not have the expected target.'
+                );
+            }
+
+            return;
         }
+
+        // @codeCoverageIgnoreStart
+        $this->fail('Exception thrown is not a ConstraintException');
+        // @codeCoverageIgnoreEnd
     }
 }
