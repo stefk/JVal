@@ -140,21 +140,26 @@ class Utils
         }
 
         if (is_array($a)) {
-            if (count($a) !== count($b)) {
+            return self::areArrayEqual($a, $b, $stack);
+        }
+
+        return $a === $b;
+    }
+
+    private static function areArrayEqual($a, $b, array $stack)
+    {
+        if (count($a) !== count($b)) {
+            return false;
+        }
+
+        foreach ($a as $key => $value) {
+            if (!array_key_exists($key, $b)) {
                 return false;
             }
 
-            foreach ($a as $key => $value) {
-                if (!array_key_exists($key, $b)) {
-                    return false;
-                }
-
-                if (!self::doAreEqual($value, $b[$key], $stack)) {
-                    return false;
-                }
+            if (!self::doAreEqual($value, $b[$key], $stack)) {
+                return false;
             }
-        } else {
-            return $a === $b;
         }
 
         return true;
