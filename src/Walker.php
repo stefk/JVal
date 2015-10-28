@@ -4,19 +4,55 @@ namespace JVal;
 
 use stdClass;
 
+/**
+ * Implements the three steps needed to perform a JSON Schema validation,
+ * i.e. distinct methods to recursively:
+ *
+ * 1) resolve JSON pointer references within schema
+ * 2) normalize and validate the syntax of the schema
+ * 3) validate a given instance against it
+ */
 class Walker
 {
+    /**
+     * @var Registry
+     */
     private $registry;
+
+    /**
+     * @var Resolver
+     */
     private $resolver;
+
+    /**
+     * @var stdClass[]
+     */
     private $parsedSchemas = [];
+
+    /**
+     * @var stdClass[]
+     */
     private $resolvedSchemas = [];
 
+    /**
+     * Constructor.
+     *
+     * @param Registry $registry
+     * @param Resolver $resolver
+     */
     public function __construct(Registry $registry, Resolver $resolver)
     {
         $this->registry = $registry;
         $this->resolver = $resolver;
     }
 
+    /**
+     * Recursively resolve JSON pointer references within a given schema.
+     *
+     * @param stdClass $schema  The schema to resolve
+     * @param Uri $uri          The URI of the schema
+     * @return stdClass
+     */
     public function resolveReferences(stdClass $schema, Uri $uri)
     {
         if ($this->isLooping($schema, $this->resolvedSchemas)) {
@@ -60,6 +96,13 @@ class Walker
         return $schema;
     }
 
+    /**
+     * Recursively normalizes a given schema and validates its syntax.
+     *
+     * @param stdClass $schema
+     * @param Context $context
+     * @return stdClass
+     */
     public function parseSchema(stdClass $schema, Context $context)
     {
         if ($this->isLooping($schema, $this->parsedSchemas)) {
@@ -80,6 +123,14 @@ class Walker
         return $schema;
     }
 
+    /**
+     * Validates an instance against a given schema, populating a context
+     * with encountered violations.
+     *
+     * @param $instance
+     * @param stdClass $schema
+     * @param Context $context
+     */
     public function applyConstraints($instance, stdClass $schema, Context $context)
     {
         $this->loadConstraints($schema, $context);

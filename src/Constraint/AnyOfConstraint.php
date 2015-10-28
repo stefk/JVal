@@ -6,13 +6,22 @@ use JVal\Context;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "anyOf" keyword.
+ */
 class AnyOfConstraint extends AbstractOfConstraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['anyOf'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $accumulatingContext = $context->duplicate();

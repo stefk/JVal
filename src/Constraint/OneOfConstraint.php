@@ -6,13 +6,22 @@ use JVal\Context;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "oneOf" keyword.
+ */
 class OneOfConstraint extends AbstractOfConstraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['oneOf'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $originalCount = $context->countViolations();

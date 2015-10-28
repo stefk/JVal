@@ -10,18 +10,30 @@ use JVal\Utils;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "uniqueItems" keyword.
+ */
 class UniqueItemsConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['uniqueItems'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_ARRAY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!is_bool($schema->uniqueItems)) {
@@ -31,6 +43,9 @@ class UniqueItemsConstraint implements Constraint
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if ($schema->uniqueItems === true) {

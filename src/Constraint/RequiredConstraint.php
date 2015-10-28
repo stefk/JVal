@@ -11,18 +11,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "required" keyword.
+ */
 class RequiredConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['required'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_OBJECT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $context->enterNode($schema->required, 'required');
@@ -50,6 +62,9 @@ class RequiredConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         foreach ($schema->required as $property) {

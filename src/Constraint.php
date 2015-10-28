@@ -4,6 +4,9 @@ namespace JVal;
 
 use stdClass;
 
+/**
+ * Interface of JSON Schema validation constraints.
+ */
 interface Constraint
 {
     /**

@@ -11,18 +11,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "dependencies" keyword.
+ */
 class DependenciesConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['dependencies'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_OBJECT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $context->enterNode($schema->dependencies, 'dependencies');
@@ -62,6 +74,9 @@ class DependenciesConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         foreach ($schema->dependencies as $property => $value) {

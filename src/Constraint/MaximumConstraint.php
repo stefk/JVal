@@ -6,13 +6,22 @@ use JVal\Context;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "maximum" and "exclusiveMaximum" keywords.
+ */
 class MaximumConstraint extends AbstractRangeConstraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['maximum', 'exclusiveMaximum'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if ($schema->exclusiveMaximum === false) {

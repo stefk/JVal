@@ -11,18 +11,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "type" keyword.
+ */
 class TypeConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['type'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $context->enterNode($schema->type, 'type');
@@ -54,6 +66,9 @@ class TypeConstraint implements Constraint
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (is_string($schema->type)) {

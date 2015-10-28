@@ -10,18 +10,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "pattern" keyword.
+ */
 class PatternConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['pattern'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_STRING;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $context->enterNode($schema->pattern, 'pattern');
@@ -37,6 +49,9 @@ class PatternConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (!preg_match("/{$schema->pattern}/", $instance)) {

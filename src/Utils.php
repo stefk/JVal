@@ -2,6 +2,9 @@
 
 namespace JVal;
 
+/**
+ * Exposes common utility methods.
+ */
 class Utils
 {
     /**

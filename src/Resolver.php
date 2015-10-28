@@ -15,10 +15,33 @@ use JVal\Exception\Resolver\UnresolvedPointerPropertyException;
 use Closure;
 use stdClass;
 
+/**
+ * Resolves JSON pointer references within a schema. Handles local/remote
+ * URIs, resolution scope alterations, and nested/recursive references.
+ */
 class Resolver
 {
+    /**
+     * Schema resolution stack. Each item on the stack is an array
+     * containing an uri and a schema.
+     *
+     * @var array
+     */
     private $stack = [];
+
+    /**
+     * Schema cache. Each schema visited at a given URI is stored
+     * in the cache to avoid superfluous requests.
+     *
+     * @var array
+     */
     private $schemas = [];
+
+    /**
+     * @see setPreFetchHook
+     *
+     * @var Closure
+     */
     private $preFetchHook;
 
     /**
@@ -100,6 +123,16 @@ class Resolver
         $this->preFetchHook = $preFetchHook;
     }
 
+    /**
+     * Pushes an URI and its associated schema onto the resolution stack,
+     * making them the current URI/schema pair. If no schema is passed, the
+     * current schema is reused (useful when entering a resolution scope
+     * within the current schema).
+     *
+     * @param Uri $uri
+     * @param stdClass $schema
+     * @throws EmptyStackException
+     */
     public function enter(Uri $uri, stdClass $schema = null)
     {
         $currentUri = $this->getCurrentUri();
@@ -111,6 +144,12 @@ class Resolver
         $this->stack[] = [$uri, $schema ?: $this->getCurrentSchema()];
     }
 
+    /**
+     * Removes the URI/schema pair at the top of the resolution stack,
+     * thus returning to the previous URI/schema context.
+     *
+     * @throws EmptyStackException
+     */
     public function leave()
     {
         if (count($this->stack) === 0) {

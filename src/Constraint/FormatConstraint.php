@@ -10,6 +10,9 @@ use JVal\Walker;
 use DateTime;
 use stdClass;
 
+/**
+ * Constraint for the "format" keyword.
+ */
 class FormatConstraint implements Constraint
 {
     /**
@@ -32,16 +35,25 @@ class FormatConstraint implements Constraint
      */
     const URI_REGEX = '#^(([^:/?\#]+):)?//([^/?\#]*)(\?([^\#]*))?(\#(.*))?#ix';
 
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['format'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_STRING;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!is_string($schema->format)) {
@@ -53,6 +65,9 @@ class FormatConstraint implements Constraint
         // TODO: add option to treat unknown format as a schema error
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (!is_string($instance)) {
@@ -87,6 +102,9 @@ class FormatConstraint implements Constraint
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     private function isDateTimeValid($date, $format)
     {
         $dateTime = DateTime::createFromFormat($format, $date);

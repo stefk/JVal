@@ -9,6 +9,9 @@ use JVal\Registry;
 use JVal\Resolver;
 use JVal\Walker;
 
+/**
+ * Test case for testing validation constraints.
+ */
 abstract class ConstraintTestCase extends BaseTestCase
 {
     private $expectedExceptionClass;

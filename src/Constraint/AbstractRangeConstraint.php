@@ -10,14 +10,23 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Base class for constraints based on a numeric limit.
+ */
 abstract class AbstractRangeConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_INTEGER
             || $type === Types::TYPE_NUMBER;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $property = $this->keywords()[0];

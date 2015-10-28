@@ -10,18 +10,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "multipleOf" keyword.
+ */
 class MultipleOfConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['multipleOf'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_INTEGER || $type === Types::TYPE_NUMBER;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $context->enterNode($schema->multipleOf, 'multipleOf');
@@ -37,6 +49,9 @@ class MultipleOfConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $divider = $schema->multipleOf;

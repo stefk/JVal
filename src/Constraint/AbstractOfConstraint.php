@@ -10,13 +10,22 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Base class for constraints based on a set of sub-schemas.
+ */
 abstract class AbstractOfConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $keyword = $this->keywords()[0];

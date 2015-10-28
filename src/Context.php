@@ -2,14 +2,44 @@
 
 namespace JVal;
 
+/**
+ * Stores data related to a particular validation task (default schema version,
+ * accumulated violations, current path, etc.).
+ */
 class Context
 {
+    /**
+     * @var string
+     */
     private $version = Registry::VERSION_DRAFT_4;
+
+    /**
+     * @var array
+     */
     private $violations = [];
+
+    /**
+     * @var array
+     */
     private $pathSegments = [];
+
+    /**
+     * @var array
+     */
     private $instanceStack = [];
+
+    /**
+     * @var string
+     */
     private $path = '';
 
+    /**
+     * Pushes an instance and its associated path segment onto the context
+     * stack, making it the current visited node.
+     *
+     * @param mixed     $instance
+     * @param string    $pathSegment
+     */
     public function enterNode($instance, $pathSegment)
     {
         $this->instanceStack[] = $instance;
@@ -17,12 +47,23 @@ class Context
         $this->path .= '/' . $pathSegment;
     }
 
+    /**
+     * Leaves the current node and enters another node located at the same
+     * depth in the hierarchy.
+     *
+     * @param mixed     $instance
+     * @param string    $pathSegment
+     */
     public function enterSibling($instance, $pathSegment)
     {
         $this->leaveNode();
         $this->enterNode($instance, $pathSegment);
     }
 
+    /**
+     * Removes the current node from the context stack, thus returning to the
+     * previous (parent) node.
+     */
     public function leaveNode()
     {
         if (count($this->instanceStack) === 0) {
@@ -36,11 +77,22 @@ class Context
         $this->path = $this->path === '/' ? '' : $this->path;
     }
 
+    /**
+     * Returns the path of the current node.
+     *
+     * @return string
+     */
     public function getCurrentPath()
     {
         return $this->path;
     }
 
+    /**
+     * Adds a violation message for the current node.
+     *
+     * @param string    $message
+     * @param array     $parameters
+     */
     public function addViolation($message, array $parameters = [])
     {
         $this->violations[] = [
@@ -49,30 +101,51 @@ class Context
         ];
     }
 
+    /**
+     * Returns the list of accumulated violations.
+     *
+     * @return array
+     */
     public function getViolations()
     {
         return $this->violations;
     }
 
+    /**
+     * Returns the number of accumulated violations.
+     *
+     * @return int
+     */
     public function countViolations()
     {
         return count($this->violations);
     }
 
+    /**
+     * Returns the current schema version.
+     *
+     * @return string
+     */
     public function getVersion()
     {
         return $this->version;
     }
 
-
-    // versions should be stack-able...
-
-
+    /**
+     * Sets the current schema version.
+     *
+     * @param string $version
+     */
     public function setVersion($version)
     {
         $this->version = $version;
     }
 
+    /**
+     * Returns a copy of the context.
+     *
+     * @return Context
+     */
     public function duplicate()
     {
         // ok as long as context doesn't hold object references
@@ -80,6 +153,12 @@ class Context
         return clone $this;
     }
 
+    /**
+     * Merges the current violations with the violations stored in
+     * another context.
+     *
+     * @param Context $context
+     */
     public function mergeViolations(Context $context)
     {
         $this->violations = array_merge($this->violations, $context->getViolations());

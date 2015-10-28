@@ -10,8 +10,14 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Base class for constraints based on a specific number of elements.
+ */
 abstract class AbstractCountConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $keyword = $this->keywords()[0];

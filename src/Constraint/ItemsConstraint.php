@@ -9,18 +9,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "items" and "additionalItems" keywords.
+ */
 class ItemsConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['items', 'additionalItems'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_ARRAY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!property_exists($schema, 'items')) {
@@ -61,6 +73,9 @@ class ItemsConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (is_object($schema->items)) {

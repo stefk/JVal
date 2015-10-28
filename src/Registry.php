@@ -4,15 +4,31 @@ namespace JVal;
 
 use JVal\Constraint;
 
+/**
+ * Stores and exposes validation constraints.
+ */
 class Registry
 {
     const VERSION_CURRENT = 'http://json-schema.org/schema#';
     const VERSION_DRAFT_3 = 'http://json-schema.org/draft-03/schema#';
     const VERSION_DRAFT_4 = 'http://json-schema.org/draft-04/schema#';
 
+    /**
+     * @var Constraint[]
+     */
     private $constraints = [];
+
+    /**
+     * @var string
+     */
     private $loadedVersion;
 
+    /**
+     * Loads the constraints associated with a given JSON Schema version.
+     *
+     * @param string $version
+     * @throws \Exception if the version is not supported
+     */
     public function loadConstraintsFor($version)
     {
         if (!isset($this->constraints[$version])) {
@@ -33,8 +49,10 @@ class Registry
     }
 
     /**
+     * Returns the loaded constraints.
+     *
      * @return Constraint[]
-     * @throws \Exception
+     * @throws \Exception if no constraints have been loaded
      */
     public function getConstraints()
     {

@@ -7,18 +7,30 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "maxProperties" keyword.
+ */
 class MaxPropertiesConstraint extends AbstractCountConstraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['maxProperties'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_OBJECT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         if (count(get_object_vars($instance)) > $schema->maxProperties) {

@@ -2,6 +2,10 @@
 
 namespace JVal\Testing;
 
+/**
+ * Provides common methods for dealing with JSON data (loading, assertions,
+ * etc.)
+ */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
     private $expectException = false;

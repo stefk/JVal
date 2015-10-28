@@ -4,6 +4,10 @@ namespace JVal;
 
 use JVal\Exception\UnsupportedTypeException;
 
+/**
+ * Wraps the list of primitive types defined in the JSON Schema Core
+ * specification and provides utility methods to deal with them.
+ */
 class Types
 {
     const TYPE_ARRAY    = 'array';
@@ -43,6 +47,13 @@ class Types
         throw new UnsupportedTypeException($type);
     }
 
+    /**
+     * Returns whether an instance matches a given type.
+     *
+     * @param mixed     $instance
+     * @param string    $type
+     * @return bool
+     */
     public static function isA($instance, $type)
     {
         $actualType = self::getPrimitiveTypeOf($instance);
@@ -51,6 +62,13 @@ class Types
             || $actualType === self::TYPE_INTEGER && $type === self::TYPE_NUMBER;
     }
 
+    /**
+     * Returns whether a type is part of the list of primitive types
+     * defined by the specification.
+     *
+     * @param string $type
+     * @return bool
+     */
     public static function isPrimitive($type)
     {
         return $type === self::TYPE_ARRAY

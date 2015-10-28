@@ -2,67 +2,148 @@
 
 namespace JVal;
 
+/**
+ * Wraps a raw URI string, providing methods to deal with URI normalization,
+ * comparison and resolution (including JSON pointers references).
+ */
 class Uri
 {
+    /**
+     * @var string
+     */
     private $raw;
+
+    /**
+     * @var array
+     */
     private $parts;
+
+    /**
+     * @var string
+     */
     private $scheme;
+
+    /**
+     * @var string
+     */
     private $authority;
+
+    /**
+     * @var string
+     */
     private $path;
+
+    /**
+     * @var string
+     */
     private $query;
+
+    /**
+     * @var string[]
+     */
     private $segments;
+
+    /**
+     * @var string
+     */
     private $primaryIdentifier;
 
+    /**
+     * Constructor.
+     *
+     * @param string $rawUri
+     */
     public function __construct($rawUri)
     {
         $this->buildFromRawUri($rawUri);
     }
 
+    /**
+     * @return string
+     */
     public function getRawUri()
     {
         return $this->raw;
     }
 
+    /**
+     * @return string
+     */
     public function getRawPointer()
     {
         return isset($this->parts['fragment']) ? $this->parts['fragment'] : '';
     }
 
+    /**
+     * @return bool
+     */
     public function isAbsolute()
     {
         return $this->scheme !== '';
     }
 
+    /**
+     * @return string
+     */
     public function getScheme()
     {
         return $this->scheme;
     }
 
+    /**
+     * @return string
+     */
     public function getAuthority()
     {
         return $this->authority;
     }
 
+    /**
+     * @return string
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * @return string
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
+    /**
+     * @return string[]
+     */
     public function getPointerSegments()
     {
         return $this->segments;
     }
 
+    /**
+     * Returns the primary resource identifier part of the URI, i.e. everything
+     * excluding its fragment part.
+     *
+     * @return string
+     */
     public function getPrimaryResourceIdentifier()
     {
         return $this->primaryIdentifier;
     }
 
+    /**
+     * Resolves the current (relative) URI against another (absolute) URI.
+     * Example:
+     *
+     * Current  = foo.json
+     * Other    = http://localhost/bar/baz
+     * Resolved = http://localhost/bar/foo.json
+     *
+     * @param Uri $uri
+     * @return string
+     */
     public function resolveAgainst(Uri $uri)
     {
         if ($this->isAbsolute()) {
@@ -117,6 +198,13 @@ class Uri
         return $resolved;
     }
 
+    /**
+     * Returns whether two URIs share the same primary resource identifier,
+     * i.e. whether they point to the same document.
+     *
+     * @param Uri $uri
+     * @return bool
+     */
     public function isSamePrimaryResource(Uri $uri)
     {
         if (!$this->isAbsolute() || !$uri->isAbsolute()) {

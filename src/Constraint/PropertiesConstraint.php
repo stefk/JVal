@@ -10,18 +10,31 @@ use JVal\Types;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "properties", "additionalProperties" and
+ * "patternProperties" keywords.
+ */
 class PropertiesConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['properties', 'additionalProperties', 'patternProperties'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return $type === Types::TYPE_OBJECT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!property_exists($schema, 'properties')) {
@@ -86,6 +99,9 @@ class PropertiesConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $propertySet = array_keys(get_object_vars($schema->properties));

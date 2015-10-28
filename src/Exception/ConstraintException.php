@@ -4,11 +4,28 @@ namespace JVal\Exception;
 
 use JVal\Context;
 
+/**
+ * Base class for constraint exceptions.
+ */
 abstract class ConstraintException extends \Exception
 {
+    /**
+     * @var Context
+     */
     private $context;
+
+    /**
+     * @var mixed
+     */
     private $target;
 
+    /**
+     * Constructor.
+     *
+     * @param Context   $context    The current validation context
+     * @param mixed     $target     An optional exception target not
+     *                              present in the current context
+     */
     public function __construct(Context $context, $target = null)
     {
         parent::__construct();
@@ -17,16 +34,25 @@ abstract class ConstraintException extends \Exception
         $this->buildMessage();
     }
 
+    /**
+     * @return string
+     */
     public function getPath()
     {
         return $this->context->getCurrentPath();
     }
 
+    /**
+     * @return mixed
+     */
     public function getTarget()
     {
         return $this->target;
     }
 
+    /**
+     * Builds the exception message.
+     */
     abstract protected function buildMessage();
 
     /**

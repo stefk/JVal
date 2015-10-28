@@ -12,18 +12,30 @@ use JVal\Utils;
 use JVal\Walker;
 use stdClass;
 
+/**
+ * Constraint for the "enum" keyword.
+ */
 class EnumConstraint implements Constraint
 {
+    /**
+     * {@inheritDoc}
+     */
     public function keywords()
     {
         return ['enum'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports($type)
     {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $context->enterNode($schema->enum, 'enum');
@@ -47,6 +59,9 @@ class EnumConstraint implements Constraint
         $context->leaveNode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
         $hasMatch = false;
