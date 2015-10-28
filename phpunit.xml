@@ -13,7 +13,7 @@
          verbose="true"
 >
     <testsuites>
-        <testsuite name="JSON Schema Test Suite">
+        <testsuite name="JVal Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
