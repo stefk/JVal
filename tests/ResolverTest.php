@@ -25,14 +25,6 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \JVal\Exception\Resolver\EmptyStackException
-     */
-    public function testGetSchemaThrowsIfNoBaseSchema()
-    {
-        $this->resolver->getBaseSchema();
-    }
-
-    /**
      * @dataProvider rootRefProvider
      *
      * @param string $schemaName

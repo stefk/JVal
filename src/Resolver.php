@@ -74,21 +74,6 @@ class Resolver
     }
 
     /**
-     * Returns the current base schema.
-     *
-     * @return stdClass
-     * @throws EmptyStackException
-     */
-    public function getBaseSchema()
-    {
-        if (count($this->stack) === 0) {
-            throw new EmptyStackException();
-        }
-
-        return $this->stack[0][1];
-    }
-
-    /**
      * Returns the URI of the current schema.
      *
      * @return Uri
