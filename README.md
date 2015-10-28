@@ -9,7 +9,9 @@ Features:
   (https://github.com/json-schema/JSON-Schema-Test-Suite), except for the
   two tests that require big nums to be treated as integers, which is not
   feasible in PHP)
-- Distinct steps for references resolution, syntax parsing and data validation.  
+- Distinct steps for references resolution, syntax parsing and data validation.
+
+[![Build Status](https://travis-ci.org/stefk/JVal.svg?branch=master)](https://travis-ci.org/stefk/JVal)
 
 Installation
 ------------
