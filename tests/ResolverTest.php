@@ -25,6 +25,30 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
+     * @expectedException \JVal\Exception\Resolver\EmptyStackException
+     */
+    public function testGetCurrentSchemaThrowsIfStackIsEmpty()
+    {
+        $this->resolver->getCurrentSchema();
+    }
+
+    /**
+     * @expectedException \JVal\Exception\Resolver\EmptyStackException
+     */
+    public function testGetCurrentUriThrowsIfStackIsEmpty()
+    {
+        $this->resolver->getCurrentUri();
+    }
+
+    /**
+     * @expectedException \JVal\Exception\Resolver\EmptyStackException
+     */
+    public function testLeaveThrowsIfStackIsEmpty()
+    {
+        $this->resolver->leave();
+    }
+
+    /**
      * @dataProvider rootRefProvider
      *
      * @param string $schemaName
