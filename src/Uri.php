@@ -279,17 +279,11 @@ class Uri
             $query = $this->getQuery();
         }
 
-        $resolved = "{$scheme}://{$authority}{$path}";
-
-        if ($query) {
-            $resolved .= '?' . $query;
-        }
-
-        if ($this->parts['fragment']) {
-            $resolved .= '#' . $this->parts['fragment'];
-        }
-
-        return $resolved;
+        return $this->appendRelativeParts(
+            "{$scheme}://{$authority}{$path}",
+            $query,
+            $this->parts['fragment']
+        );
     }
 
     private function buildResolvedPathAgainst($againstPath)
@@ -303,5 +297,18 @@ class Uri
         }
 
         return $ownPath;
+    }
+
+    private function appendRelativeParts($absolutePart, $query, $fragment)
+    {
+        if ($query) {
+            $absolutePart .= '?' . $query;
+        }
+
+        if ($fragment) {
+            $absolutePart .= '#' . $fragment;
+        }
+
+        return $absolutePart;
     }
 }
