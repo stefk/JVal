@@ -149,6 +149,8 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ['/baz#/baz/quz', 'file:///foo/bar#baz', 'file:///baz#/baz/quz'],
             ['//quz', 'http://foo/bar', 'http://quz'],
             ['//quz/baz#/baz', 'http://foo/bar#baz', 'http://quz/baz#/baz'],
+            ['?foo=a#/baz', 'http://localhost/bar?foo=b#baz', 'http://localhost/bar?foo=a#/baz'],
+            ['//john:123@localhost', 'http://localhost:456/bar', 'http://john:123@localhost']
         ];
     }
 
