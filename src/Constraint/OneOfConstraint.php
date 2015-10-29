@@ -31,22 +31,28 @@ class OneOfConstraint extends AbstractOfConstraint
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        $originalCount = $context->countViolations();
+        $accumulatingContext = $context->duplicate(false);
         $hasMatch = false;
         $hasDoubleMatch = false;
 
         foreach ($schema->oneOf as $subSchema) {
-            $subContext = $context->duplicate();
+            $subContext = $context->duplicate(false);
             $walker->applyConstraints($instance, $subSchema, $subContext);
 
-            if ($subContext->countViolations() === $originalCount) {
+            if ($subContext->countViolations() === $context->countViolations()) {
                 if (!$hasMatch) {
                     $hasMatch = true;
                 } else {
                     $hasDoubleMatch = true;
                     break;
                 }
+            } else {
+                $accumulatingContext->mergeViolations($subContext);
             }
+        }
+
+        if (!$hasMatch) {
+            $context->mergeViolations($accumulatingContext);
         }
 
         if (!$hasMatch || $hasDoubleMatch) {

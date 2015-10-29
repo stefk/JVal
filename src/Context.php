@@ -149,13 +149,20 @@ class Context
     }
 
     /**
-     * Returns a copy of the context.
+     * Returns a copy of the context, optionally purged of its
+     * accumulated violations.
      *
+     * @param bool $withViolations
      * @return Context
      */
-    public function duplicate()
+    public function duplicate($withViolations = true)
     {
-        // ok as long as context doesn't hold object references
+        // cloning as long as the context doesn't hold object references
+        $clone = clone $this;
+
+        if (!$withViolations) {
+            $clone->purgeViolations();
+        }
 
         return clone $this;
     }
@@ -169,5 +176,13 @@ class Context
     public function mergeViolations(Context $context)
     {
         $this->violations = array_merge($this->violations, $context->getViolations());
+    }
+
+    /**
+     * Deletes the list of accumulated violations.
+     */
+    public function purgeViolations()
+    {
+        $this->violations = [];
     }
 }

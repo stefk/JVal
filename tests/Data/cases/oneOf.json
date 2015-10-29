@@ -52,6 +52,14 @@
           "violations": [
             {
               "path": "",
+              "message": "additional properties are not allowed"
+            },
+            {
+              "path": "",
+              "message": "additional properties are not allowed"
+            },
+            {
+              "path": "",
               "message": "instance must match exactly one of the schemas listed in oneOf"
             }
           ]
