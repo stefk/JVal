@@ -39,3 +39,10 @@ or local), the absolute URI of the base schema will probably be needed as well:
 $validator = JVal\Validator::buildDefault();
 $violations = $validator->validate($data, $schema, 'file://path/to/the/schema');
 ```
+
+CLI
+---
+
+```
+bin/jval path/to/data path/to/schema
+```

@@ -49,6 +49,7 @@
     "autoload": {
         "psr-4": { "JVal\\": "src/" }
     },
+    "bin": ["bin/jval"],
     "minimum-stability": "dev",
     "prefer-stable": true
 }
