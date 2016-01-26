@@ -50,6 +50,9 @@ try {
     $validator = JVal\Validator::buildDefault();
     $errors = $validator->validate($instance, $schema, $schemaUri);
     echo json_encode($errors, JSON_PRETTY_PRINT) . "\n";
+    ($count = count($errors)) > 0 ?
+        writeln("{$count} errors.", 'error') :
+        writeln('No error.', 'info');
 } catch (Exception $ex) {
     writeln($ex->getMessage(), 'error');
     writeln($ex->getTraceAsString());
