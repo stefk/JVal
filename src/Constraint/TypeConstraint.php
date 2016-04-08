@@ -71,6 +71,8 @@ class TypeConstraint implements Constraint
         } else {
             throw new InvalidTypeException($context, [Types::TYPE_STRING, Types::TYPE_ARRAY]);
         }
+
+        $context->leaveNode();
     }
 
     /**
