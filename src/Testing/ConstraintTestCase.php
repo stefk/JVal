@@ -47,7 +47,11 @@ abstract class ConstraintTestCase extends BaseTestCase
         $schemaContext = new Context();
         $validationContext = new Context();
         $walker = new Walker(new Registry(), new Resolver());
+
+        $pathBefore = $schemaContext->getCurrentPath();
         $constraint->normalize($schema, $schemaContext, $walker);
+        $this->assertSame($pathBefore, $schemaContext->getCurrentPath());
+
         $constraint->apply($instance, $schema, $validationContext, $walker);
         $actualErrors = $validationContext->getViolations();
 
