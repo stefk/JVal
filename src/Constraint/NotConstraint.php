@@ -42,7 +42,7 @@ class NotConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->not, 'not');
+        $context->enterNode('not');
 
         if (!is_object($schema->not)) {
             throw new InvalidTypeException($context, Types::TYPE_OBJECT);

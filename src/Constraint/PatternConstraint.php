@@ -44,7 +44,7 @@ class PatternConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->pattern, 'pattern');
+        $context->enterNode('pattern');
 
         if (!is_string($schema->pattern)) {
             throw new InvalidTypeException($context, Types::TYPE_STRING);

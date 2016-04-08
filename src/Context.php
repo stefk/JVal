@@ -31,34 +31,27 @@ class Context
     private $pathSegments = [];
 
     /**
-     * @var array
-     */
-    private $instanceStack = [];
-
-    /**
-     * Pushes an instance and its associated path segment onto the context
-     * stack, making it the current visited node.
+     * Pushes a path segment onto the context stack, making it the current
+     * visited node.
      *
-     * @param mixed  $instance
      * @param string $pathSegment
      */
-    public function enterNode($instance, $pathSegment)
+    public function enterNode($pathSegment)
     {
-        $this->instanceStack[] = $instance;
         $this->pathSegments[] = $pathSegment;
     }
+
 
     /**
      * Leaves the current node and enters another node located at the same
      * depth in the hierarchy.
      *
-     * @param mixed  $instance
      * @param string $pathSegment
      */
-    public function enterSibling($instance, $pathSegment)
+    public function enterSibling($pathSegment)
     {
         $this->leaveNode();
-        $this->enterNode($instance, $pathSegment);
+        $this->enterNode($pathSegment);
     }
 
     /**
@@ -67,11 +60,10 @@ class Context
      */
     public function leaveNode()
     {
-        if (count($this->instanceStack) === 0) {
+        if (count($this->pathSegments) === 0) {
             throw new \LogicException('Cannot leave node: instance stack is empty');
         }
 
-        array_pop($this->instanceStack);
         array_pop($this->pathSegments);
     }
 
