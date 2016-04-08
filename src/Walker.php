@@ -32,14 +32,19 @@ class Walker
     private $resolver;
 
     /**
-     * @var stdClass[]
+     * @var array
      */
     private $parsedSchemas = [];
 
     /**
-     * @var stdClass[]
+     * @var array
      */
     private $resolvedSchemas = [];
+
+    /**
+     * @var Constraint[][]
+     */
+    private $constraintsCache = [];
 
     /**
      * Constructor.
@@ -126,13 +131,16 @@ class Walker
             return $schema;
         }
 
-        foreach ($this->getConstraints($schema, $context) as $constraint) {
-            foreach ($constraint->keywords() as $keyword) {
-                if (property_exists($schema, $keyword)) {
-                    $constraint->normalize($schema, $context, $this);
-                    break;
-                }
-            }
+        if (isset($schema->{'$schema'})) {
+            $context->setVersion($schema->{'$schema'});
+        }
+
+        $version = $context->getVersion();
+        $constraints = $this->registry->getConstraints($version);
+        $constraints = $this->filterConstraintsForSchema($constraints, $schema);
+
+        foreach ($constraints as $constraint) {
+            $constraint->normalize($schema, $context, $this);
         }
 
         return $schema;
@@ -142,50 +150,71 @@ class Walker
      * Validates an instance against a given schema, populating a context
      * with encountered violations.
      *
-     * @param $instance
+     * @param mixed    $instance
      * @param stdClass $schema
      * @param Context  $context
      */
     public function applyConstraints($instance, stdClass $schema, Context $context)
     {
-        $instanceType = Types::getPrimitiveTypeOf($instance);
-
-        foreach ($this->getConstraints($schema, $context) as $constraint) {
-            foreach ($constraint->keywords() as $keyword) {
-                if ($constraint->supports($instanceType)) {
-                    if (property_exists($schema, $keyword)) {
-                        $constraint->apply($instance, $schema, $context, $this);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private function isLooping($item, array &$stack)
-    {
-        $isKnown = false;
-
-        foreach ($stack as $knownItem) {
-            if ($item === $knownItem) {
-                $isKnown = true;
-                break;
-            }
-        }
-
-        if (!$isKnown) {
-            $stack[] = $item;
-        }
-
-        return $isKnown;
-    }
-
-    private function getConstraints(stdClass $schema, Context $context)
-    {
-        if (property_exists($schema, '$schema')) {
+        if (isset($schema->{'$schema'})) {
             $context->setVersion($schema->{'$schema'});
         }
 
-        return $this->registry->getConstraints($context->getVersion());
+        $cacheKey = gettype($instance).spl_object_hash($schema);
+        $constraints = & $this->constraintsCache[$cacheKey];
+
+        if ($constraints === null) {
+            $version = $context->getVersion();
+            $instanceType = Types::getPrimitiveTypeOf($instance);
+            $constraints = $this->registry->getConstraintsForType($version, $instanceType);
+            $constraints = $this->filterConstraintsForSchema($constraints, $schema);
+        }
+
+        foreach ($constraints as $constraint) {
+            $constraint->apply($instance, $schema, $context, $this);
+        }
+    }
+
+    /**
+     * Checks if given schema has been already visited.
+     *
+     * @param stdClass $schema
+     * @param array    $stack
+     *
+     * @return bool
+     */
+    private function isLooping(stdClass $schema, array &$stack)
+    {
+        $schemaHash = spl_object_hash($schema);
+        if (isset($stack[$schemaHash])) {
+            return true;
+        }
+
+        $stack[$schemaHash] = true;
+        return false;
+    }
+
+    /**
+     * Filters constraints which should be triggered for given schema.
+     *
+     * @param Constraint[] $constraints
+     * @param stdClass     $schema
+     *
+     * @return Constraint[]
+     */
+    private function filterConstraintsForSchema(array $constraints, stdClass $schema)
+    {
+        $filtered = [];
+
+        foreach ($constraints as $constraint) {
+            foreach ($constraint->keywords() as $keyword) {
+                if (property_exists($schema, $keyword)) {
+                    $filtered[] = $constraint;
+                    break;
+                }
+            }
+        }
+
+        return $filtered;
     }
 }

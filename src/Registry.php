@@ -54,13 +54,18 @@ class Registry
     private $constraints = [];
 
     /**
+     * @var Constraint[][]
+     */
+    private $constraintsForTypeCache;
+
+    /**
      * Returns the constraints associated with a given JSON Schema version.
      *
      * @param string $version
      *
      * @return Constraint[]
      *
-     * @throws \Exception if the version is not supported
+     * @throws UnsupportedVersionException if the version is not supported
      */
     public function getConstraints($version)
     {
@@ -69,6 +74,34 @@ class Registry
         }
 
         return $this->constraints[$version];
+    }
+
+    /**
+     * Returns the constraints associated with a given JSON Schema version
+     * which supports given JSON type.
+     *
+     * @param string $version
+     * @param string $type
+     *
+     * @return Constraint[]
+     *
+     * @throws UnsupportedVersionException if the version is not supported
+     */
+    public function getConstraintsForType($version, $type)
+    {
+        $cache = & $this->constraintsForTypeCache[$version.$type];
+
+        if ($cache === null) {
+            $cache = [];
+
+            foreach ($this->getConstraints($version) as $constraint) {
+                if ($constraint->supports($type)) {
+                    $cache[] = $constraint;
+                }
+            }
+        }
+
+        return $cache;
     }
 
     /**
