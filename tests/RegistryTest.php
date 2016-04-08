@@ -14,18 +14,9 @@ class RegistryTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \JVal\Exception\UnsupportedVersionException
      */
-    public function testLoadConstraintsThrowOnUnsupportedVersion()
+    public function testGetConstraintsThrowOnUnsupportedVersion()
     {
         $registry = new Registry();
-        $registry->loadConstraintsFor('unknown');
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testLoadConstraintsThrowIfNoConstraintsLoaded()
-    {
-        $registry = new Registry();
-        $registry->getConstraints();
+        $registry->getConstraints('unknown');
     }
 }
