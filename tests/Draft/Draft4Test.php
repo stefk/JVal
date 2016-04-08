@@ -31,9 +31,9 @@ class Draft4Test extends BaseTestCase
     ) {
         $remoteDir = realpath(__DIR__.'/../../vendor/json-schema/test-suite/remotes');
         $validator = Validator::buildDefault(function ($uri) use ($remoteDir) {
-            return str_replace('http://localhost:1234', 'file://'.$remoteDir, $uri);
+            return str_replace('http://localhost:1234', $this->getLocalUri($remoteDir), $uri);
         });
-        $actualErrors = $validator->validate($instance, $schema, 'file://'.$file);
+        $actualErrors = $validator->validate($instance, $schema, $this->getLocalUri($file));
 
         $this->assertValidationResult(
             $file,

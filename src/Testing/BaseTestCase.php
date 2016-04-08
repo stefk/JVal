@@ -148,6 +148,22 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Returns URI to local file system.
+     *
+     * @param  string $path
+     *
+     * @return string
+     */
+    protected function getLocalUri($path)
+    {
+        if (preg_match('/^[A-Z]:/', $path)) {
+            $path = '/' . strtr($path, '\\', '/');
+        }
+
+        return 'file://' . $path;
+    }
+
+    /**
      * @codeCoverageIgnore (cannot cover code whose behaviour depends on PHP version)
      *
      * @param mixed $variable
