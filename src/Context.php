@@ -36,11 +36,6 @@ class Context
     private $instanceStack = [];
 
     /**
-     * @var string
-     */
-    private $path = '';
-
-    /**
      * Pushes an instance and its associated path segment onto the context
      * stack, making it the current visited node.
      *
@@ -51,7 +46,6 @@ class Context
     {
         $this->instanceStack[] = $instance;
         $this->pathSegments[] = $pathSegment;
-        $this->path .= '/'.$pathSegment;
     }
 
     /**
@@ -79,9 +73,6 @@ class Context
 
         array_pop($this->instanceStack);
         array_pop($this->pathSegments);
-
-        $this->path = '/'.implode('/', $this->pathSegments);
-        $this->path = $this->path === '/' ? '' : $this->path;
     }
 
     /**
@@ -91,7 +82,7 @@ class Context
      */
     public function getCurrentPath()
     {
-        return $this->path;
+        return $this->pathSegments ? '/'.implode('/', $this->pathSegments) : '';
     }
 
     /**
@@ -103,7 +94,7 @@ class Context
     public function addViolation($message, array $parameters = [])
     {
         $this->violations[] = [
-            'path' => $this->path,
+            'path' => $this->getCurrentPath(),
             'message' => vsprintf($message, $parameters),
         ];
     }
