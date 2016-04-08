@@ -41,7 +41,7 @@
           "violations": [
             {
               "path": "",
-              "message": "additional properties are not allowed"
+              "message": "additional property \"unknown\" is not allowed"
             }
           ]
         },
@@ -55,7 +55,7 @@
           "violations": [
             {
               "path": "",
-              "message": "additional properties are not allowed"
+              "message": "additional property \"baz-new\" is not allowed"
             }
           ]
         }
@@ -107,11 +107,11 @@
           "violations": [
             {
               "path": "/foo",
-              "message": "additional properties are not allowed"
+              "message": "additional property \"nope\" is not allowed"
             },
             {
               "path": "/baz2",
-              "message": "additional properties are not allowed"
+              "message": "additional property \"bar\" is not allowed"
             }
           ]
         }
