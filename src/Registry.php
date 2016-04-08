@@ -54,59 +54,51 @@ class Registry
     private $constraints = [];
 
     /**
-     * @var string
+     * Returns the constraints associated with a given JSON Schema version.
+     *
+     * @param string $version
+     *
+     * @return Constraint[]
+     *
+     * @throws \Exception if the version is not supported
      */
-    private $loadedVersion;
+    public function getConstraints($version)
+    {
+        if (!isset($this->constraints[$version])) {
+            $this->constraints[$version] = $this->createConstraints($version);
+        }
+
+        return $this->constraints[$version];
+    }
 
     /**
      * Loads the constraints associated with a given JSON Schema version.
      *
      * @param string $version
      *
-     * @throws \Exception if the version is not supported
-     */
-    public function loadConstraintsFor($version)
-    {
-        if (!isset($this->constraints[$version])) {
-            switch ($version) {
-                case self::VERSION_CURRENT:
-                case self::VERSION_DRAFT_4:
-                    $this->constraints[$version] = $this->createConstraints(
-                        array_merge(
-                            self::$commonConstraints,
-                            self::$draft4Constraints
-                        )
-                    );
-                    break;
-                default:
-                    throw new UnsupportedVersionException(
-                        "Schema version '{$version}' not supported"
-                    );
-            }
-        }
-
-        $this->loadedVersion = $version;
-    }
-
-    /**
-     * Returns the loaded constraints.
-     *
      * @return Constraint[]
      *
-     * @throws \LogicException if no constraints have been loaded
+     * @throws \Exception if the version is not supported
      */
-    public function getConstraints()
+    protected function createConstraints($version)
     {
-        if (!isset($this->loadedVersion)) {
-            throw new \LogicException(
-                'Cannot return constraints: no constraints have been loaded yet'
-            );
+        switch ($version) {
+            case self::VERSION_CURRENT:
+            case self::VERSION_DRAFT_4:
+                return $this->createBuiltInConstraints(
+                    array_merge(
+                        self::$commonConstraints,
+                        self::$draft4Constraints
+                    )
+                );
+            default:
+                throw new UnsupportedVersionException(
+                    "Schema version '{$version}' not supported"
+                );
         }
-
-        return $this->constraints[$this->loadedVersion];
     }
 
-    private function createConstraints(array $constraintNames)
+    private function createBuiltInConstraints(array $constraintNames)
     {
         return array_map(function ($name) {
             $class = "JVal\\Constraint\\{$name}Constraint";

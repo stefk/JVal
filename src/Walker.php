@@ -118,9 +118,7 @@ class Walker
             return $schema;
         }
 
-        $this->loadConstraints($schema, $context);
-
-        foreach ($this->registry->getConstraints() as $constraint) {
+        foreach ($this->getConstraints($schema, $context) as $constraint) {
             foreach ($constraint->keywords() as $keyword) {
                 if (property_exists($schema, $keyword)) {
                     $constraint->normalize($schema, $context, $this);
@@ -142,10 +140,9 @@ class Walker
      */
     public function applyConstraints($instance, stdClass $schema, Context $context)
     {
-        $this->loadConstraints($schema, $context);
         $instanceType = Types::getPrimitiveTypeOf($instance);
 
-        foreach ($this->registry->getConstraints() as $constraint) {
+        foreach ($this->getConstraints($schema, $context) as $constraint) {
             foreach ($constraint->keywords() as $keyword) {
                 if ($constraint->supports($instanceType)) {
                     if (property_exists($schema, $keyword)) {
@@ -175,12 +172,12 @@ class Walker
         return $isKnown;
     }
 
-    private function loadConstraints(stdClass $schema, Context $context)
+    private function getConstraints(stdClass $schema, Context $context)
     {
         if (property_exists($schema, '$schema')) {
             $context->setVersion($schema->{'$schema'});
         }
 
-        $this->registry->loadConstraintsFor($context->getVersion());
+        return $this->registry->getConstraints($context->getVersion());
     }
 }
