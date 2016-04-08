@@ -204,7 +204,7 @@ class ResolverTest extends BaseTestCase
         $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
         $schemaFile = __DIR__.'/Data/schemas/invalid/undecodable.json';
         $reference = new stdClass();
-        $reference->{'$ref'} = "file://{$schemaFile}";
+        $reference->{'$ref'} = $this->getLocalUri($schemaFile);
         $this->resolver->resolve($reference);
     }
 
@@ -216,7 +216,7 @@ class ResolverTest extends BaseTestCase
         $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
         $schemaFile = __DIR__.'/Data/schemas/invalid/not-an-object.json';
         $reference = new stdClass();
-        $reference->{'$ref'} = "file://{$schemaFile}";
+        $reference->{'$ref'} = $this->getLocalUri($schemaFile);
         $this->resolver->resolve($reference);
     }
 
@@ -330,7 +330,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             ['http://json-schema.org/draft-03/schema#', $schema3],
-            ["file://{$schemaFile}", $schema3],
+            [$this->getLocalUri($schemaFile), $schema3],
         ];
     }
 

@@ -200,6 +200,10 @@ class Uri
             }
         }
 
+        if ($this->parts['scheme'] === 'file' && preg_match('/^[A-Z]:/', $this->parts['path'])) {
+            $this->parts['path'] = '/' . $this->parts['path'];
+        }
+
         $this->authority = $this->buildAuthority();
         $this->segments = $this->buildSegments();
         $this->primaryIdentifier = $this->buildPrimaryIdentifier();
