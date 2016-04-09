@@ -28,7 +28,7 @@ abstract class AbstractCountConstraint implements Constraint
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         $keyword = $this->keywords()[0];
-        $context->enterNode($schema->{$keyword}, $keyword);
+        $context->enterNode($keyword);
 
         if (!is_int($schema->{$keyword})) {
             throw new InvalidTypeException($context, Types::TYPE_INTEGER);

@@ -44,7 +44,7 @@ class RequiredConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->required, 'required');
+        $context->enterNode('required');
 
         if (!is_array($schema->required)) {
             throw new InvalidTypeException($context, Types::TYPE_ARRAY);
@@ -56,7 +56,7 @@ class RequiredConstraint implements Constraint
 
         foreach ($schema->required as $index => $property) {
             if (!is_string($property)) {
-                $context->enterNode($property, $index);
+                $context->enterNode($index);
 
                 throw new InvalidTypeException($context, Types::TYPE_STRING);
             }

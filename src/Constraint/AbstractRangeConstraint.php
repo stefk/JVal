@@ -48,13 +48,13 @@ abstract class AbstractRangeConstraint implements Constraint
         }
 
         if (!Types::isA($schema->{$property}, Types::TYPE_NUMBER)) {
-            $context->enterNode($schema->{$property}, $property);
+            $context->enterNode($property);
 
             throw new InvalidTypeException($context, Types::TYPE_NUMBER);
         }
 
         if (!is_bool($schema->{$secondaryProperty})) {
-            $context->enterNode($schema->{$secondaryProperty}, $secondaryProperty);
+            $context->enterNode($secondaryProperty);
 
             throw new InvalidTypeException($context, Types::TYPE_BOOLEAN);
         }

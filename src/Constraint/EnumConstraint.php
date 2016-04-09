@@ -45,7 +45,7 @@ class EnumConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->enum, 'enum');
+        $context->enterNode('enum');
 
         if (!is_array($schema->enum)) {
             throw new InvalidTypeException($context, Types::TYPE_ARRAY);

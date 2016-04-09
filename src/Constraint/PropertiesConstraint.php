@@ -47,13 +47,13 @@ class PropertiesConstraint implements Constraint
     {
         $this->createDefaults($schema);
 
-        $context->enterNode($schema->properties, 'properties');
+        $context->enterNode('properties');
         $this->parsePropertiesProperty($schema, $context, $walker);
 
-        $context->enterSibling($schema->additionalProperties, 'additionalProperties');
+        $context->enterSibling('additionalProperties');
         $this->parseAdditionalPropertiesProperty($schema, $context, $walker);
 
-        $context->enterSibling($schema->patternProperties, 'patternProperties');
+        $context->enterSibling('patternProperties');
         $this->parsePatternPropertiesProperty($schema, $context, $walker);
         $context->leaveNode();
     }
@@ -90,7 +90,7 @@ class PropertiesConstraint implements Constraint
         }
 
         foreach ($schema->properties as $property => $value) {
-            $context->enterNode($schema->properties->{$property}, $property);
+            $context->enterNode($property);
 
             if (!is_object($value)) {
                 throw new InvalidTypeException($context, Types::TYPE_OBJECT);
@@ -117,7 +117,7 @@ class PropertiesConstraint implements Constraint
         }
 
         foreach ($schema->patternProperties as $regex => $value) {
-            $context->enterNode($value, $regex);
+            $context->enterNode($regex);
 
             if (!Utils::isValidRegex($regex)) {
                 throw new InvalidRegexException($context);
@@ -168,7 +168,7 @@ class PropertiesConstraint implements Constraint
         $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
 
         foreach ($instance as $property => $value) {
-            $context->enterNode($value, $property);
+            $context->enterNode($property);
             $schemas = [];
 
             if (in_array($property, $propertySet)) {

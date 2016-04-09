@@ -43,7 +43,7 @@ class MultipleOfConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->multipleOf, 'multipleOf');
+        $context->enterNode('multipleOf');
 
         if (!Types::isA($schema->multipleOf, Types::TYPE_NUMBER)) {
             throw new InvalidTypeException($context, Types::TYPE_NUMBER);

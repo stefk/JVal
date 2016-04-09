@@ -64,7 +64,7 @@ class FormatConstraint implements Constraint
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!is_string($schema->format)) {
-            $context->enterNode($schema->format, 'format');
+            $context->enterNode('format');
 
             throw new InvalidTypeException($context, Types::TYPE_STRING);
         }

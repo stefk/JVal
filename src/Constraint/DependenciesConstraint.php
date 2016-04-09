@@ -44,14 +44,14 @@ class DependenciesConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->dependencies, 'dependencies');
+        $context->enterNode('dependencies');
 
         if (!is_object($schema->dependencies)) {
             throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
 
         foreach ($schema->dependencies as $property => $value) {
-            $context->enterNode($value, $property);
+            $context->enterNode($property);
 
             if (is_object($value)) {
                 $walker->parseSchema($value, $context);
@@ -62,7 +62,7 @@ class DependenciesConstraint implements Constraint
 
                 foreach ($value as $index => $subProperty) {
                     if (!is_string($subProperty)) {
-                        $context->enterNode($subProperty, $index);
+                        $context->enterNode($index);
 
                         throw new InvalidTypeException($context, Types::TYPE_STRING);
                     }

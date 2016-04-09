@@ -44,7 +44,7 @@ class TypeConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $context->enterNode($schema->type, 'type');
+        $context->enterNode('type');
 
         if (is_string($schema->type)) {
             if (!Types::isPrimitive($schema->type)) {
@@ -52,7 +52,7 @@ class TypeConstraint implements Constraint
             }
         } elseif (is_array($schema->type)) {
             foreach ($schema->type as $index => $type) {
-                $context->enterNode($type, $index);
+                $context->enterNode($index);
 
                 if (!is_string($type)) {
                     throw new InvalidTypeException($context, Types::TYPE_STRING);

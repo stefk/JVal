@@ -44,7 +44,7 @@ class UniqueItemsConstraint implements Constraint
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
         if (!is_bool($schema->uniqueItems)) {
-            $context->enterNode($schema->uniqueItems, 'uniqueItems');
+            $context->enterNode('uniqueItems');
 
             throw new InvalidTypeException($context, Types::TYPE_BOOLEAN);
         }
