@@ -74,6 +74,14 @@ class Resolver
     }
 
     /**
+     * Clears internal schema resolution stack.
+     */
+    public function clearStack()
+    {
+        $this->stack = [];
+    }
+
+    /**
      * Returns the URI of the current schema.
      *
      * @return Uri

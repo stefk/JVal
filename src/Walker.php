@@ -63,16 +63,26 @@ class Walker
      */
     public function resolveReferences(stdClass $schema, Uri $uri)
     {
+        $this->resolver->setBaseSchema($schema, $uri);
+        $schema = $this->doResolveReferences($schema, $uri);
+        $this->resolver->clearStack();
+
+        return $schema;
+    }
+
+    /**
+     * @param stdClass $schema
+     * @param Uri      $uri
+     *
+     * @return stdClass
+     */
+    private function doResolveReferences(stdClass $schema, Uri $uri)
+    {
         if ($this->isLooping($schema, $this->resolvedSchemas)) {
             return $schema;
         }
 
-        if (!$this->resolver->hasBaseSchema()) {
-            $this->resolver->setBaseSchema($schema, $uri);
-        }
-
         $inScope = false;
-
         if (property_exists($schema, 'id') && is_string($schema->id)) {
             $this->resolver->enter(new Uri($schema->id));
             $inScope = true;
@@ -81,16 +91,16 @@ class Walker
         if (property_exists($schema, '$ref')) {
             $resolved = $this->resolver->resolve($schema);
             $this->resolver->enter($resolved[0], $resolved[1]);
-            $schema = $this->resolveReferences($resolved[1], $resolved[0]);
+            $schema = $this->doResolveReferences($resolved[1], $resolved[0]);
             $this->resolver->leave();
         } else {
             foreach ($schema as $property => $value) {
                 if (is_object($value)) {
-                    $schema->{$property} = $this->resolveReferences($value, $uri);
+                    $schema->{$property} = $this->doResolveReferences($value, $uri);
                 } elseif (is_array($value)) {
                     foreach ($value as $index => $element) {
                         if (is_object($element)) {
-                            $schema->{$property}[$index] = $this->resolveReferences($element, $uri);
+                            $schema->{$property}[$index] = $this->doResolveReferences($element, $uri);
                         }
                     }
                 }
