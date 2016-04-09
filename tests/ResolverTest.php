@@ -56,7 +56,7 @@ class ResolverTest extends BaseTestCase
     public function testResolveLocalRoot($schemaName)
     {
         $schema = $this->loadSchema($schemaName);
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $resolved = $this->resolver->resolve($schema->foo->bar);
         $this->assertEquals($schema, $resolved[1]);
     }
@@ -70,7 +70,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $actual = $this->resolver->resolve($reference);
@@ -86,7 +86,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUnresolvedPointerProperty(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -101,7 +101,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -116,7 +116,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUnresolvedPointerIndex(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -131,7 +131,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidPointerSegment(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -146,7 +146,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidPointerTarget(stdClass $schema, $pointerUri)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -161,7 +161,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnSelfReferencingPointer(stdClass $schema, stdClass $reference)
     {
-        $this->resolver->setBaseSchema($schema, new Uri('file:///foo/bar'));
+        $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
         $this->resolver->resolve($reference);
     }
 
@@ -174,7 +174,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUnfetchableUri($pointerUri)
     {
-        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
+        $this->resolver->initialize(new stdClass(), new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $this->resolver->resolve($reference);
@@ -189,7 +189,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveRemoteSchema($pointerUri, stdClass $expectedSchema)
     {
-        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
+        $this->resolver->initialize(new stdClass(), new Uri('file:///foo/bar'));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $resolved = $this->resolver->resolve($reference);
@@ -201,7 +201,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnUndecodableRemoteSchema()
     {
-        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
+        $this->resolver->initialize(new stdClass(), new Uri('file:///foo/bar'));
         $schemaFile = __DIR__.'/Data/schemas/invalid/undecodable.json';
         $reference = new stdClass();
         $reference->{'$ref'} = $this->getLocalUri($schemaFile);
@@ -213,7 +213,7 @@ class ResolverTest extends BaseTestCase
      */
     public function testResolveThrowsOnInvalidRemoteSchema()
     {
-        $this->resolver->setBaseSchema(new stdClass(), new Uri('file:///foo/bar'));
+        $this->resolver->initialize(new stdClass(), new Uri('file:///foo/bar'));
         $schemaFile = __DIR__.'/Data/schemas/invalid/not-an-object.json';
         $reference = new stdClass();
         $reference->{'$ref'} = $this->getLocalUri($schemaFile);

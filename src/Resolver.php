@@ -52,33 +52,15 @@ class Resolver
     private $preFetchHook;
 
     /**
-     * Returns whether a base schema has been set.
-     *
-     * @return bool
-     */
-    public function hasBaseSchema()
-    {
-        return count($this->stack) > 0;
-    }
-
-    /**
-     * Sets the current schema, on which resolutions will be based.
+     * Initializes the resolver with a root schema, on which resolutions will be based.
      *
      * @param stdClass $schema
      * @param Uri      $uri
      */
-    public function setBaseSchema(stdClass $schema, Uri $uri)
+    public function initialize(stdClass $schema, Uri $uri)
     {
         $this->registerSchema($schema, $uri);
         $this->stack = [[$uri, $schema]];
-    }
-
-    /**
-     * Clears internal schema resolution stack.
-     */
-    public function clearStack()
-    {
-        $this->stack = [];
     }
 
     /**

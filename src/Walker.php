@@ -63,11 +63,9 @@ class Walker
      */
     public function resolveReferences(stdClass $schema, Uri $uri)
     {
-        $this->resolver->setBaseSchema($schema, $uri);
-        $schema = $this->doResolveReferences($schema, $uri);
-        $this->resolver->clearStack();
+        $this->resolver->initialize($schema, $uri);
 
-        return $schema;
+        return $this->doResolveReferences($schema, $uri);
     }
 
     /**
