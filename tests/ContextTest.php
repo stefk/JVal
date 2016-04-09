@@ -19,4 +19,18 @@ class ContextTest extends \PHPUnit_Framework_TestCase
         $context = new Context();
         $context->leaveNode();
     }
+
+    public function testTraversal()
+    {
+        $context = new Context();
+        $this->assertEquals('', $context->getCurrentPath());
+
+        $context->enterNode('foo');
+        $context->enterNode('bar');
+        $context->leaveNode();
+        $this->assertEquals('/foo', $context->getCurrentPath());
+
+        $context->enterNode('baz');
+        $this->assertEquals('/foo/baz', $context->getCurrentPath());
+    }
 }

@@ -31,6 +31,11 @@ class Context
     private $pathSegments = [];
 
     /**
+     * @var int
+     */
+    private $pathLength = 0;
+
+    /**
      * Pushes a path segment onto the context stack, making it the current
      * visited node.
      *
@@ -38,7 +43,7 @@ class Context
      */
     public function enterNode($pathSegment)
     {
-        $this->pathSegments[] = $pathSegment;
+        $this->pathSegments[$this->pathLength++] = $pathSegment;
     }
 
 
@@ -50,8 +55,7 @@ class Context
      */
     public function enterSibling($pathSegment)
     {
-        $this->leaveNode();
-        $this->enterNode($pathSegment);
+        $this->pathSegments[$this->pathLength - 1] = $pathSegment;
     }
 
     /**
@@ -60,11 +64,11 @@ class Context
      */
     public function leaveNode()
     {
-        if (count($this->pathSegments) === 0) {
-            throw new \LogicException('Cannot leave node: instance stack is empty');
+        if ($this->pathLength === 0) {
+            throw new \LogicException('Cannot leave node');
         }
 
-        array_pop($this->pathSegments);
+        $this->pathLength--;
     }
 
     /**
@@ -74,7 +78,8 @@ class Context
      */
     public function getCurrentPath()
     {
-        return $this->pathSegments ? '/'.implode('/', $this->pathSegments) : '';
+        $this->pathSegments = array_slice($this->pathSegments, 0, $this->pathLength);
+        return $this->pathLength ? '/'.implode('/', $this->pathSegments) : '';
     }
 
     /**
