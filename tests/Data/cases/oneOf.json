@@ -52,11 +52,11 @@
           "violations": [
             {
               "path": "",
-              "message": "additional properties are not allowed"
+              "message": "additional property \"bar\" is not allowed"
             },
             {
               "path": "",
-              "message": "additional properties are not allowed"
+              "message": "additional property \"foo\" is not allowed"
             },
             {
               "path": "",

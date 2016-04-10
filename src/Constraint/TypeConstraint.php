@@ -85,16 +85,7 @@ class TypeConstraint implements Constraint
                 $context->addViolation('instance must be of type %s', [$schema->type]);
             }
         } else {
-            $hasMatch = false;
-
-            foreach ($schema->type as $type) {
-                if (Types::isA($instance, $type)) {
-                    $hasMatch = true;
-                    break;
-                }
-            }
-
-            if (!$hasMatch) {
+            if (!Types::isOneOf($instance, $schema->type)) {
                 $context->addViolation('instance does not match any of the expected types');
             }
         }

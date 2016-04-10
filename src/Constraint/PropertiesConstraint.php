@@ -63,8 +63,36 @@ class PropertiesConstraint implements Constraint
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        $this->validateInstance($instance, $schema, $context);
-        $this->validateChildren($instance, $schema, $context, $walker);
+        // implementation of the algorithms described in 5.4.4.4 and in 8.3
+        foreach ($instance as $property => $value) {
+            $schemas = [];
+
+            if (isset($schema->properties->{$property})) {
+                $schemas[] = $schema->properties->{$property};
+            }
+
+            foreach ($schema->patternProperties as $regex => $propertySchema) {
+                if (Utils::matchesRegex($property, $regex)) {
+                    $schemas[] = $propertySchema;
+                }
+            }
+
+            if (empty($schemas)) {
+                if (is_object($schema->additionalProperties)) {
+                    $schemas[] = $schema->additionalProperties;
+                } elseif ($schema->additionalProperties === false) {
+                    $context->addViolation('additional property "%s" is not allowed', [$property]);
+                }
+            }
+
+            $context->enterNode($property);
+
+            foreach ($schemas as $childSchema) {
+                $walker->applyConstraints($value, $childSchema, $context);
+            }
+
+            $context->leaveNode();
+        }
     }
 
     private function createDefaults(stdClass $schema)
@@ -128,67 +156,6 @@ class PropertiesConstraint implements Constraint
             }
 
             $walker->parseSchema($value, $context);
-            $context->leaveNode();
-        }
-    }
-
-    private function validateInstance($instance, stdClass $schema, Context $context)
-    {
-        // implementation of the algorithm described in 5.4.4.4
-        $propertySet = array_keys(get_object_vars($schema->properties));
-        $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
-
-        if ($schema->additionalProperties === false) {
-            $instanceSet = array_keys(get_object_vars($instance));
-
-            foreach ($propertySet as $property) {
-                if (in_array($property, $instanceSet)) {
-                    unset($instanceSet[array_search($property, $instanceSet)]);
-                }
-            }
-
-            foreach ($patternPropertySet as $regex) {
-                foreach ($instanceSet as $index => $property) {
-                    if (Utils::matchesRegex($property, $regex)) {
-                        unset($instanceSet[$index]);
-                    }
-                }
-            }
-
-            if (count($instanceSet) > 0) {
-                $context->addViolation('additional properties are not allowed');
-            }
-        }
-    }
-
-    private function validateChildren($instance, stdClass $schema, Context $context, Walker $walker)
-    {
-        // implementation of the algorithm described in 8.3
-        $propertySet = array_keys(get_object_vars($schema->properties));
-        $patternPropertySet = array_keys(get_object_vars($schema->patternProperties));
-
-        foreach ($instance as $property => $value) {
-            $context->enterNode($property);
-            $schemas = [];
-
-            if (in_array($property, $propertySet)) {
-                $schemas[] = $schema->properties->{$property};
-            }
-
-            foreach ($patternPropertySet as $regex) {
-                if (Utils::matchesRegex($property, $regex)) {
-                    $schemas[] = $schema->patternProperties->{$regex};
-                }
-            }
-
-            if (count($schemas) === 0 && is_object($schema->additionalProperties)) {
-                $schemas[] = $schema->additionalProperties;
-            }
-
-            foreach ($schemas as $childSchema) {
-                $walker->applyConstraints($value, $childSchema, $context);
-            }
-
             $context->leaveNode();
         }
     }
