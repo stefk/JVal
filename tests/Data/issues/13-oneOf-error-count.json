@@ -1,0 +1,73 @@
+{
+  "title": "issue #13: duplicate validation errors with oneOf",
+  "tests": [
+    {
+      "title": "as a schema for items",
+      "schema": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "valid": [
+        [1, 2],
+        ["foo", 3, "bar"]
+      ],
+      "invalid": [
+        {
+          "instance": [1.2],
+          "violations": [
+            {
+              "path": "/0",
+              "message": "instance must be of type string"
+            },
+            {
+              "path": "/0",
+              "message": "instance must be of type integer"
+            },
+            {
+              "path": "/0",
+              "message": "instance must match exactly one of the schemas listed in oneOf"
+            }
+          ]
+        },
+        {
+          "instance": [true, {}],
+          "violations": [
+            {
+              "path": "/0",
+              "message": "instance must be of type string"
+            },
+            {
+              "path": "/0",
+              "message": "instance must be of type integer"
+            },
+            {
+              "path": "/0",
+              "message": "instance must match exactly one of the schemas listed in oneOf"
+            },
+            {
+              "path": "/1",
+              "message": "instance must be of type string"
+            },
+            {
+              "path": "/1",
+              "message": "instance must be of type integer"
+            },
+            {
+              "path": "/1",
+              "message": "instance must match exactly one of the schemas listed in oneOf"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

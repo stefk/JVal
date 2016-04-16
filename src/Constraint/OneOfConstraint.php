@@ -39,7 +39,7 @@ class OneOfConstraint extends AbstractOfConstraint
             $subContext = $context->duplicate(false);
             $walker->applyConstraints($instance, $subSchema, $subContext);
 
-            if ($subContext->countViolations() === $context->countViolations()) {
+            if ($subContext->countViolations() === 0) {
                 if (!$hasMatch) {
                     $hasMatch = true;
                 } else {

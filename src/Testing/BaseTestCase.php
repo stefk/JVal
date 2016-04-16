@@ -156,9 +156,11 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getLocalUri($path)
     {
+        // @codeCoverageIgnoreStart
         if (preg_match('/^[A-Z]:/', $path)) {
             $path = '/' . strtr($path, '\\', '/');
         }
+        // @codeCoverageIgnoreEnd
 
         return 'file://' . $path;
     }
