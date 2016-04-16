@@ -200,7 +200,7 @@ class Uri
             }
         }
 
-        if ($this->parts['scheme'] === 'file' && preg_match('/^[A-Z]:/', $this->parts['path'])) {
+        if ($this->parts['scheme'] === 'file' && preg_match('/^[A-Z]:/i', $this->parts['path'])) {
             $this->parts['path'] = '/' . $this->parts['path'];
         }
 
