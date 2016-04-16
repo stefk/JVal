@@ -147,12 +147,10 @@ abstract class ConstraintTestCase extends DataTestCase
                     'Exception does not have the expected target.'
                 );
             }
-
-            return;
+        } else {
+            // @codeCoverageIgnoreStart
+            $this->fail('Exception thrown is not a ConstraintException');
+            // @codeCoverageIgnoreEnd
         }
-
-        // @codeCoverageIgnoreStart
-        $this->fail('Exception thrown is not a ConstraintException');
-        // @codeCoverageIgnoreEnd
     }
 }
