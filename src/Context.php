@@ -152,7 +152,7 @@ class Context
             $clone->purgeViolations();
         }
 
-        return clone $this;
+        return $clone;
     }
 
     /**

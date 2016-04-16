@@ -19,14 +19,14 @@ use JVal\Walker;
 /**
  * Test case for testing validation constraints.
  */
-abstract class ConstraintTestCase extends BaseTestCase
+abstract class ConstraintTestCase extends DataTestCase
 {
     private $expectedExceptionClass;
     private $expectedExceptionPath;
     private $expectedExceptionTarget;
 
     /**
-     * @dataProvider applyTestProvider
+     * @dataProvider fileDataProvider
      *
      * @param string    $file
      * @param string    $title
@@ -67,70 +67,6 @@ abstract class ConstraintTestCase extends BaseTestCase
     }
 
     /**
-     * @codeCoverageIgnore (data provider is executed before test is launched)
-     *
-     * Provider of #testApply().
-     */
-    public function applyTestProvider()
-    {
-        $caseDir = realpath(__DIR__.'/../../tests/Data/cases');
-        $tests = [];
-
-        foreach ($this->getCaseFileNames() as $caseName) {
-            $caseFile = "{$caseDir}/{$caseName}.json";
-            $case = $this->loadJsonFromFile($caseFile);
-
-            foreach ($case->tests as $test) {
-                if (!isset($test->valid) && !isset($test->invalid)) {
-                    throw new \Exception(sprintf(
-                        'Test case "%s %s" has neither "valid" or "invalid" data (file: %s)',
-                        $case->title,
-                        $test->title,
-                        $caseFile
-                    ));
-                }
-
-                if (isset($test->valid)) {
-                    foreach ($test->valid as $i => $instance) {
-                        $tests[] = [
-                            $caseFile,
-                            "{$case->title} {$test->title}, valid instance #{$i}",
-                            $instance,
-                            $test->schema,
-                            true,
-                            [],
-                        ];
-                    }
-                }
-
-                if (isset($test->invalid)) {
-                    foreach ($test->invalid as $i => $set) {
-                        if (!isset($set->violations)) {
-                            throw new \Exception(sprintf(
-                                'Invalid test must have a "violations" property in %s',
-                                $caseFile
-                            ));
-                        }
-
-                        $tests[] = [
-                            $caseFile,
-                            "{$case->title} {$test->title}, invalid instance #{$i}",
-                            $set->instance,
-                            $test->schema,
-                            false,
-                            array_map(function ($violation) {
-                                return (array) $violation;
-                            }, $set->violations),
-                        ];
-                    }
-                }
-            }
-        }
-
-        return $tests;
-    }
-
-    /**
      * Returns an instance of the constraint to be tested.
      *
      * @return Constraint
@@ -138,11 +74,14 @@ abstract class ConstraintTestCase extends BaseTestCase
     abstract protected function getConstraint();
 
     /**
-     * Returns an array of case file names for #testApply().
+     * @codeCoverageIgnore (called from a data provider, before test execution)
      *
-     * @return array
+     * {@inheritDoc}
      */
-    abstract protected function getCaseFileNames();
+    protected function getDataDirectory()
+    {
+        return __DIR__.'/../../tests/Data/constraints';
+    }
 
     /**
      * Returns a mocked walker instance.
@@ -208,12 +147,10 @@ abstract class ConstraintTestCase extends BaseTestCase
                     'Exception does not have the expected target.'
                 );
             }
-
-            return;
+        } else {
+            // @codeCoverageIgnoreStart
+            $this->fail('Exception thrown is not a ConstraintException');
+            // @codeCoverageIgnoreEnd
         }
-
-        // @codeCoverageIgnoreStart
-        $this->fail('Exception thrown is not a ConstraintException');
-        // @codeCoverageIgnoreEnd
     }
 }
