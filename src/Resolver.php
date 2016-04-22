@@ -29,12 +29,16 @@ use stdClass;
 class Resolver
 {
     /**
-     * Schema resolution stack. Each item on the stack is an array
-     * containing an uri and a schema.
-     *
-     * @var array
+     * @var stdClass
      */
-    private $stack = [];
+    private $rootSchema;
+
+    /**
+     * Stack of URIs used for resolving relative URIs.
+     *
+     * @var Uri[]
+     */
+    private $uriStack = [];
 
     /**
      * Schema cache. Each schema visited at a given URI is stored
@@ -60,7 +64,34 @@ class Resolver
     public function initialize(stdClass $schema, Uri $uri)
     {
         $this->registerSchema($schema, $uri);
-        $this->stack = [[$uri, $schema]];
+        $this->rootSchema = $schema;
+        $this->uriStack = [$uri];
+    }
+
+    /**
+     * Returns URI of root schema.
+     *
+     * @return Uri
+     *
+     * @throws EmptyStackException
+     */
+    public function getRootUri()
+    {
+        if (count($this->uriStack) === 0) {
+            throw new EmptyStackException();
+        }
+
+        return reset($this->uriStack);
+    }
+
+    /**
+     * Returns root schema.
+     *
+     * @return stdClass|null
+     */
+    public function getRootSchema()
+    {
+        return $this->rootSchema;
     }
 
     /**
@@ -72,27 +103,11 @@ class Resolver
      */
     public function getCurrentUri()
     {
-        if (count($this->stack) === 0) {
+        if (count($this->uriStack) === 0) {
             throw new EmptyStackException();
         }
 
-        return end($this->stack)[0];
-    }
-
-    /**
-     * Returns the current schema.
-     *
-     * @return stdClass
-     *
-     * @throws EmptyStackException
-     */
-    public function getCurrentSchema()
-    {
-        if (count($this->stack) === 0) {
-            throw new EmptyStackException();
-        }
-
-        return end($this->stack)[1];
+        return end($this->uriStack);
     }
 
     /**
@@ -124,7 +139,7 @@ class Resolver
             $uri->resolveAgainst($currentUri);
         }
 
-        $this->stack[] = [$uri, $schema];
+        $this->uriStack[] = $uri;
     }
 
     /**
@@ -135,11 +150,11 @@ class Resolver
      */
     public function leave()
     {
-        if (count($this->stack) === 0) {
+        if (count($this->uriStack) === 0) {
             throw new EmptyStackException();
         }
 
-        array_pop($this->stack);
+        array_pop($this->uriStack);
     }
 
     /**

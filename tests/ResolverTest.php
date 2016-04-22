@@ -24,12 +24,30 @@ class ResolverTest extends BaseTestCase
         $this->resolver = new Resolver();
     }
 
+    public function testBasicStackHandling()
+    {
+        $schemaA = new stdClass();
+        $uriA = new Uri('file:///foo/bar/a');
+        $this->resolver->initialize($schemaA, $uriA);
+
+        $this->assertSame($schemaA, $this->resolver->getRootSchema());
+        $this->assertSame($uriA, $this->resolver->getRootUri());
+        $this->assertSame($uriA, $this->resolver->getCurrentUri());
+
+        $schemaB = new stdClass();
+        $uriB = new Uri('file:///foo/bar/b');
+        $this->resolver->enter($uriB, $schemaB);
+        $this->assertSame($schemaA, $this->resolver->getRootSchema());
+        $this->assertSame($uriA, $this->resolver->getRootUri());
+        $this->assertSame($uriB, $this->resolver->getCurrentUri());
+    }
+
     /**
      * @expectedException \JVal\Exception\Resolver\EmptyStackException
      */
-    public function testGetCurrentSchemaThrowsIfStackIsEmpty()
+    public function testGetRootUriThrowsIfStackIsEmpty()
     {
-        $this->resolver->getCurrentSchema();
+        $this->resolver->getRootUri();
     }
 
     /**
