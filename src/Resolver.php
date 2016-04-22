@@ -134,12 +134,8 @@ class Resolver
     public function enter(Uri $uri, stdClass $schema)
     {
         $currentUri = $this->getCurrentUri();
-
-        if (!$uri->isAbsolute()) {
-            $uri = $uri->resolveAgainst($currentUri);
-        }
-
-        $this->uriStack[] = $uri;
+        $resolvedUri = $uri->resolveAgainst($currentUri);
+        $this->uriStack[] = $resolvedUri;
     }
 
     /**
@@ -173,10 +169,7 @@ class Resolver
     {
         $baseUri = $this->getCurrentUri();
         $uri = new Uri($reference->{'$ref'});
-
-        if (!$uri->isAbsolute()) {
-            $uri = $uri->resolveAgainst($baseUri);
-        }
+        $uri = $uri->resolveAgainst($baseUri);
 
         $identifier = $uri->getPrimaryResourceIdentifier();
 

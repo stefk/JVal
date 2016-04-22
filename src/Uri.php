@@ -151,20 +151,15 @@ class Uri
     public function resolveAgainst(Uri $uri)
     {
         if ($this->isAbsolute()) {
-            throw new \LogicException(
-                'Cannot resolve against another URI: URI is already absolute'
-            );
-        }
-
-        if (!$uri->isAbsolute()) {
+            return $this;
+        } elseif (!$uri->isAbsolute()) {
             throw new \LogicException(
                 'Cannot resolve against another URI: reference URI is not absolute'
             );
+        } else {
+            $resolvedUri = $this->buildResolvedUriAgainst($uri);
+            return new self($resolvedUri);
         }
-
-        $resolved = $this->buildResolvedUriAgainst($uri);
-
-        return new self($resolved);
     }
 
     /**

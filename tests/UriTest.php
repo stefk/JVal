@@ -46,15 +46,6 @@ class UriTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \LogicException
      */
-    public function testCannotResolveAgainstOtherUriIfAlreadyAbsolute()
-    {
-        $pointer = new Uri('http://localhost');
-        $pointer->resolveAgainst(new Uri('file:///foo'));
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
     public function testCannotResolveAgainstRelativeUri()
     {
         $pointer = new Uri('foo/bar');
@@ -141,6 +132,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
     public function againstUriProvider()
     {
         return [
+            ['http://localhost', 'file:///foo', 'http://localhost'],
             ['foo.json', 'http://localhost/bar', 'http://localhost/foo.json'],
             ['foo.json', 'http://localhost/bar/baz', 'http://localhost/bar/foo.json'],
             ['/foo.json', 'http://localhost/bar/baz', 'http://localhost/foo.json'],
