@@ -248,14 +248,18 @@ class Uri
     {
         $identifier = '';
 
-        if ($this->parts['scheme']) {
+        if ($this->parts['scheme'] !== '') {
             $identifier .= $this->parts['scheme'].'://';
         }
 
         $identifier .= $this->authority.$this->parts['path'];
 
-        if ($this->parts['query']) {
+        if ($this->parts['query'] !== '') {
             $identifier .= '?'.$this->parts['query'];
+        }
+
+        if ($this->parts['fragment'] !== '' && $this->parts['fragment'][0] !== '/') {
+            $identifier .= '#'.$this->parts['fragment'];
         }
 
         return $identifier;
