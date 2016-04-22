@@ -74,7 +74,7 @@ class Uri
      */
     public function getRawPointer()
     {
-        return isset($this->parts['fragment']) ? $this->parts['fragment'] : '';
+        return $this->parts['fragment'];
     }
 
     /**
