@@ -42,6 +42,22 @@ class ResolverTest extends BaseTestCase
         $this->assertSame($uriB, $this->resolver->getCurrentUri());
     }
 
+    public function testRegisterSchemaWithTwoEqualSchemas()
+    {
+        $this->resolver->registerSchema((object) ['type' => 'string'], new Uri('file:///foo/bar'));
+        $this->resolver->registerSchema((object) ['type' => 'string'], new Uri('file:///foo/bar'));
+
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testRegisterSchemaThrowsIfAlreadyRegisteredWithDifferentSchema()
+    {
+        $this->resolver->registerSchema((object) ['type' => 'string'], new Uri('file:///foo/bar'));
+        $this->resolver->registerSchema((object) ['type' => 'array'], new Uri('file:///foo/bar'));
+    }
+
     /**
      * @expectedException \JVal\Exception\Resolver\EmptyStackException
      */

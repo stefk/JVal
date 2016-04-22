@@ -126,6 +126,14 @@ class Uri
     }
 
     /**
+     * @return bool
+     */
+    public function hasPointer()
+    {
+        return !empty($this->segments);
+    }
+
+    /**
      * Returns the primary resource identifier part of the URI, i.e. everything
      * excluding its fragment part.
      *

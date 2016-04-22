@@ -63,7 +63,10 @@ class Resolver
      */
     public function initialize(stdClass $schema, Uri $uri)
     {
-        $this->registerSchema($schema, $uri);
+        if ($uri->isAbsolute() && !$uri->hasPointer()) {
+            $this->registerSchema($schema, $uri);
+        }
+
         $this->rootSchema = $schema;
         $this->uriStack = [$uri];
     }
@@ -198,15 +201,23 @@ class Resolver
     }
 
     /**
-     * Caches a schema reference for future use.
+     * Registers a schema reference for future use.
      *
      * @param stdClass $schema
      * @param Uri      $uri
      */
-    private function registerSchema(stdClass $schema, Uri $uri)
+    public function registerSchema(stdClass $schema, Uri $uri)
     {
-        if (!isset($this->schemas[$uri->getPrimaryResourceIdentifier()])) {
-            $this->schemas[$uri->getPrimaryResourceIdentifier()] = $schema;
+        if (!$uri->isAbsolute()) {
+            throw new \LogicException('Unable to register schema without absolute URI');
+        }
+
+        $identifier = $uri->getPrimaryResourceIdentifier();
+
+        if (!isset($this->schemas[$identifier])) {
+            $this->schemas[$identifier] = $schema;
+        } elseif (!Utils::areEqual($this->schemas[$identifier], $schema)) {
+            throw new \LogicException('Different schema is already registered with given URI');
         }
     }
 
