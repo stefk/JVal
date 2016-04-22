@@ -139,6 +139,10 @@ class Resolver
         $currentUri = $this->getCurrentUri();
         $resolvedUri = $uri->resolveAgainst($currentUri);
         $this->uriStack[] = $resolvedUri;
+
+        if ($resolvedUri->isAbsolute() && !$resolvedUri->hasPointer()) {
+            $this->registerSchema($schema, $resolvedUri);
+        }
     }
 
     /**
