@@ -125,6 +125,10 @@ class Utils
 
     private static function doAreEqual($a, $b, array $stack)
     {
+        if ($a === $b) {
+            return true;
+        }
+
         // keep track of object references to avoid infinite recursion
         if (is_object($a)) {
             if (in_array($a, $stack)) {
