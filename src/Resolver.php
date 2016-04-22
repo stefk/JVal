@@ -109,16 +109,14 @@ class Resolver
 
     /**
      * Pushes an URI and its associated schema onto the resolution stack,
-     * making them the current URI/schema pair. If no schema is passed, the
-     * current schema is reused (useful when entering a resolution scope
-     * within the current schema).
+     * making them the current URI/schema pair.
      *
      * @param Uri      $uri
      * @param stdClass $schema
      *
      * @throws EmptyStackException
      */
-    public function enter(Uri $uri, stdClass $schema = null)
+    public function enter(Uri $uri, stdClass $schema)
     {
         $currentUri = $this->getCurrentUri();
 
@@ -126,7 +124,7 @@ class Resolver
             $uri->resolveAgainst($currentUri);
         }
 
-        $this->stack[] = [$uri, $schema ?: $this->getCurrentSchema()];
+        $this->stack[] = [$uri, $schema];
     }
 
     /**
