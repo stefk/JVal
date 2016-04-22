@@ -96,6 +96,22 @@ class ResolverTest extends BaseTestCase
     }
 
     /**
+     * @dataProvider chainProvider
+     *
+     * @param stdClass $schema
+     * @param string   $pointerUri
+     * @param stdClass $resolved
+     */
+    public function testResolveChainWithoutAbsoluteUri(stdClass $schema, $pointerUri, stdClass $resolved)
+    {
+        $this->resolver->initialize($schema, new Uri(''));
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $actual = $this->resolver->resolve($reference);
+        $this->assertSame($actual[1], $resolved);
+    }
+
+    /**
      * @dataProvider unresolvablePointerPropertyProvider
      * @expectedException \JVal\Exception\Resolver\UnresolvedPointerPropertyException
      *

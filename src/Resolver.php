@@ -169,15 +169,19 @@ class Resolver
     {
         $baseUri = $this->getCurrentUri();
         $uri = new Uri($reference->{'$ref'});
-        $uri = $uri->resolveAgainst($baseUri);
 
-        $identifier = $uri->getPrimaryResourceIdentifier();
-
-        if (!isset($this->schemas[$identifier])) {
-            $schema = $this->fetchSchemaAt($identifier);
-            $this->registerSchema($schema, $uri);
+        if ($baseUri->getPrimaryResourceIdentifier() === '' && $uri->getPrimaryResourceIdentifier() === '') {
+            $schema = $this->getRootSchema();
         } else {
-            $schema = $this->schemas[$identifier];
+            $uri = $uri->resolveAgainst($baseUri);
+            $identifier = $uri->getPrimaryResourceIdentifier();
+
+            if (isset($this->schemas[$identifier])) {
+                $schema = $this->schemas[$identifier];
+            } else {
+                $schema = $this->fetchSchemaAt($identifier);
+                $this->registerSchema($schema, $uri);
+            }
         }
 
         $resolved = $this->resolvePointer($schema, $uri);
