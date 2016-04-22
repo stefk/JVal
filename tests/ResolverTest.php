@@ -241,9 +241,7 @@ class ResolverTest extends BaseTestCase
     public function rootRefProvider()
     {
         return [
-            ['valid/root-reference-1'],
-            ['valid/root-reference-2'],
-            ['valid/root-reference-3'],
+            ['valid/root-reference'],
         ];
     }
 
@@ -252,12 +250,10 @@ class ResolverTest extends BaseTestCase
         $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
-            [$schema, '#foo', $schema->foo],
             [$schema, '#/foo', $schema->foo],
             [$schema, '#/foo/baz', $schema->foo->baz],
             [$schema, '#/bar/baz', $schema->bar->baz],
             [$schema, '#/bar/baz/bat', $schema->bar->baz->bat],
-            [$schema, '#/bar/baz/bat/', $schema->bar->baz->bat],
             [$schema, '#/bat/0', $schema->bat[0]],
             [$schema, '#/bat/1/quz/0', $schema->bat[1]->quz[0]],
             [$schema, '#/with%25percent', $schema->{'with%percent'}],
@@ -272,9 +268,9 @@ class ResolverTest extends BaseTestCase
         $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
-            [$schema, '#nope'],
+            [$schema, '#/nope'],
             [$schema, '#/foo/nope'],
-            [$schema, '#bar/baz/nope'],
+            [$schema, '#/bar/baz/nope'],
         ];
     }
 
@@ -314,7 +310,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema, '#/foo/bat'],
-            [$schema, '#bat'],
+            [$schema, '#/bat'],
         ];
     }
 

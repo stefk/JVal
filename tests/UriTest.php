@@ -68,13 +68,13 @@ class UriTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveAgainstUriDoesNotChangeInternalState()
     {
-        $pointer = new Uri('#quz/123');
-        $against = new Uri('http://localhost:1234/foo/bar#baz');
+        $pointer = new Uri('#/quz/123');
+        $against = new Uri('http://localhost:1234/foo/bar#/baz');
         $resolved = $pointer->resolveAgainst($against);
 
-        $this->assertEquals('#quz/123', $pointer->getRawUri());
+        $this->assertEquals('#/quz/123', $pointer->getRawUri());
 
-        $this->assertEquals('http://localhost:1234/foo/bar#quz/123', $resolved->getRawUri());
+        $this->assertEquals('http://localhost:1234/foo/bar#/quz/123', $resolved->getRawUri());
         $this->assertEquals('http', $resolved->getScheme());
         $this->assertEquals('http://localhost:1234/foo/bar', $resolved->getPrimaryResourceIdentifier());
         $this->assertEquals(['quz', '123'], $resolved->getPointerSegments());
@@ -122,10 +122,12 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ['http://foo.bar/baz?foo=bar#/foo/bar', ['foo', 'bar']],
             ['//localhost/foo#/bar/baz', ['bar', 'baz']],
             ['/quz', []],
-            ['/quz/#//', []],
-            ['/quz/#//foo/1%25/bar', ['foo', '1%', 'bar']],
-            ['/quz/#//foo/1~02/bar', ['foo', '1~2', 'bar']],
-            ['/quz/#//foo/1~12/bar', ['foo', '1/2', 'bar']],
+            ['/quz#', []],
+            ['/quz#/', ['']],
+            ['/quz#//', ['', '']],
+            ['/quz#/foo/1%25/bar', ['foo', '1%', 'bar']],
+            ['/quz#/foo/1~02/bar', ['foo', '1~2', 'bar']],
+            ['/quz#/foo/1~12/bar', ['foo', '1/2', 'bar']],
         ];
     }
 

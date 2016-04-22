@@ -227,17 +227,13 @@ class Uri
     {
         $segments = [];
 
-        if (isset($this->parts['fragment'])) {
-            $rawSegments = explode('/', $this->parts['fragment']);
+        if (substr($this->parts['fragment'], 0, 1) === '/') {
+            $rawSegments = explode('/', substr($this->parts['fragment'], 1));
 
             foreach ($rawSegments as $segment) {
-                $segment = trim($segment);
-
-                if ($segment !== '') {
-                    $segment = str_replace('~1', '/', $segment);
-                    $segment = str_replace('~0', '~', $segment);
-                    $segments[] = $segment;
-                }
+                $segment = str_replace('~1', '/', $segment);
+                $segment = str_replace('~0', '~', $segment);
+                $segments[] = $segment;
             }
         }
 
