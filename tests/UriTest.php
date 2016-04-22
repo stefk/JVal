@@ -72,18 +72,21 @@ class UriTest extends \PHPUnit_Framework_TestCase
     {
         $pointer = new Uri($uri);
         $resolved = $pointer->resolveAgainst(new Uri($againstUri));
-        $this->assertEquals($expectedResolved, $resolved);
+        $this->assertEquals($expectedResolved, $resolved->getRawUri());
     }
 
-    public function testResolveAgainstUriChangesInternalState()
+    public function testResolveAgainstUriDoesNotChangeInternalState()
     {
         $pointer = new Uri('#quz/123');
         $against = new Uri('http://localhost:1234/foo/bar#baz');
-        $pointer->resolveAgainst($against);
-        $this->assertEquals('http://localhost:1234/foo/bar#quz/123', $pointer->getRawUri());
-        $this->assertEquals('http', $pointer->getScheme());
-        $this->assertEquals('http://localhost:1234/foo/bar', $pointer->getPrimaryResourceIdentifier());
-        $this->assertEquals(['quz', '123'], $pointer->getPointerSegments());
+        $resolved = $pointer->resolveAgainst($against);
+
+        $this->assertEquals('#quz/123', $pointer->getRawUri());
+
+        $this->assertEquals('http://localhost:1234/foo/bar#quz/123', $resolved->getRawUri());
+        $this->assertEquals('http', $resolved->getScheme());
+        $this->assertEquals('http://localhost:1234/foo/bar', $resolved->getPrimaryResourceIdentifier());
+        $this->assertEquals(['quz', '123'], $resolved->getPointerSegments());
     }
 
     /**

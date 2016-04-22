@@ -136,7 +136,7 @@ class Resolver
         $currentUri = $this->getCurrentUri();
 
         if (!$uri->isAbsolute()) {
-            $uri->resolveAgainst($currentUri);
+            $uri = $uri->resolveAgainst($currentUri);
         }
 
         $this->uriStack[] = $uri;
@@ -175,7 +175,7 @@ class Resolver
         $uri = new Uri($reference->{'$ref'});
 
         if (!$uri->isAbsolute()) {
-            $uri->resolveAgainst($baseUri);
+            $uri = $uri->resolveAgainst($baseUri);
         }
 
         $identifier = $uri->getPrimaryResourceIdentifier();

@@ -146,7 +146,7 @@ class Uri
      *
      * @param Uri $uri
      *
-     * @return string
+     * @return Uri
      */
     public function resolveAgainst(Uri $uri)
     {
@@ -163,9 +163,8 @@ class Uri
         }
 
         $resolved = $this->buildResolvedUriAgainst($uri);
-        $this->buildFromRawUri($resolved);
 
-        return $resolved;
+        return new self($resolved);
     }
 
     /**
