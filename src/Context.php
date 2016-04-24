@@ -16,11 +16,6 @@ namespace JVal;
 class Context
 {
     /**
-     * @var string
-     */
-    private $version = Registry::VERSION_DRAFT_4;
-
-    /**
      * @var array
      */
     private $violations = [];
@@ -114,26 +109,6 @@ class Context
     public function countViolations()
     {
         return count($this->violations);
-    }
-
-    /**
-     * Returns the current schema version.
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        return $this->version;
-    }
-
-    /**
-     * Sets the current schema version.
-     *
-     * @param string $version
-     */
-    public function setVersion($version)
-    {
-        $this->version = $version;
     }
 
     /**

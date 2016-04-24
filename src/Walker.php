@@ -132,11 +132,7 @@ class Walker
             return $schema;
         }
 
-        if (isset($schema->{'$schema'})) {
-            $context->setVersion($schema->{'$schema'});
-        }
-
-        $version = $context->getVersion();
+        $version = $this->getVersion($schema);
         $constraints = $this->registry->getConstraints($version);
         $constraints = $this->filterConstraintsForSchema($constraints, $schema);
 
@@ -157,15 +153,11 @@ class Walker
      */
     public function applyConstraints($instance, stdClass $schema, Context $context)
     {
-        if (isset($schema->{'$schema'})) {
-            $context->setVersion($schema->{'$schema'});
-        }
-
         $cacheKey = gettype($instance).spl_object_hash($schema);
         $constraints = & $this->constraintsCache[$cacheKey];
 
         if ($constraints === null) {
-            $version = $context->getVersion();
+            $version = $this->getVersion($schema);
             $instanceType = Types::getPrimitiveTypeOf($instance);
             $constraints = $this->registry->getConstraintsForType($version, $instanceType);
             $constraints = $this->filterConstraintsForSchema($constraints, $schema);
@@ -197,6 +189,20 @@ class Walker
         $processed[$schemaHash] = true;
 
         return false;
+    }
+
+    /**
+     * Returns the version of a schema.
+     *
+     * @param stdClass $schema
+     *
+     * @return string
+     */
+    private function getVersion(stdClass $schema)
+    {
+        return property_exists($schema, '$schema') ?
+            $schema->{'$schema'} :
+            Registry::VERSION_CURRENT;
     }
 
     /**
