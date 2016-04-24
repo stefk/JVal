@@ -81,11 +81,12 @@ class Walker
      */
     private function doResolveReferences(stdClass $schema, Uri $uri)
     {
-        if ($this->isLooping($schema, $this->resolvedSchemas)) {
+        if ($this->isProcessed($schema, $this->resolvedSchemas)) {
             return $schema;
         }
 
         $inScope = false;
+
         if (property_exists($schema, 'id') && is_string($schema->id)) {
             $this->resolver->enter(new Uri($schema->id));
             $inScope = true;
@@ -127,7 +128,7 @@ class Walker
      */
     public function parseSchema(stdClass $schema, Context $context)
     {
-        if ($this->isLooping($schema, $this->parsedSchemas)) {
+        if ($this->isProcessed($schema, $this->parsedSchemas)) {
             return $schema;
         }
 
@@ -176,21 +177,25 @@ class Walker
     }
 
     /**
-     * Checks if given schema has been already visited.
+     * Returns whether a schema has already been processed and stored in
+     * a given collection. This is helpful both as a cache lookup and as
+     * an infinite recursion check.
      *
      * @param stdClass $schema
-     * @param array    $stack
+     * @param array    $processed
      *
      * @return bool
      */
-    private function isLooping(stdClass $schema, array &$stack)
+    private function isProcessed(stdClass $schema, array &$processed)
     {
         $schemaHash = spl_object_hash($schema);
-        if (isset($stack[$schemaHash])) {
+
+        if (isset($processed[$schemaHash])) {
             return true;
         }
 
-        $stack[$schemaHash] = true;
+        $processed[$schemaHash] = true;
+
         return false;
     }
 
