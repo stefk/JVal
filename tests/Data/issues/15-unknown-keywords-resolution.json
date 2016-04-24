@@ -1,0 +1,17 @@
+{
+  "title": "issue #15: References under unknown keywords should be ignored",
+  "tests": [
+    {
+      "title": "$ref in unknown property",
+      "schema": {
+        "unknown": {
+          "$ref": "#/should/be/ignored"
+        }
+      },
+      "valid": [
+        {},
+        123
+      ]
+    }
+  ]
+}

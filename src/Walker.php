@@ -59,7 +59,7 @@ class Walker
     }
 
     /**
-     * Recursively resolve JSON pointer references within a given schema.
+     * Recursively resolves JSON pointer references within a given schema.
      *
      * @param stdClass $schema The schema to resolve
      * @param Uri      $uri    The URI of the schema
@@ -76,10 +76,11 @@ class Walker
     /**
      * @param stdClass $schema
      * @param Uri      $uri
+     * @param bool     $inProperties
      *
      * @return stdClass
      */
-    private function doResolveReferences(stdClass $schema, Uri $uri)
+    private function doResolveReferences(stdClass $schema, Uri $uri, $inProperties = false)
     {
         if ($this->isProcessed($schema, $this->resolvedSchemas)) {
             return $schema;
@@ -98,13 +99,17 @@ class Walker
             $schema = $this->doResolveReferences($resolved[1], $resolved[0]);
             $this->resolver->leave();
         } else {
+            $version = $this->getVersion($schema);
+
             foreach ($schema as $property => $value) {
-                if (is_object($value)) {
-                    $schema->{$property} = $this->doResolveReferences($value, $uri);
-                } elseif (is_array($value)) {
-                    foreach ($value as $index => $element) {
-                        if (is_object($element)) {
-                            $schema->{$property}[$index] = $this->doResolveReferences($element, $uri);
+                if ($inProperties || $this->registry->hasKeyword($version, $property)) {
+                    if (is_object($value)) {
+                        $schema->{$property} = $this->doResolveReferences($value, $uri, $property === 'properties');
+                    } elseif (is_array($value)) {
+                        foreach ($value as $index => $element) {
+                            if (is_object($element)) {
+                                $schema->{$property}[$index] = $this->doResolveReferences($element, $uri);
+                            }
                         }
                     }
                 }
@@ -200,7 +205,7 @@ class Walker
      */
     private function getVersion(stdClass $schema)
     {
-        return property_exists($schema, '$schema') ?
+        return property_exists($schema, '$schema') && is_string($schema->{'$schema'}) ?
             $schema->{'$schema'} :
             Registry::VERSION_CURRENT;
     }

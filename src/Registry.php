@@ -56,7 +56,12 @@ class Registry
     /**
      * @var Constraint[][]
      */
-    private $constraintsForTypeCache;
+    private $constraintsForTypeCache = [];
+
+    /**
+     * @var array
+     */
+    private $keywordsCache = [];
 
     /**
      * Returns the constraints associated with a given JSON Schema version.
@@ -78,7 +83,7 @@ class Registry
 
     /**
      * Returns the constraints associated with a given JSON Schema version
-     * which supports given JSON type.
+     * supporting a given primitive type.
      *
      * @param string $version
      * @param string $type
@@ -105,13 +110,39 @@ class Registry
     }
 
     /**
+     * Returns whether a keyword is supported in a given JSON Schema version.
+     *
+     * @param string $version
+     * @param string $keyword
+     *
+     * @return bool
+     *
+     */
+    public function hasKeyword($version, $keyword)
+    {
+        $cache = & $this->keywordsCache[$version];
+
+        if ($cache === null) {
+            $cache = [];
+
+            foreach ($this->getConstraints($version) as $constraint) {
+                foreach ($constraint->keywords() as $constraintKeyword) {
+                    $cache[$constraintKeyword] = true;
+                }
+            }
+        }
+
+        return isset($cache[$keyword]);
+    }
+
+    /**
      * Loads the constraints associated with a given JSON Schema version.
      *
      * @param string $version
      *
      * @return Constraint[]
      *
-     * @throws \Exception if the version is not supported
+     * @throws UnsupportedVersionException if the version is not supported
      */
     protected function createConstraints($version)
     {
