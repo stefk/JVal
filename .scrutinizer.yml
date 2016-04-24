@@ -1,3 +1,9 @@
 tools:
   external_code_coverage:
     timeout: 1200
+  php_cs_fixer:
+    config: { level: symfony }
+build_failure_conditions:
+  - 'issues.label("coding-style").exists'
+  - 'project.metric("scrutinizer.quality", < 9)'
+  - 'project.metric_change("scrutinizer.test_coverage", < 0)'

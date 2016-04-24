@@ -97,4 +97,3 @@ abstract class DataTestCase extends BaseTestCase
      */
     abstract protected function getCaseFileNames();
 }
-

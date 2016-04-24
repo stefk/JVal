@@ -19,4 +19,11 @@ class RegistryTest extends \PHPUnit_Framework_TestCase
         $registry = new Registry();
         $registry->getConstraints('unknown');
     }
+
+    public function testHasKeyword()
+    {
+        $registry = new Registry();
+        $this->assertFalse($registry->hasKeyword(Registry::VERSION_CURRENT, 'unknown'));
+        $this->assertTrue($registry->hasKeyword(Registry::VERSION_CURRENT, 'maximum'));
+    }
 }

@@ -91,9 +91,9 @@ class Utils
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new JsonDecodeException(sprintf(
-               'Cannot decode JSON from file "%s" (error: %s)',
-               $filePath,
-               static::lastJsonErrorMessage()
+                'Cannot decode JSON from file "%s" (error: %s)',
+                $filePath,
+                static::lastJsonErrorMessage()
             ));
         }
 

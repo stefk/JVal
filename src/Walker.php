@@ -59,7 +59,7 @@ class Walker
     }
 
     /**
-     * Recursively resolve JSON pointer references within a given schema.
+     * Recursively resolves JSON pointer references within a given schema.
      *
      * @param stdClass $schema The schema to resolve
      * @param Uri      $uri    The URI of the schema
@@ -76,16 +76,18 @@ class Walker
     /**
      * @param stdClass $schema
      * @param Uri      $uri
+     * @param bool     $inProperties
      *
      * @return stdClass
      */
-    private function doResolveReferences(stdClass $schema, Uri $uri)
+    private function doResolveReferences(stdClass $schema, Uri $uri, $inProperties = false)
     {
-        if ($this->isLooping($schema, $this->resolvedSchemas)) {
+        if ($this->isProcessed($schema, $this->resolvedSchemas)) {
             return $schema;
         }
 
         $inScope = false;
+
         if (property_exists($schema, 'id') && is_string($schema->id)) {
             $this->resolver->enter(new Uri($schema->id));
             $inScope = true;
@@ -97,13 +99,17 @@ class Walker
             $schema = $this->doResolveReferences($resolved[1], $resolved[0]);
             $this->resolver->leave();
         } else {
+            $version = $this->getVersion($schema);
+
             foreach ($schema as $property => $value) {
-                if (is_object($value)) {
-                    $schema->{$property} = $this->doResolveReferences($value, $uri);
-                } elseif (is_array($value)) {
-                    foreach ($value as $index => $element) {
-                        if (is_object($element)) {
-                            $schema->{$property}[$index] = $this->doResolveReferences($element, $uri);
+                if ($inProperties || $this->registry->hasKeyword($version, $property)) {
+                    if (is_object($value)) {
+                        $schema->{$property} = $this->doResolveReferences($value, $uri, $property === 'properties');
+                    } elseif (is_array($value)) {
+                        foreach ($value as $index => $element) {
+                            if (is_object($element)) {
+                                $schema->{$property}[$index] = $this->doResolveReferences($element, $uri);
+                            }
                         }
                     }
                 }
@@ -127,15 +133,11 @@ class Walker
      */
     public function parseSchema(stdClass $schema, Context $context)
     {
-        if ($this->isLooping($schema, $this->parsedSchemas)) {
+        if ($this->isProcessed($schema, $this->parsedSchemas)) {
             return $schema;
         }
 
-        if (isset($schema->{'$schema'})) {
-            $context->setVersion($schema->{'$schema'});
-        }
-
-        $version = $context->getVersion();
+        $version = $this->getVersion($schema);
         $constraints = $this->registry->getConstraints($version);
         $constraints = $this->filterConstraintsForSchema($constraints, $schema);
 
@@ -156,15 +158,11 @@ class Walker
      */
     public function applyConstraints($instance, stdClass $schema, Context $context)
     {
-        if (isset($schema->{'$schema'})) {
-            $context->setVersion($schema->{'$schema'});
-        }
-
         $cacheKey = gettype($instance).spl_object_hash($schema);
         $constraints = & $this->constraintsCache[$cacheKey];
 
         if ($constraints === null) {
-            $version = $context->getVersion();
+            $version = $this->getVersion($schema);
             $instanceType = Types::getPrimitiveTypeOf($instance);
             $constraints = $this->registry->getConstraintsForType($version, $instanceType);
             $constraints = $this->filterConstraintsForSchema($constraints, $schema);
@@ -176,22 +174,40 @@ class Walker
     }
 
     /**
-     * Checks if given schema has been already visited.
+     * Returns whether a schema has already been processed and stored in
+     * a given collection. This is helpful both as a cache lookup and as
+     * an infinite recursion check.
      *
      * @param stdClass $schema
-     * @param array    $stack
+     * @param array    $processed
      *
      * @return bool
      */
-    private function isLooping(stdClass $schema, array &$stack)
+    private function isProcessed(stdClass $schema, array &$processed)
     {
         $schemaHash = spl_object_hash($schema);
-        if (isset($stack[$schemaHash])) {
+
+        if (isset($processed[$schemaHash])) {
             return true;
         }
 
-        $stack[$schemaHash] = true;
+        $processed[$schemaHash] = true;
+
         return false;
+    }
+
+    /**
+     * Returns the version of a schema.
+     *
+     * @param stdClass $schema
+     *
+     * @return string
+     */
+    private function getVersion(stdClass $schema)
+    {
+        return property_exists($schema, '$schema') && is_string($schema->{'$schema'}) ?
+            $schema->{'$schema'} :
+            Registry::VERSION_CURRENT;
     }
 
     /**
