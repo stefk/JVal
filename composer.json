@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4.1"
+        "php": ">=5.4.1",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
@@ -39,7 +40,7 @@
                 "name": "json-schema/test-suite",
                 "version": "dev-master",
                 "source": {
-                    "url": "https://github.com/json-schema/JSON-Schema-Test-Suite",
+                    "url": "https://github.com/json-schema-org/JSON-Schema-Test-Suite",
                     "type": "git",
                     "reference": "master"
                 }
