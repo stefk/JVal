@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "meta": {
+      "$ref": "http://json-quiz.github.io/json-quiz/schemas/metadata/schema.json"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "http://json-quiz.github.io/json-quiz/schemas/content/schema.json"
+                },
+                {
+                  "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/choice/schema.json"
+                },
+                {
+                  "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/match/schema.json"
+                },
+                {
+                  "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/sort/schema.json"
+                },
+                {
+                  "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/cloze/schema.json"
+                },
+                {
+                  "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/short/schema.json"
+                }
+              ]
+            }
+          }
+        },
+        "required": ["id", "items"]
+      }
+    }
+  },
+  "required": ["id", "steps"]
+}

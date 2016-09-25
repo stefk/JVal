@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions" : {
+    "coord": {
+      "type": "object",
+      "properties": {
+        "x": {"type" : "number"},
+        "y": {"type" : "number"}
+      },
+      "required": ["x", "y"]
+    },
+    "area":{
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "shape": {
+              "enum": ["circle"]
+            },
+            "center": {
+              "$ref": "#/definitions/coord"
+            },
+            "radius": {
+              "type": "number"
+            }
+          },
+          "required": ["id", "shape", "center", "radius"]
+        },
+        {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "shape": {
+              "enum": ["rect"]
+            },
+            "coords": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions/coord"
+              }
+            }
+          },
+          "required": ["id", "shape", "coords"]
+        },
+        {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "shape": {
+              "enum": ["poly"]
+            },
+            "coords": {
+              "type": "array",
+              "minItems": 3,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions/coord"
+              }
+            }
+          },
+          "required": ["id", "shape", "coords"]
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/base/schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "application/x.graphic+json"
+          ]
+        },
+        "image": {
+          "allOf": [
+            {
+              "$ref": "http://json-quiz.github.io/json-quiz/schemas/content/schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "width": {
+                  "type": "number"
+                },
+                "height": {
+                  "type": "number"
+                }
+              },
+              "required": ["width", "height"]
+            }
+          ]
+        },
+        "pointers": {
+          "type": "number",
+          "minimum": 1
+        },
+        "solutions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": {
+                "$ref": "#/definitions/area"
+              },
+              "score": {
+                "type": "number"
+              },
+              "feedback": {
+                "type": "string"
+              }
+            },
+            "required": ["area", "score"]
+          }
+        }
+      },
+      "required": ["image", "pointers"]
+    }
+  ]
+}

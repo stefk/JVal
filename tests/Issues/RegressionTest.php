@@ -31,9 +31,15 @@ class RegressionTest extends DataTestCase
         $isInstanceValid,
         array $expectedErrors
     ) {
-        $validator = Validator::buildDefault();
+        $jsonQuizDir = realpath(__DIR__.'/../Data/schemas/valid/json-quiz');
+        $validator = Validator::buildDefault(function ($uri) use ($jsonQuizDir){
+            return str_replace(
+                'http://json-quiz.github.io/json-quiz/schemas',
+                'file://'.$jsonQuizDir,
+                $uri
+            );
+        });
         $actualErrors = $validator->validate($instance, $schema, $this->getLocalUri($file));
-
         $this->assertValidationResult(
             $file,
             $title,
