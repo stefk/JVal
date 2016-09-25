@@ -46,15 +46,6 @@ class UriTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \LogicException
      */
-    public function testCannotResolveAgainstOtherUriIfAlreadyAbsolute()
-    {
-        $pointer = new Uri('http://localhost');
-        $pointer->resolveAgainst(new Uri('file:///foo'));
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
     public function testCannotResolveAgainstRelativeUri()
     {
         $pointer = new Uri('foo/bar');
@@ -72,18 +63,21 @@ class UriTest extends \PHPUnit_Framework_TestCase
     {
         $pointer = new Uri($uri);
         $resolved = $pointer->resolveAgainst(new Uri($againstUri));
-        $this->assertEquals($expectedResolved, $resolved);
+        $this->assertEquals($expectedResolved, $resolved->getRawUri());
     }
 
-    public function testResolveAgainstUriChangesInternalState()
+    public function testResolveAgainstUriDoesNotChangeInternalState()
     {
-        $pointer = new Uri('#quz/123');
-        $against = new Uri('http://localhost:1234/foo/bar#baz');
-        $pointer->resolveAgainst($against);
-        $this->assertEquals('http://localhost:1234/foo/bar#quz/123', $pointer->getRawUri());
-        $this->assertEquals('http', $pointer->getScheme());
-        $this->assertEquals('http://localhost:1234/foo/bar', $pointer->getPrimaryResourceIdentifier());
-        $this->assertEquals(['quz', '123'], $pointer->getPointerSegments());
+        $pointer = new Uri('#/quz/123');
+        $against = new Uri('http://localhost:1234/foo/bar#/baz');
+        $resolved = $pointer->resolveAgainst($against);
+
+        $this->assertEquals('#/quz/123', $pointer->getRawUri());
+
+        $this->assertEquals('http://localhost:1234/foo/bar#/quz/123', $resolved->getRawUri());
+        $this->assertEquals('http', $resolved->getScheme());
+        $this->assertEquals('http://localhost:1234/foo/bar', $resolved->getPrimaryResourceIdentifier());
+        $this->assertEquals(['quz', '123'], $resolved->getPointerSegments());
     }
 
     /**
@@ -128,16 +122,19 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ['http://foo.bar/baz?foo=bar#/foo/bar', ['foo', 'bar']],
             ['//localhost/foo#/bar/baz', ['bar', 'baz']],
             ['/quz', []],
-            ['/quz/#//', []],
-            ['/quz/#//foo/1%25/bar', ['foo', '1%', 'bar']],
-            ['/quz/#//foo/1~02/bar', ['foo', '1~2', 'bar']],
-            ['/quz/#//foo/1~12/bar', ['foo', '1/2', 'bar']],
+            ['/quz#', []],
+            ['/quz#/', ['']],
+            ['/quz#//', ['', '']],
+            ['/quz#/foo/1%25/bar', ['foo', '1%', 'bar']],
+            ['/quz#/foo/1~02/bar', ['foo', '1~2', 'bar']],
+            ['/quz#/foo/1~12/bar', ['foo', '1/2', 'bar']],
         ];
     }
 
     public function againstUriProvider()
     {
         return [
+            ['http://localhost', 'file:///foo', 'http://localhost'],
             ['foo.json', 'http://localhost/bar', 'http://localhost/foo.json'],
             ['foo.json', 'http://localhost/bar/baz', 'http://localhost/bar/foo.json'],
             ['/foo.json', 'http://localhost/bar/baz', 'http://localhost/foo.json'],

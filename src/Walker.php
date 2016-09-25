@@ -92,7 +92,7 @@ class Walker
         $inScope = false;
 
         if (property_exists($schema, 'id') && is_string($schema->id)) {
-            $this->resolver->enter(new Uri($schema->id));
+            $this->resolver->enter(new Uri($schema->id), $schema);
             $inScope = true;
         }
 

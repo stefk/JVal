@@ -107,11 +107,6 @@ class WalkerTest extends BaseTestCase
 
         $this->assertObjectHasAttribute('bar', $resolved->properties);
         $this->assertObjectHasAttribute('minimum', $resolved->properties->bar);
-
-        $this->assertObjectHasAttribute('baz', $resolved->properties);
-        $this->assertObjectHasAttribute('oneOf', $resolved->properties->baz);
-        $this->assertArrayHasKey(0, $resolved->properties->baz->oneOf);
-        $this->assertObjectHasAttribute('maximum', $resolved->properties->baz->oneOf[0]);
     }
 
     public function testApplyConstraintsWithRecursiveReference()

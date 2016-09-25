@@ -29,12 +29,16 @@ use stdClass;
 class Resolver
 {
     /**
-     * Schema resolution stack. Each item on the stack is an array
-     * containing an uri and a schema.
-     *
-     * @var array
+     * @var stdClass
      */
-    private $stack = [];
+    private $rootSchema;
+
+    /**
+     * Stack of URIs used for resolving relative URIs.
+     *
+     * @var Uri[]
+     */
+    private $uriStack = [];
 
     /**
      * Schema cache. Each schema visited at a given URI is stored
@@ -59,8 +63,38 @@ class Resolver
      */
     public function initialize(stdClass $schema, Uri $uri)
     {
-        $this->registerSchema($schema, $uri);
-        $this->stack = [[$uri, $schema]];
+        if ($uri->isAbsolute() && !$uri->hasPointer()) {
+            $this->registerSchema($schema, $uri);
+        }
+
+        $this->rootSchema = $schema;
+        $this->uriStack = [$uri];
+    }
+
+    /**
+     * Returns URI of root schema.
+     *
+     * @return Uri
+     *
+     * @throws EmptyStackException
+     */
+    public function getRootUri()
+    {
+        if (count($this->uriStack) === 0) {
+            throw new EmptyStackException();
+        }
+
+        return reset($this->uriStack);
+    }
+
+    /**
+     * Returns root schema.
+     *
+     * @return stdClass|null
+     */
+    public function getRootSchema()
+    {
+        return $this->rootSchema;
     }
 
     /**
@@ -72,27 +106,11 @@ class Resolver
      */
     public function getCurrentUri()
     {
-        if (count($this->stack) === 0) {
+        if (count($this->uriStack) === 0) {
             throw new EmptyStackException();
         }
 
-        return end($this->stack)[0];
-    }
-
-    /**
-     * Returns the current schema.
-     *
-     * @return stdClass
-     *
-     * @throws EmptyStackException
-     */
-    public function getCurrentSchema()
-    {
-        if (count($this->stack) === 0) {
-            throw new EmptyStackException();
-        }
-
-        return end($this->stack)[1];
+        return end($this->uriStack);
     }
 
     /**
@@ -109,24 +127,22 @@ class Resolver
 
     /**
      * Pushes an URI and its associated schema onto the resolution stack,
-     * making them the current URI/schema pair. If no schema is passed, the
-     * current schema is reused (useful when entering a resolution scope
-     * within the current schema).
+     * making them the current URI/schema pair.
      *
      * @param Uri      $uri
      * @param stdClass $schema
      *
      * @throws EmptyStackException
      */
-    public function enter(Uri $uri, stdClass $schema = null)
+    public function enter(Uri $uri, stdClass $schema)
     {
         $currentUri = $this->getCurrentUri();
+        $resolvedUri = $uri->resolveAgainst($currentUri);
+        $this->uriStack[] = $resolvedUri;
 
-        if (!$uri->isAbsolute()) {
-            $uri->resolveAgainst($currentUri);
+        if ($resolvedUri->isAbsolute() && !$resolvedUri->hasPointer()) {
+            $this->registerSchema($schema, $resolvedUri);
         }
-
-        $this->stack[] = [$uri, $schema ?: $this->getCurrentSchema()];
     }
 
     /**
@@ -137,11 +153,11 @@ class Resolver
      */
     public function leave()
     {
-        if (count($this->stack) === 0) {
+        if (count($this->uriStack) === 0) {
             throw new EmptyStackException();
         }
 
-        array_pop($this->stack);
+        array_pop($this->uriStack);
     }
 
     /**
@@ -161,17 +177,18 @@ class Resolver
         $baseUri = $this->getCurrentUri();
         $uri = new Uri($reference->{'$ref'});
 
-        if (!$uri->isAbsolute()) {
-            $uri->resolveAgainst($baseUri);
-        }
-
-        $identifier = $uri->getPrimaryResourceIdentifier();
-
-        if (!isset($this->schemas[$identifier])) {
-            $schema = $this->fetchSchemaAt($identifier);
-            $this->registerSchema($schema, $uri);
+        if ($baseUri->getPrimaryResourceIdentifier() === '' && $uri->getPrimaryResourceIdentifier() === '') {
+            $schema = $this->getRootSchema();
         } else {
-            $schema = $this->schemas[$identifier];
+            $uri = $uri->resolveAgainst($baseUri);
+            $identifier = $uri->getPrimaryResourceIdentifier();
+
+            if (isset($this->schemas[$identifier])) {
+                $schema = $this->schemas[$identifier];
+            } else {
+                $schema = $this->fetchSchemaAt($identifier);
+                $this->registerSchema($schema, $uri);
+            }
         }
 
         $resolved = $this->resolvePointer($schema, $uri);
@@ -188,15 +205,23 @@ class Resolver
     }
 
     /**
-     * Caches a schema reference for future use.
+     * Registers a schema reference for future use.
      *
      * @param stdClass $schema
      * @param Uri      $uri
      */
-    private function registerSchema(stdClass $schema, Uri $uri)
+    public function registerSchema(stdClass $schema, Uri $uri)
     {
-        if (!isset($this->schemas[$uri->getPrimaryResourceIdentifier()])) {
-            $this->schemas[$uri->getPrimaryResourceIdentifier()] = $schema;
+        if (!$uri->isAbsolute()) {
+            throw new \LogicException('Unable to register schema without absolute URI');
+        }
+
+        $identifier = $uri->getPrimaryResourceIdentifier();
+
+        if (!isset($this->schemas[$identifier])) {
+            $this->schemas[$identifier] = $schema;
+        } elseif (!Utils::areEqual($this->schemas[$identifier], $schema)) {
+            throw new \LogicException('Different schema is already registered with given URI');
         }
     }
 

@@ -74,7 +74,7 @@ class Uri
      */
     public function getRawPointer()
     {
-        return isset($this->parts['fragment']) ? $this->parts['fragment'] : '';
+        return $this->parts['fragment'];
     }
 
     /**
@@ -126,6 +126,14 @@ class Uri
     }
 
     /**
+     * @return bool
+     */
+    public function hasPointer()
+    {
+        return !empty($this->segments);
+    }
+
+    /**
      * Returns the primary resource identifier part of the URI, i.e. everything
      * excluding its fragment part.
      *
@@ -146,26 +154,20 @@ class Uri
      *
      * @param Uri $uri
      *
-     * @return string
+     * @return Uri
      */
     public function resolveAgainst(Uri $uri)
     {
         if ($this->isAbsolute()) {
-            throw new \LogicException(
-                'Cannot resolve against another URI: URI is already absolute'
-            );
-        }
-
-        if (!$uri->isAbsolute()) {
+            return $this;
+        } elseif (!$uri->isAbsolute()) {
             throw new \LogicException(
                 'Cannot resolve against another URI: reference URI is not absolute'
             );
+        } else {
+            $resolvedUri = $this->buildResolvedUriAgainst($uri);
+            return new self($resolvedUri);
         }
-
-        $resolved = $this->buildResolvedUriAgainst($uri);
-        $this->buildFromRawUri($resolved);
-
-        return $resolved;
     }
 
     /**
@@ -233,17 +235,13 @@ class Uri
     {
         $segments = [];
 
-        if (isset($this->parts['fragment'])) {
-            $rawSegments = explode('/', $this->parts['fragment']);
+        if (substr($this->parts['fragment'], 0, 1) === '/') {
+            $rawSegments = explode('/', substr($this->parts['fragment'], 1));
 
             foreach ($rawSegments as $segment) {
-                $segment = trim($segment);
-
-                if ($segment !== '') {
-                    $segment = str_replace('~1', '/', $segment);
-                    $segment = str_replace('~0', '~', $segment);
-                    $segments[] = $segment;
-                }
+                $segment = str_replace('~1', '/', $segment);
+                $segment = str_replace('~0', '~', $segment);
+                $segments[] = $segment;
             }
         }
 
@@ -254,14 +252,18 @@ class Uri
     {
         $identifier = '';
 
-        if ($this->parts['scheme']) {
+        if ($this->parts['scheme'] !== '') {
             $identifier .= $this->parts['scheme'].'://';
         }
 
         $identifier .= $this->authority.$this->parts['path'];
 
-        if ($this->parts['query']) {
+        if ($this->parts['query'] !== '') {
             $identifier .= '?'.$this->parts['query'];
+        }
+
+        if ($this->parts['fragment'] !== '' && $this->parts['fragment'][0] !== '/') {
+            $identifier .= '#'.$this->parts['fragment'];
         }
 
         return $identifier;

@@ -24,12 +24,46 @@ class ResolverTest extends BaseTestCase
         $this->resolver = new Resolver();
     }
 
+    public function testBasicStackHandling()
+    {
+        $schemaA = new stdClass();
+        $uriA = new Uri('file:///foo/bar/a');
+        $this->resolver->initialize($schemaA, $uriA);
+
+        $this->assertSame($schemaA, $this->resolver->getRootSchema());
+        $this->assertSame($uriA, $this->resolver->getRootUri());
+        $this->assertSame($uriA, $this->resolver->getCurrentUri());
+
+        $schemaB = new stdClass();
+        $uriB = new Uri('file:///foo/bar/b');
+        $this->resolver->enter($uriB, $schemaB);
+        $this->assertSame($schemaA, $this->resolver->getRootSchema());
+        $this->assertSame($uriA, $this->resolver->getRootUri());
+        $this->assertSame($uriB, $this->resolver->getCurrentUri());
+    }
+
+    public function testRegisterSchemaWithTwoEqualSchemas()
+    {
+        $this->resolver->registerSchema((object) ['type' => 'string'], new Uri('file:///foo/bar'));
+        $this->resolver->registerSchema((object) ['type' => 'string'], new Uri('file:///foo/bar'));
+
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testRegisterSchemaThrowsIfAlreadyRegisteredWithDifferentSchema()
+    {
+        $this->resolver->registerSchema((object) ['type' => 'string'], new Uri('file:///foo/bar'));
+        $this->resolver->registerSchema((object) ['type' => 'array'], new Uri('file:///foo/bar'));
+    }
+
     /**
      * @expectedException \JVal\Exception\Resolver\EmptyStackException
      */
-    public function testGetCurrentSchemaThrowsIfStackIsEmpty()
+    public function testGetRootUriThrowsIfStackIsEmpty()
     {
-        $this->resolver->getCurrentSchema();
+        $this->resolver->getRootUri();
     }
 
     /**
@@ -71,6 +105,22 @@ class ResolverTest extends BaseTestCase
     public function testResolveChain(stdClass $schema, $pointerUri, stdClass $resolved)
     {
         $this->resolver->initialize($schema, new Uri('file:///foo/bar'));
+        $reference = new stdClass();
+        $reference->{'$ref'} = $pointerUri;
+        $actual = $this->resolver->resolve($reference);
+        $this->assertSame($actual[1], $resolved);
+    }
+
+    /**
+     * @dataProvider chainProvider
+     *
+     * @param stdClass $schema
+     * @param string   $pointerUri
+     * @param stdClass $resolved
+     */
+    public function testResolveChainWithoutAbsoluteUri(stdClass $schema, $pointerUri, stdClass $resolved)
+    {
+        $this->resolver->initialize($schema, new Uri(''));
         $reference = new stdClass();
         $reference->{'$ref'} = $pointerUri;
         $actual = $this->resolver->resolve($reference);
@@ -223,9 +273,7 @@ class ResolverTest extends BaseTestCase
     public function rootRefProvider()
     {
         return [
-            ['valid/root-reference-1'],
-            ['valid/root-reference-2'],
-            ['valid/root-reference-3'],
+            ['valid/root-reference'],
         ];
     }
 
@@ -234,12 +282,10 @@ class ResolverTest extends BaseTestCase
         $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
-            [$schema, '#foo', $schema->foo],
             [$schema, '#/foo', $schema->foo],
             [$schema, '#/foo/baz', $schema->foo->baz],
             [$schema, '#/bar/baz', $schema->bar->baz],
             [$schema, '#/bar/baz/bat', $schema->bar->baz->bat],
-            [$schema, '#/bar/baz/bat/', $schema->bar->baz->bat],
             [$schema, '#/bat/0', $schema->bat[0]],
             [$schema, '#/bat/1/quz/0', $schema->bat[1]->quz[0]],
             [$schema, '#/with%25percent', $schema->{'with%percent'}],
@@ -254,9 +300,9 @@ class ResolverTest extends BaseTestCase
         $schema = $this->loadSchema('valid/resolution-chains');
 
         return [
-            [$schema, '#nope'],
+            [$schema, '#/nope'],
             [$schema, '#/foo/nope'],
-            [$schema, '#bar/baz/nope'],
+            [$schema, '#/bar/baz/nope'],
         ];
     }
 
@@ -296,7 +342,7 @@ class ResolverTest extends BaseTestCase
 
         return [
             [$schema, '#/foo/bat'],
-            [$schema, '#bat'],
+            [$schema, '#/bat'],
         ];
     }
 
