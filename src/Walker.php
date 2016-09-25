@@ -180,8 +180,8 @@ class Walker
      * Returns whether a schema has already been processed and stored in
      * a given collection. This acts as an infinite recursion check.
      *
-     * @param stdClass $schema
-     * @param array    $processed
+     * @param stdClass          $schema
+     * @param SplObjectStorage  $storage
      *
      * @return bool
      */
