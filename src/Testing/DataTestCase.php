@@ -48,7 +48,7 @@ abstract class DataTestCase extends BaseTestCase
                             $caseFile,
                             "{$case->title} {$test->title}, valid instance #{$i}",
                             $instance,
-                            $test->schema,
+                            clone $test->schema,
                             true,
                             [],
                         ];

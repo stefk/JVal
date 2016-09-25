@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^application/x\\.[^/]+\\+json$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "meta": {
+      "$ref": "http://json-quiz.github.io/json-quiz/schemas/metadata/schema.json"
+    },
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "http://json-quiz.github.io/json-quiz/schemas/content/schema.json"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "http://json-quiz.github.io/json-quiz/schemas/content/schema.json"
+      }
+    },
+    "hints": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "penalty": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          }
+        },
+        "required": ["id", "text"],
+        "additionalProperties": false
+      }
+    },
+    "feedback": {
+      "type": "string"
+    },
+    "score": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": ["sum"]
+            }
+          },
+          "required": ["type"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": ["fixed"]
+            },
+            "success": {
+              "type": "number"
+            },
+            "failure": {
+              "type": "number"
+            }
+          },
+          "required": ["type", "success", "failure"]
+        }
+      ]
+    }
+  },
+  "required": ["id", "type", "title"]
+}

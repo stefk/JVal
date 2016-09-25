@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "allOf": [
+    {
+      "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/base/schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["application/x.short+json"]
+        },
+        "solutions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "properties" : {
+              "score": {
+                "type": "number"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["score", "value"]
+          }
+        }
+      }
+    }
+  ]
+}

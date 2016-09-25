@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "allOf": [
+    {
+      "$ref": "http://json-quiz.github.io/json-quiz/schemas/question/base/schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["application/x.choice+json"]
+        },
+        "random": {
+          "type": "boolean"
+        },
+        "multiple": {
+          "type": "boolean"
+        },
+        "choices": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "http://json-quiz.github.io/json-quiz/schemas/content/schema.json"
+          }
+        },
+        "solutions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              },
+              "feedback": {
+                "type": "string"
+              }
+            },
+            "required": ["id", "score"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["random", "multiple", "choices"]
+    }
+  ]
+}

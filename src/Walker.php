@@ -10,6 +10,7 @@
 namespace JVal;
 
 use stdClass;
+use SplObjectStorage;
 
 /**
  * Implements the three steps needed to perform a JSON Schema validation,
@@ -32,14 +33,14 @@ class Walker
     private $resolver;
 
     /**
-     * @var array
+     * @var SplObjectStorage
      */
-    private $parsedSchemas = [];
+    private $parsedSchemas;
 
     /**
-     * @var array
+     * @var SplObjectStorage
      */
-    private $resolvedSchemas = [];
+    private $resolvedSchemas;
 
     /**
      * @var Constraint[][]
@@ -56,6 +57,8 @@ class Walker
     {
         $this->registry = $registry;
         $this->resolver = $resolver;
+        $this->resolvedSchemas = new SplObjectStorage();
+        $this->parsedSchemas = new SplObjectStorage();
     }
 
     /**
@@ -175,23 +178,20 @@ class Walker
 
     /**
      * Returns whether a schema has already been processed and stored in
-     * a given collection. This is helpful both as a cache lookup and as
-     * an infinite recursion check.
+     * a given collection. This acts as an infinite recursion check.
      *
-     * @param stdClass $schema
-     * @param array    $processed
+     * @param stdClass          $schema
+     * @param SplObjectStorage  $storage
      *
      * @return bool
      */
-    private function isProcessed(stdClass $schema, array &$processed)
+    private function isProcessed(stdClass $schema, SplObjectStorage $storage)
     {
-        $schemaHash = spl_object_hash($schema);
-
-        if (isset($processed[$schemaHash])) {
+        if ($storage->contains($schema)) {
             return true;
         }
 
-        $processed[$schemaHash] = true;
+        $storage->attach($schema);
 
         return false;
     }
