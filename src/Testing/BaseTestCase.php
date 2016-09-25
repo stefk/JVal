@@ -129,7 +129,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             $reportParameters[4] = 'at least one error';
             $this->assertHasError($actualErrors, $reportParameters);
         } else {
-            $this->assertErrorsAreEqual($expectedErrors, $actualErrors, $reportParameters);
+            $this->assertErrorsAreEqual($actualErrors, $expectedErrors, $reportParameters);
         }
     }
 
