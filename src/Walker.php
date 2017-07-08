@@ -64,12 +64,12 @@ class Walker
     /**
      * Recursively resolves JSON pointer references within a given schema.
      *
-     * @param stdClass $schema The schema to resolve
-     * @param Uri      $uri    The URI of the schema
+     * @param mixed $schema The schema to resolve
+     * @param Uri   $uri    The URI of the schema
      *
-     * @return stdClass
+     * @return mixed
      */
-    public function resolveReferences(stdClass $schema, Uri $uri)
+    public function resolveReferences($schema, Uri $uri)
     {
         $this->resolver->initialize($schema, $uri);
 
@@ -77,15 +77,15 @@ class Walker
     }
 
     /**
-     * @param stdClass $schema
-     * @param Uri      $uri
-     * @param bool     $inProperties
+     * @param mixed $schema
+     * @param Uri   $uri
+     * @param bool  $inProperties
      *
-     * @return stdClass
+     * @return mixed
      */
-    private function doResolveReferences(stdClass $schema, Uri $uri, $inProperties = false)
+    private function doResolveReferences($schema, Uri $uri, $inProperties = false)
     {
-        if ($this->isProcessed($schema, $this->resolvedSchemas)) {
+        if (is_bool($schema) || $this->isProcessed($schema, $this->resolvedSchemas)) {
             return $schema;
         }
 
@@ -129,14 +129,14 @@ class Walker
     /**
      * Recursively normalizes a given schema and validates its syntax.
      *
-     * @param stdClass $schema
-     * @param Context  $context
+     * @param mixed     $schema
+     * @param Context   $context
      *
-     * @return stdClass
+     * @return mixed
      */
-    public function parseSchema(stdClass $schema, Context $context)
+    public function parseSchema($schema, Context $context)
     {
-        if ($this->isProcessed($schema, $this->parsedSchemas)) {
+        if (is_bool($schema) || $this->isProcessed($schema, $this->parsedSchemas)) {
             return $schema;
         }
 
@@ -155,24 +155,28 @@ class Walker
      * Validates an instance against a given schema, populating a context
      * with encountered violations.
      *
-     * @param mixed    $instance
-     * @param stdClass $schema
-     * @param Context  $context
+     * @param mixed     $instance
+     * @param mixed     $schema
+     * @param Context   $context
      */
-    public function applyConstraints($instance, stdClass $schema, Context $context)
+    public function applyConstraints($instance, $schema, Context $context)
     {
-        $cacheKey = gettype($instance).spl_object_hash($schema);
-        $constraints = & $this->constraintsCache[$cacheKey];
+        if ($schema === false) {
+            $context->addViolation('instance is not valid');
+        } elseif ($schema !== true) {
+            $cacheKey = gettype($instance) . spl_object_hash($schema);
+            $constraints = &$this->constraintsCache[$cacheKey];
 
-        if ($constraints === null) {
-            $version = $this->getVersion($schema);
-            $instanceType = Types::getPrimitiveTypeOf($instance);
-            $constraints = $this->registry->getConstraintsForType($version, $instanceType);
-            $constraints = $this->filterConstraintsForSchema($constraints, $schema);
-        }
+            if ($constraints === null) {
+                $version = $this->getVersion($schema);
+                $instanceType = Types::getPrimitiveTypeOf($instance);
+                $constraints = $this->registry->getConstraintsForType($version, $instanceType);
+                $constraints = $this->filterConstraintsForSchema($constraints, $schema);
+            }
 
-        foreach ($constraints as $constraint) {
-            $constraint->apply($instance, $schema, $context, $this);
+            foreach ($constraints as $constraint) {
+                $constraint->apply($instance, $schema, $context, $this);
+            }
         }
     }
 

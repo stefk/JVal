@@ -49,7 +49,7 @@ abstract class AbstractOfConstraint implements Constraint
         foreach ($schema->{$keyword} as $index => $subSchema) {
             $context->enterNode($index);
 
-            if (!is_object($subSchema)) {
+            if (!is_object($subSchema) && !is_bool($subSchema)) {
                 throw new InvalidTypeException($context, Types::TYPE_OBJECT);
             }
 

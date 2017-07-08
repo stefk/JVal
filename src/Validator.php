@@ -61,13 +61,13 @@ class Validator
      * of violations, if any. If the schema contains relative remote
      * references, its (absolute) URI must be passed as argument.
      *
-     * @param mixed    $instance
-     * @param stdClass $schema
-     * @param string   $schemaUri
+     * @param mixed     $instance
+     * @param mixed     $schema
+     * @param string    $schemaUri
      *
      * @return array
      */
-    public function validate($instance, stdClass $schema, $schemaUri = '')
+    public function validate($instance, $schema, $schemaUri = '')
     {
         $parseContext = new Context();
         $constraintContext = new Context();

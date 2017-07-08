@@ -120,7 +120,7 @@ class PropertiesConstraint implements Constraint
         foreach ($schema->properties as $property => $value) {
             $context->enterNode($property);
 
-            if (!is_object($value)) {
+            if (!is_object($value) && !is_bool($value)) {
                 throw new InvalidTypeException($context, Types::TYPE_OBJECT);
             }
 
@@ -140,6 +140,10 @@ class PropertiesConstraint implements Constraint
 
     private function parsePatternPropertiesProperty(stdClass $schema, Context $context, Walker $walker)
     {
+        if (is_bool($schema->patternProperties)) {
+            return;
+        }
+
         if (!is_object($schema->patternProperties)) {
             throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
@@ -151,8 +155,8 @@ class PropertiesConstraint implements Constraint
                 throw new InvalidRegexException($context);
             }
 
-            if (!is_object($value)) {
-                throw new InvalidTypeException($context, Types::TYPE_OBJECT);
+            if (!is_object($value) && !is_bool($value)) {
+                throw new InvalidTypeException($context, Types::TYPE_OBJECT, Types::TYPE_BOOLEAN);
             }
 
             $walker->parseSchema($value, $context);

@@ -325,11 +325,11 @@ class ResolverTest extends BaseTestCase
     public function remoteUriProvider()
     {
         $schemaDir = $this->getVendorDir().'/json-schema/json-schema';
-        $schemaFile = $schemaDir.'/draft-03/schema';
+        $schemaFile = $schemaDir.'/schema.json';
         $schema3 = $this->loadJsonFromFile($schemaFile);
 
         return [
-            ['http://json-schema.org/draft-03/schema#', $schema3],
+            ['http://json-schema.org/draft-06/schema#', $schema3],
             [$this->getLocalUri($schemaFile), $schema3],
         ];
     }

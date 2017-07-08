@@ -19,14 +19,14 @@ class Draft6Test extends BaseTestCase
      * @param string    $file
      * @param string    $title
      * @param mixed     $instance
-     * @param \stdClass $schema
+     * @param mixed     $schema
      * @param bool      $isInstanceValid
      */
     public function testApply(
         $file,
         $title,
         $instance,
-        \stdClass $schema,
+        $schema,
         $isInstanceValid
     ) {
         $remoteDir = realpath(__DIR__.'/../../vendor/json-schema/test-suite/remotes');

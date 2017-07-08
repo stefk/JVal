@@ -44,7 +44,7 @@ class NotConstraint implements Constraint
     {
         $context->enterNode('not');
 
-        if (!is_object($schema->not)) {
+        if (!is_object($schema->not) && !is_bool($schema->not)) {
             throw new InvalidTypeException($context, Types::TYPE_OBJECT);
         }
 

@@ -104,7 +104,7 @@ class ItemsConstraint implements Constraint
 
     private function parseItemsProperty(stdClass $schema, Context $context, Walker $walker)
     {
-        if (is_object($schema->items)) {
+        if (is_object($schema->items) || is_bool($schema->items)) {
             $walker->parseSchema($schema->items, $context);
         } elseif (is_array($schema->items)) {
             foreach ($schema->items as $index => $item) {

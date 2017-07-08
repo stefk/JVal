@@ -1,5 +1,5 @@
 {
-  "title": "issue #13: missing errors due to unresolved references",
+  "title": "issue #17: missing errors due to unresolved references",
   "tests": [
     {
       "title": "with nested references",

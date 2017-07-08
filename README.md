@@ -30,7 +30,7 @@ $violations = $validator->validate($data, $schema);
 
 Data can be anything that might result from a call to `json_decode`. The schema
 must be the JSON-decoded representation of a JSON Schema, i.e. a `stdClass`
-instance.
+instance or a boolean value.
 
 If the schema contains relative references to external schemas (either remote
 or local), the absolute URI of the base schema will probably be needed as well:

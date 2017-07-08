@@ -23,6 +23,7 @@ use JVal\Exception\UnsupportedVersionException;
 class Registry
 {
     const VERSION_CURRENT = 'http://json-schema.org/schema#';
+    const VERSION_DRAFT_4 = 'http://json-schema.org/draft-04/schema#';
     const VERSION_DRAFT_6 = 'http://json-schema.org/draft-06/schema#';
 
     private static $constraintNames = [
@@ -150,6 +151,8 @@ class Registry
     {
         switch ($version) {
             case self::VERSION_CURRENT:
+            // TODO: remove version 4 as soon regression test 17 can be updated
+            case self::VERSION_DRAFT_4:
             case self::VERSION_DRAFT_6:
                 return $this->createBuiltInConstraints(self::$constraintNames);
             default:

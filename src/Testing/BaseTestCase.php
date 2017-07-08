@@ -102,7 +102,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @param string    $file
      * @param string    $title
      * @param mixed     $instance
-     * @param \stdClass $schema
+     * @param mixed     $schema
      * @param bool      $isInstanceValid
      * @param array     $expectedErrors
      * @param array     $actualErrors
@@ -111,7 +111,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         $file,
         $title,
         $instance,
-        \stdClass $schema,
+        $schema,
         $isInstanceValid,
         array $expectedErrors,
         array $actualErrors

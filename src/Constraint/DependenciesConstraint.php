@@ -53,7 +53,7 @@ class DependenciesConstraint implements Constraint
         foreach ($schema->dependencies as $property => $value) {
             $context->enterNode($property);
 
-            if (is_object($value)) {
+            if (is_object($value) || is_bool($value)) {
                 $walker->parseSchema($value, $context);
             } elseif (is_array($value)) {
                 if (0 === $propertyCount = count($value)) {
@@ -72,7 +72,10 @@ class DependenciesConstraint implements Constraint
                     throw new NotUniqueException($context);
                 }
             } else {
-                throw new InvalidTypeException($context, [Types::TYPE_OBJECT, Types::TYPE_ARRAY]);
+                throw new InvalidTypeException(
+                    $context,
+                    [Types::TYPE_OBJECT, Types::TYPE_ARRAY, Types::TYPE_BOOLEAN]
+                );
             }
 
             $context->leaveNode();

@@ -54,10 +54,10 @@ class Resolver
     /**
      * Initializes the resolver with a root schema, on which resolutions will be based.
      *
-     * @param stdClass $schema
-     * @param Uri      $uri
+     * @param mixed $schema
+     * @param Uri   $uri
      */
-    public function initialize(stdClass $schema, Uri $uri)
+    public function initialize($schema, Uri $uri)
     {
         $this->registerSchema($schema, $uri);
         $this->stack = [[$uri, $schema]];
@@ -113,12 +113,12 @@ class Resolver
      * current schema is reused (useful when entering a resolution scope
      * within the current schema).
      *
-     * @param Uri      $uri
-     * @param stdClass $schema
+     * @param Uri   $uri
+     * @param mixed $schema
      *
      * @throws EmptyStackException
      */
-    public function enter(Uri $uri, stdClass $schema = null)
+    public function enter(Uri $uri, $schema = null)
     {
         $currentUri = $this->getCurrentUri();
 
@@ -126,7 +126,7 @@ class Resolver
             $uri->resolveAgainst($currentUri);
         }
 
-        $this->stack[] = [$uri, $schema ?: $this->getCurrentSchema()];
+        $this->stack[] = [$uri, $schema !== null ? $schema : $this->getCurrentSchema()];
     }
 
     /**
@@ -180,7 +180,7 @@ class Resolver
             throw new SelfReferencingPointerException();
         }
 
-        if (!is_object($resolved)) {
+        if (!is_object($resolved) && !is_bool($resolved)) {
             throw new InvalidPointerTargetException([$uri->getRawUri()]);
         }
 
@@ -190,10 +190,10 @@ class Resolver
     /**
      * Caches a schema reference for future use.
      *
-     * @param stdClass $schema
-     * @param Uri      $uri
+     * @param mixed $schema
+     * @param Uri   $uri
      */
-    private function registerSchema(stdClass $schema, Uri $uri)
+    private function registerSchema($schema, Uri $uri)
     {
         if (!isset($this->schemas[$uri->getPrimaryResourceIdentifier()])) {
             $this->schemas[$uri->getPrimaryResourceIdentifier()] = $schema;
