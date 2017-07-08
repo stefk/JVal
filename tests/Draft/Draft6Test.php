@@ -11,7 +11,7 @@ namespace JVal;
 
 use JVal\Testing\BaseTestCase;
 
-class Draft4Test extends BaseTestCase
+class Draft6Test extends BaseTestCase
 {
     /**
      * @dataProvider applyTestProvider
@@ -51,7 +51,7 @@ class Draft4Test extends BaseTestCase
      */
     public function applyTestProvider()
     {
-        $testDir = realpath(__DIR__.'/../../vendor/json-schema/test-suite/tests/draft4');
+        $testDir = realpath(__DIR__.'/../../vendor/json-schema/test-suite/tests/draft6');
         $iterator = new \RecursiveDirectoryIterator($testDir);
         $tests = [];
 

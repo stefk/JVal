@@ -13,14 +13,19 @@ use JVal\Exception\UnsupportedVersionException;
 
 /**
  * Stores and exposes validation constraints per version.
+ *
+ * Note: the registry is currently locked on the latest version of the specification;
+ *       as changes introduced by a new version might impact other areas than the
+ *       constraint validation (i.e. reference resolution) it's probably wise to
+ *       keep it that way and completely drop support for schemas mixing several
+ *       versions of the specification.
  */
 class Registry
 {
     const VERSION_CURRENT = 'http://json-schema.org/schema#';
-    const VERSION_DRAFT_3 = 'http://json-schema.org/draft-03/schema#';
-    const VERSION_DRAFT_4 = 'http://json-schema.org/draft-04/schema#';
+    const VERSION_DRAFT_6 = 'http://json-schema.org/draft-06/schema#';
 
-    private static $commonConstraints = [
+    private static $constraintNames = [
         'Maximum',
         'Minimum',
         'MaxLength',
@@ -36,9 +41,6 @@ class Registry
         'Enum',
         'Type',
         'Format',
-    ];
-
-    private static $draft4Constraints = [
         'MultipleOf',
         'MinProperties',
         'MaxProperties',
@@ -148,13 +150,8 @@ class Registry
     {
         switch ($version) {
             case self::VERSION_CURRENT:
-            case self::VERSION_DRAFT_4:
-                return $this->createBuiltInConstraints(
-                    array_merge(
-                        self::$commonConstraints,
-                        self::$draft4Constraints
-                    )
-                );
+            case self::VERSION_DRAFT_6:
+                return $this->createBuiltInConstraints(self::$constraintNames);
             default:
                 throw new UnsupportedVersionException(
                     "Schema version '{$version}' not supported"

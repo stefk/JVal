@@ -17,8 +17,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
-        "json-schema/json-schema": "dev-master",
-        "json-schema/test-suite": "dev-master",
+        "json-schema/json-schema": "dev-draft-6",
+        "json-schema/test-suite": "dev-draft-6",
         "fabpot/php-cs-fixer": "~1.10"
     },
     "repositories": [
@@ -26,11 +26,11 @@
             "type": "package",
             "package": {
                 "name": "json-schema/json-schema",
-                "version": "dev-master",
+                "version": "dev-draft-6",
                 "source": {
-                    "url": "https://github.com/json-schema/json-schema",
+                    "url": "https://github.com/json-schema-org/json-schema-spec",
                     "type": "git",
-                    "reference": "master"
+                    "reference": "3ad80f0f318f0d795f85b8b427a733cf5189e394"
                 }
             }
         },
@@ -38,11 +38,11 @@
             "type": "package",
             "package": {
                 "name": "json-schema/test-suite",
-                "version": "dev-master",
+                "version": "dev-draft-6",
                 "source": {
                     "url": "https://github.com/json-schema-org/JSON-Schema-Test-Suite",
                     "type": "git",
-                    "reference": "master"
+                    "reference": "728066f9c5c258ba3b1804a22a5b998f2ec77ec0"
                 }
             }
         }
