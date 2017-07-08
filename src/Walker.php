@@ -96,7 +96,7 @@ class Walker
             $inScope = true;
         }
 
-        if (property_exists($schema, '$ref')) {
+        if (property_exists($schema, '$ref') && !$inProperties) {
             $resolved = $this->resolver->resolve($schema);
             $this->resolver->enter($resolved[0], $resolved[1]);
             $schema = $this->doResolveReferences($resolved[1], $resolved[0]);
