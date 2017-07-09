@@ -14,16 +14,16 @@ use JVal\Walker;
 use stdClass;
 
 /**
- * Constraint for the "minimum" keyword.
+ * Constraint for the "exclusiveMinimum" keyword.
  */
-class MinimumConstraint extends AbstractRangeConstraint
+class ExclusiveMinimumConstraint extends AbstractRangeConstraint
 {
     /**
      * {@inheritdoc}
      */
     public function keywords()
     {
-        return ['minimum'];
+        return ['exclusiveMinimum'];
     }
 
     /**
@@ -31,8 +31,8 @@ class MinimumConstraint extends AbstractRangeConstraint
      */
     public function apply($instance, stdClass $schema, Context $context, Walker $walker)
     {
-        if ($instance < $schema->minimum) {
-            $context->addViolation('should be greater than or equal to %s', [$schema->minimum]);
+        if ($instance <= $schema->exclusiveMinimum) {
+            $context->addViolation('should be greater than %s', [$schema->exclusiveMinimum]);
         }
     }
 }

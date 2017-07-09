@@ -14,21 +14,6 @@ use JVal\Testing\ConstraintTestCase;
 
 class MinimumConstraintTest extends ConstraintTestCase
 {
-    public function testNormalizeThrowsIfMaxNotPresent()
-    {
-        $this->expectConstraintException('MissingKeywordException', '', 'minimum');
-        $schema = $this->loadSchema('invalid/minimum-not-present');
-        $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
-    }
-
-    public function testNormalizeSetsExclusiveMaxToFalseIfNotPresent()
-    {
-        $schema = $this->loadSchema('valid/exclusiveMinimum-not-present');
-        $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
-        $this->assertObjectHasAttribute('exclusiveMinimum', $schema);
-        $this->assertEquals(false, $schema->exclusiveMinimum);
-    }
-
     public function testNormalizeThrowsIfMinimumIsNotANumber()
     {
         $this->expectConstraintException('InvalidTypeException', '/minimum');
@@ -36,10 +21,10 @@ class MinimumConstraintTest extends ConstraintTestCase
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 
-    public function testNormalizeThrowsIfExclusiveMinimumIsNotABoolean()
+    public function testNormalizeThrowsIfExclusiveMinimumIsNotANumber()
     {
         $this->expectConstraintException('InvalidTypeException', '/exclusiveMinimum');
-        $schema = $this->loadSchema('invalid/exclusiveMinimum-not-boolean');
+        $schema = $this->loadSchema('invalid/exclusiveMinimum-not-number');
         $this->getConstraint()->normalize($schema, new Context(), $this->mockWalker());
     }
 

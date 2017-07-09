@@ -29,6 +29,8 @@ class Registry
     private static $constraintNames = [
         'Maximum',
         'Minimum',
+        'ExclusiveMaximum',
+        'ExclusiveMinimum',
         'MaxLength',
         'MinLength',
         'Pattern',
@@ -151,8 +153,6 @@ class Registry
     {
         switch ($version) {
             case self::VERSION_CURRENT:
-            // TODO: remove version 4 as soon regression test 17 can be updated
-            case self::VERSION_DRAFT_4:
             case self::VERSION_DRAFT_6:
                 return $this->createBuiltInConstraints(self::$constraintNames);
             default:

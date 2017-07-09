@@ -121,7 +121,7 @@ class PropertiesConstraint implements Constraint
             $context->enterNode($property);
 
             if (!is_object($value) && !is_bool($value)) {
-                throw new InvalidTypeException($context, Types::TYPE_OBJECT);
+                throw new InvalidTypeException($context, Types::TYPE_OBJECT, Types::TYPE_BOOLEAN);
             }
 
             $walker->parseSchema($value, $context);

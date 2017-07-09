@@ -12,7 +12,6 @@ namespace JVal\Constraint;
 use JVal\Constraint;
 use JVal\Context;
 use JVal\Exception\Constraint\InvalidTypeException;
-use JVal\Exception\Constraint\MissingKeywordException;
 use JVal\Types;
 use JVal\Walker;
 use stdClass;
@@ -36,27 +35,14 @@ abstract class AbstractRangeConstraint implements Constraint
      */
     public function normalize(stdClass $schema, Context $context, Walker $walker)
     {
-        $property = $this->keywords()[0];
-        $secondaryProperty = $this->keywords()[1];
-
-        if (!property_exists($schema, $property)) {
-            throw new MissingKeywordException($context, $property);
-        }
-
-        if (!property_exists($schema, $secondaryProperty)) {
-            $schema->{$secondaryProperty} = false;
-        }
+        $property = property_exists($schema, $this->keywords()[0]) ?
+            $this->keywords()[0] :
+            $this->keywords()[1];
 
         if (!Types::isA($schema->{$property}, Types::TYPE_NUMBER)) {
             $context->enterNode($property);
 
             throw new InvalidTypeException($context, Types::TYPE_NUMBER);
-        }
-
-        if (!is_bool($schema->{$secondaryProperty})) {
-            $context->enterNode($secondaryProperty);
-
-            throw new InvalidTypeException($context, Types::TYPE_BOOLEAN);
         }
     }
 }
